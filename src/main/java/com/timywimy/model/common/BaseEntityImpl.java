@@ -1,49 +1,47 @@
-package com.timywimy.model;
+package com.timywimy.model.common;
 
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.internal.util.compare.EqualsHelper;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @MappedSuperclass
-public abstract class BaseEntity implements Serializable, Cloneable {
+public abstract class BaseEntityImpl implements BaseEntity {
+    //todo serilizable,clonable (to clone events or whatever)
     //todo check timestamps,check version
-    //add named and described entities
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Id
     @Column(name = "id", columnDefinition = "UUID")
-    protected UUID id;
+    private UUID id;
 
     @Column(name = "created_by", columnDefinition = "UUID", nullable = false)
-    protected UUID createdBy;
+    private UUID createdBy;
     @Column(name = "created_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    protected OffsetDateTime createdTs;
+    private OffsetDateTime createdTs;
     @Column(name = "updated_by", columnDefinition = "UUID")
-    protected UUID updatedBy;
+    private UUID updatedBy;
     @Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @Temporal(TemporalType.TIMESTAMP)
-    protected OffsetDateTime updatedTs;
+    private OffsetDateTime updatedTs;
     @Column(name = "deleted_by", columnDefinition = "UUID")
-    protected UUID deletedBy;
+    private UUID deletedBy;
     @Column(name = "deleted_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @Temporal(TemporalType.TIMESTAMP)
-    protected OffsetDateTime deletedTs;
+    private OffsetDateTime deletedTs;
 
     @Version
-    @Column(name = "version", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
-    protected Integer version;
+    @Column(name = "version", columnDefinition = "NUMERIC", nullable = false)
+    private Integer version;
 
-    protected BaseEntity() {
+    protected BaseEntityImpl() {
     }
 
-    protected BaseEntity(UUID id) {
+    protected BaseEntityImpl(UUID id) {
         this.id = id;
     }
 
@@ -111,33 +109,35 @@ public abstract class BaseEntity implements Serializable, Cloneable {
         this.version = version;
     }
 
-    public boolean isNew() {
-        return this.id == null;
-    }
-
-
     @Override
     public String toString() {
-        return String.format("Base Entity (%s, %s)", id, version);
+        return String.format("(id:%s)", id);
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || !getClass().equals(Hibernate.getClass(o))) {
+        if (o == null || !(o instanceof BaseEntity)) {
             return false;
         }
-        BaseEntity that = (BaseEntity) o;
-        return EqualsHelper.equals(id, that.id) &&
-                EqualsHelper.equals(createdBy, that.createdBy) &&
-                EqualsHelper.equals(createdTs, that.createdTs);
+        BaseEntityImpl that = (BaseEntityImpl) o;
+        return Objects.equals(createdBy, that.createdBy) &&
+                Objects.equals(createdTs, that.createdTs) &&
+                Objects.equals(updatedBy, that.updatedBy) &&
+                Objects.equals(updatedTs, that.updatedTs) &&
+                Objects.equals(deletedBy, that.deletedBy) &&
+                Objects.equals(deletedTs, that.deletedTs) &&
+                Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.hashCode();
+        return Objects.hash(
+                createdBy, createdTs,
+                updatedBy, updatedTs,
+                deletedBy, deletedTs,
+                version, version);
     }
 }
