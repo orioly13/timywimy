@@ -1,13 +1,15 @@
 package com.timywimy.model.bo.tasks;
 
 import com.timywimy.model.bo.events.Event;
+import com.timywimy.model.bo.tasks.converters.Priority;
 import com.timywimy.model.common.DateTimeZoneEntity;
+import com.timywimy.model.common.DescribedEntity;
 import com.timywimy.model.common.OwnedEntity;
 
 import java.util.List;
 
 
-public interface Task extends DateTimeZoneEntity, OwnedEntity {
+public interface Task extends OwnedEntity, DescribedEntity, DateTimeZoneEntity {
 
     Task getParent();
 
@@ -21,9 +23,9 @@ public interface Task extends DateTimeZoneEntity, OwnedEntity {
 
     void setPriority(Priority priority);
 
-    boolean isDone();
+    boolean isCompleted();
 
-    void setDone(boolean done);
+    void setCompleted(boolean completed);
 
     Event getEvent();
 

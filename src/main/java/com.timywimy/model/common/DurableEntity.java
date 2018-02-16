@@ -1,10 +1,11 @@
 package com.timywimy.model.common;
 
-import java.time.Duration;
+import com.timywimy.model.common.converters.PeriodDuration;
 
-public interface DurableEntity extends DateTimeZoneEntity {
 
-    Duration getDuration();
+public interface DurableEntity extends BaseEntity {
 
-    void setDuration(Duration duration);
+    PeriodDuration getDuration();
+
+    void setDuration(PeriodDuration duration);
 }

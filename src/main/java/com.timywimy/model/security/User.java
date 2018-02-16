@@ -1,6 +1,7 @@
 package com.timywimy.model.security;
 
 import com.timywimy.model.common.NamedEntity;
+import com.timywimy.model.security.converters.Role;
 
 public interface User extends NamedEntity {
 
@@ -16,9 +17,9 @@ public interface User extends NamedEntity {
 
     void setRole(Role role);
 
-    boolean isActivated();
+    boolean isActive();
 
-    void setActivated(boolean activated);
+    void setActive(boolean active);
 
 //    boolean isBanned();
 //

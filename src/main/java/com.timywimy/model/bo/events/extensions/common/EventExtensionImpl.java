@@ -10,10 +10,12 @@ public abstract class EventExtensionImpl extends BaseEntityImpl implements Event
 
     private Event event;
 
+    @Override
     public Event getEvent() {
         return event;
     }
 
+    @Override
     public void setEvent(Event event) {
         this.event = event;
     }

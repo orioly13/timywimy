@@ -1,6 +1,7 @@
 package com.timywimy.model.security;
 
 import com.timywimy.model.common.NamedEntityImpl;
+import com.timywimy.model.security.converters.Role;
 
 import javax.persistence.Entity;
 
@@ -46,13 +47,13 @@ public class UserImpl extends NamedEntityImpl implements User {
     }
 
     @Override
-    public boolean isActivated() {
+    public boolean isActive() {
         return activated;
     }
 
     @Override
-    public void setActivated(boolean activated) {
-        this.activated = activated;
+    public void setActive(boolean active) {
+        this.activated = active;
     }
 
 }

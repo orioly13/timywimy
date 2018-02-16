@@ -1,4 +1,4 @@
-package com.timywimy.model.bo.tasks;
+package com.timywimy.model.bo.tasks.converters;
 
 public enum Priority {
     UNKNOWN(-1, "unknown"),

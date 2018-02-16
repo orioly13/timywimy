@@ -1,19 +1,21 @@
 package com.timywimy.model.bo.events.extensions;
 
-import com.timywimy.model.bo.events.extensions.common.NamedEventExtensionImpl;
+import com.timywimy.model.bo.events.extensions.common.DefaultEventExtensionImpl;
 
-import java.util.Objects;
+import javax.persistence.Entity;
 
-public class CounterExtensionImpl extends NamedEventExtensionImpl implements CounterExtension {
+@Entity
+public class CounterExtensionImpl extends DefaultEventExtensionImpl implements CounterExtension {
 
     private int counter;
 
+    @Override
     public int getCounter() {
         return counter;
     }
 
+    @Override
     public void setCounter(int counter) {
         this.counter = counter;
     }
-
 }

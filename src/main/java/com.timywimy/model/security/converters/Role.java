@@ -1,4 +1,4 @@
-package com.timywimy.model.security;
+package com.timywimy.model.security.converters;
 
 public enum Role {
     UNKNOWN(-1, "unknown"),

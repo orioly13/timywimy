@@ -3,7 +3,7 @@ package com.timywimy.model.common;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @MappedSuperclass
@@ -21,83 +21,99 @@ public abstract class BaseEntityImpl implements BaseEntity {
     private UUID createdBy;
     @Column(name = "created_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private OffsetDateTime createdTs;
+    private ZonedDateTime createdTs;
     @Column(name = "updated_by", columnDefinition = "UUID")
     private UUID updatedBy;
     @Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @Temporal(TemporalType.TIMESTAMP)
-    private OffsetDateTime updatedTs;
+    private ZonedDateTime updatedTs;
     @Column(name = "deleted_by", columnDefinition = "UUID")
     private UUID deletedBy;
     @Column(name = "deleted_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @Temporal(TemporalType.TIMESTAMP)
-    private OffsetDateTime deletedTs;
+    private ZonedDateTime deletedTs;
 
     @Version
     @Column(name = "version", columnDefinition = "NUMERIC", nullable = false)
-    private Integer version;
+    private int version;
 
+    @Override
     public UUID getId() {
         return id;
     }
 
+    @Override
     public void setId(UUID id) {
         this.id = id;
     }
 
+    @Override
     public UUID getCreatedBy() {
         return createdBy;
     }
 
+    @Override
     public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
-    public OffsetDateTime getCreatedTs() {
+    @Override
+    public ZonedDateTime getCreatedTs() {
         return createdTs;
     }
 
-    public void setCreatedTs(OffsetDateTime createdTs) {
+    @Override
+    public void setCreatedTs(ZonedDateTime createdTs) {
         this.createdTs = createdTs;
     }
 
+    @Override
     public UUID getUpdatedBy() {
         return updatedBy;
     }
 
+    @Override
     public void setUpdatedBy(UUID updatedBy) {
         this.updatedBy = updatedBy;
     }
 
-    public OffsetDateTime getUpdatedTs() {
+    @Override
+    public ZonedDateTime getUpdatedTs() {
         return updatedTs;
     }
 
-    public void setUpdatedTs(OffsetDateTime updatedTs) {
+    @Override
+    public void setUpdatedTs(ZonedDateTime updatedTs) {
         this.updatedTs = updatedTs;
     }
 
+    @Override
     public UUID getDeletedBy() {
         return deletedBy;
     }
 
+    @Override
     public void setDeletedBy(UUID deletedBy) {
         this.deletedBy = deletedBy;
     }
 
-    public OffsetDateTime getDeletedTs() {
+    @Override
+    public ZonedDateTime getDeletedTs() {
         return deletedTs;
     }
 
-    public void setDeletedTs(OffsetDateTime deletedTs) {
+    @Override
+    public void setDeletedTs(ZonedDateTime deletedTs) {
         this.deletedTs = deletedTs;
     }
 
-    public Integer getVersion() {
+    @Override
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(Integer version) {
+    @Override
+    public void setVersion(int version) {
         this.version = version;
     }
 

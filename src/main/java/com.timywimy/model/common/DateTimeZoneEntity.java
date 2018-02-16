@@ -2,7 +2,7 @@ package com.timywimy.model.common;
 
 import com.timywimy.model.common.converters.DateTimeZone;
 
-public interface DateTimeZoneEntity extends DescribedEntity {
+public interface DateTimeZoneEntity extends BaseEntity {
 
     DateTimeZone getDateTimeZone();
 

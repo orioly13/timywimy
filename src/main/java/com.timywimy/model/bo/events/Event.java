@@ -2,13 +2,12 @@ package com.timywimy.model.bo.events;
 
 import com.timywimy.model.bo.events.extensions.common.EventExtension;
 import com.timywimy.model.bo.tasks.Task;
-import com.timywimy.model.common.DurableEntity;
-import com.timywimy.model.common.OwnedEntity;
+import com.timywimy.model.common.*;
 
 import java.util.List;
 
 
-public interface Event extends DurableEntity, OwnedEntity {
+public interface Event extends OwnedEntity, NamedEntity, DescribedEntity, DurableEntity, DateTimeZoneEntity {
 
     List<EventExtension> getExtensions();
 

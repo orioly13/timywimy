@@ -1,6 +1,6 @@
 package com.timywimy.model.common;
 
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public interface BaseEntity {
@@ -13,29 +13,29 @@ public interface BaseEntity {
 
     void setCreatedBy(UUID createdBy);
 
-    OffsetDateTime getCreatedTs();
+    ZonedDateTime getCreatedTs();
 
-    void setCreatedTs(OffsetDateTime createdTs);
+    void setCreatedTs(ZonedDateTime createdTs);
 
     UUID getUpdatedBy();
 
     void setUpdatedBy(UUID updatedBy);
 
-    OffsetDateTime getUpdatedTs();
+    ZonedDateTime getUpdatedTs();
 
-    void setUpdatedTs(OffsetDateTime updatedTs);
+    void setUpdatedTs(ZonedDateTime updatedTs);
 
     UUID getDeletedBy();
 
     void setDeletedBy(UUID deletedBy);
 
-    OffsetDateTime getDeletedTs();
+    ZonedDateTime getDeletedTs();
 
-    void setDeletedTs(OffsetDateTime deletedTs);
+    void setDeletedTs(ZonedDateTime deletedTs);
 
-    Integer getVersion();
+    int getVersion();
 
-    void setVersion(Integer version);
+    void setVersion(int version);
 
     //other methods (default, lol)
     default boolean isNew() {

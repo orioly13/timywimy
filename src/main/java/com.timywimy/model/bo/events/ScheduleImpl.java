@@ -1,16 +1,18 @@
 package com.timywimy.model.bo.events;
 
-import com.timywimy.model.common.DurableEntityImpl;
-import com.timywimy.model.security.User;
+import com.timywimy.model.common.DefaultEntityImpl;
+import com.timywimy.model.common.converters.PeriodDuration;
 
+import javax.persistence.Entity;
 import java.util.List;
 
-public class ScheduleImpl extends DurableEntityImpl implements Schedule {
+@Entity
+public class ScheduleImpl extends DefaultEntityImpl implements Schedule {
 
     private String cron;
-    private List<Event> instances;
+    private PeriodDuration duration;
 
-    private User owner;
+    private List<Event> instances;
 
     @Override
     public String getCron() {
@@ -18,7 +20,7 @@ public class ScheduleImpl extends DurableEntityImpl implements Schedule {
     }
 
     @Override
-    public void setCron() {
+    public void setCron(String cron) {
         this.cron = cron;
     }
 
@@ -33,12 +35,12 @@ public class ScheduleImpl extends DurableEntityImpl implements Schedule {
     }
 
     @Override
-    public User getOwner() {
-        return owner;
+    public PeriodDuration getDuration() {
+        return duration;
     }
 
     @Override
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setDuration(PeriodDuration duration) {
+        this.duration = duration;
     }
 }
