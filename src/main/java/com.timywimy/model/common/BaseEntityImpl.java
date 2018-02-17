@@ -8,33 +8,29 @@ import java.util.UUID;
 
 @MappedSuperclass
 public abstract class BaseEntityImpl implements BaseEntity {
-    //todo serilizable,clonable (to clone events or whatever)
-    //todo implent to string in other methods
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Id
-    @Column(name = "id", columnDefinition = "UUID")
+    @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
-
-    @Column(name = "created_by", columnDefinition = "UUID", nullable = false)
+    @Column(name = "created_by", columnDefinition = "uuid")
     private UUID createdBy;
-    @Column(name = "created_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE", nullable = false)
+    @Column(name = "created_ts", columnDefinition = "timestamp with time zone")
     @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime createdTs;
-    @Column(name = "updated_by", columnDefinition = "UUID")
+    @Column(name = "updated_by", columnDefinition = "uuid")
     private UUID updatedBy;
-    @Column(name = "updated_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "updated_ts", columnDefinition = "timestamp with time zone")
     @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime updatedTs;
-    @Column(name = "deleted_by", columnDefinition = "UUID")
+    @Column(name = "deleted_by", columnDefinition = "uuid")
     private UUID deletedBy;
-    @Column(name = "deleted_ts", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "deleted_ts", columnDefinition = "timestamp with time zone")
     @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime deletedTs;
-
     @Version
-    @Column(name = "version", columnDefinition = "NUMERIC", nullable = false)
+    @Column(name = "version", columnDefinition = "numeric(2,0)", nullable = false)
     private int version;
 
     @Override
@@ -117,6 +113,15 @@ public abstract class BaseEntityImpl implements BaseEntity {
         this.version = version;
     }
 
+
+    @PreUpdate
+    @PrePersist
+    public void updateTimeStamps() {
+        updatedTs = ZonedDateTime.now();
+        if (createdTs == null) {
+            createdTs = ZonedDateTime.now();
+        }
+    }
 //    @Override
 //    public String toString() {
 //        return String.format("(id:%s)", id);
