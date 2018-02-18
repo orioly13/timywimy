@@ -8,7 +8,7 @@
 
     <servlet>
         <servlet-name>restServlet</servlet-name>
-        <servlet-class>com.timywimy.web.RestServlet</servlet-class>
+        <servlet-class>timywimy.web.RestServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
