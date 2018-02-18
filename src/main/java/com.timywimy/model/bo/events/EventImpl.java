@@ -4,27 +4,31 @@ import com.timywimy.model.bo.events.extensions.common.EventExtension;
 import com.timywimy.model.bo.tasks.Task;
 import com.timywimy.model.common.DefaultEntityImpl;
 import com.timywimy.model.common.converters.DateTimeZone;
-import com.timywimy.model.common.converters.PeriodDuration;
-import com.timywimy.model.security.User;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "BO_EVENTS", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
+@Table(name = "bo_events", indexes = {
+        @Index(name = "bo_events_idx_owner_id", columnList = "owner_id"),
+        @Index(name = "bo_events_idx_date_time_zone", columnList = "owner_id,date,time,zone"),
+        @Index(name = "bo_events_idx_name", columnList = "owner_id,name")})
 public class EventImpl extends DefaultEntityImpl implements Event {
 
-    //todo event templates
+    @Embedded
     private DateTimeZone dateTimeZone;
-    private PeriodDuration duration;
+    @Column(name = "duration", columnDefinition = "timestamp without time zone")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime duration;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
     private List<EventExtension> extensions;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
     private List<Task> tasks;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
-
-    private User owner;
 
     @Override
     public List<EventExtension> getExtensions() {
@@ -57,16 +61,6 @@ public class EventImpl extends DefaultEntityImpl implements Event {
     }
 
     @Override
-    public User getOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    @Override
     public DateTimeZone getDateTimeZone() {
         return dateTimeZone;
     }
@@ -77,12 +71,12 @@ public class EventImpl extends DefaultEntityImpl implements Event {
     }
 
     @Override
-    public PeriodDuration getDuration() {
+    public LocalDateTime getDuration() {
         return duration;
     }
 
     @Override
-    public void setDuration(PeriodDuration duration) {
+    public void setDuration(LocalDateTime duration) {
         this.duration = duration;
     }
 }

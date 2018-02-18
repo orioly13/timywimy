@@ -2,18 +2,28 @@ package com.timywimy.model.common.converters;
 
 import com.timywimy.util.TimeFormatUtil;
 
+import javax.persistence.*;
 import java.time.*;
 import java.util.Objects;
 
-
+@Embeddable
 public class DateTimeZone {
 
+    @Column(name = "date", columnDefinition = "date")
+    @Temporal(TemporalType.DATE)
     private LocalDate date;
+    @Column(name = "time", columnDefinition = "time")
+    @Temporal(TemporalType.TIME)
     private LocalTime time;
+    @Column(name = "zone", columnDefinition = "varchar(20)")
+    @Convert(converter = ZoneIdConverter.class)
     private ZoneId zone;
 
+    @Transient
     private boolean initialized;
+    @Transient
     private LocalDateTime localDateTime;
+    @Transient
     private ZonedDateTime zonedDateTime;
 
     public DateTimeZone() {

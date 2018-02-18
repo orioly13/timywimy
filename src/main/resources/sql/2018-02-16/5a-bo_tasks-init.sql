@@ -1,27 +1,30 @@
-create table bo_tasks (
+CREATE TABLE bo_tasks (
   --base
-  id            uuid not null
-                constraint bo_tasks_pk_id primary key
-                constraint bo_tasks_fk_id_base_id references a_base_entities(id),
+  id          UUID CONSTRAINT bo_tasks_pk_id PRIMARY KEY,
+  created_by  UUID CONSTRAINT bo_tasks_fk_created_by_sec_users_id REFERENCES sec_users (id),
+  created_ts  TIMESTAMP WITH TIME ZONE,
+  updated_by  UUID CONSTRAINT bo_tasks_fk_updated_by_sec_users_id REFERENCES sec_users (id),
+  updated_ts  TIMESTAMP WITH TIME ZONE,
+  deleted_by  UUID CONSTRAINT bo_tasks_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
+  deleted_ts  TIMESTAMP WITH TIME ZONE,
+  version     INTEGER NOT NULL DEFAULT 0 CONSTRAINT bo_tasks_version CHECK (version >= 0),
   --owned
-  owner_id      uuid not null
-                constraint bo_tasks_fk_owner_sec_users_id references sec_users(id),
+  owner_id    UUID    NOT NULL CONSTRAINT bo_tasks_fk_owner_sec_users_id REFERENCES sec_users (id),
   --described
-  description 	varchar(255),
+  description VARCHAR(255),
   --datetimezone
-  date 			date,
-  time			time,
-  zone			varchar(20),
+  date        DATE,
+  time        TIME,
+  zone        VARCHAR(20),
   --event link
-  event_id      uuid
-                constraint bo_tasks_fk_event_id_bo_events_id references bo_events(id),
+  event_id    UUID CONSTRAINT bo_tasks_fk_event_id_bo_events_id REFERENCES bo_events (id),
   --other
-  parent_id     uuid
-                constraint bo_tasks_fk_parent_id_bo_tasks_id references bo_tasks(id),
-  group_id      uuid
-                constraint bo_tasks_fk_group_id_bo_task_groups_id references bo_task_groups(id),
-  priority      numeric(1),
-  completed     boolean not null default false
+  parent_id   UUID CONSTRAINT bo_tasks_fk_parent_id_bo_tasks_id REFERENCES bo_tasks (id),
+  group_id    UUID CONSTRAINT bo_tasks_fk_group_id_bo_task_groups_id REFERENCES bo_task_groups (id),
+  priority    NUMERIC(1, 0),
+  completed   BOOLEAN NOT NULL DEFAULT FALSE
 );
-create index bo_tasks_idx_date_time_zone on bo_tasks(owner_id, date, time, zone);
-create index bo_tasks_idx_priority on bo_tasks(owner_id, priority);
+CREATE INDEX bo_tasks_idx_date_time_zone
+  ON bo_tasks (owner_id, date, time, zone);
+CREATE INDEX bo_tasks_idx_priority
+  ON bo_tasks (owner_id, priority);

@@ -1,17 +1,21 @@
-create table bo_event_ext_tickboxes(
+CREATE TABLE bo_event_ext_tickboxes (
   --base
-  id            uuid not null
-                constraint bo_event_ext_tickboxes_pk_id primary key
-                constraint bo_event_ext_tickboxes_fk_id_base_id references a_base_entities(id),
+  id          UUID CONSTRAINT bo_event_ext_tickboxes_pk_id PRIMARY KEY,
+  created_by  UUID CONSTRAINT bo_event_ext_tickboxes_fk_created_by_sec_users_id REFERENCES sec_users (id),
+  created_ts  TIMESTAMP WITH TIME ZONE,
+  updated_by  UUID CONSTRAINT bo_event_ext_tickboxes_fk_updated_by_sec_users_id REFERENCES sec_users (id),
+  updated_ts  TIMESTAMP WITH TIME ZONE,
+  deleted_by  UUID CONSTRAINT bo_event_ext_tickboxes_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
+  deleted_ts  TIMESTAMP WITH TIME ZONE,
+  version     INTEGER NOT NULL DEFAULT 0 CONSTRAINT bo_event_ext_tickboxes_version CHECK (version >= 0),
   --event link
-  event_id      uuid
-                constraint bo_event_ext_tickboxes_fk_event_id_bo_events_id references bo_events(id),
+  event_id    UUID CONSTRAINT bo_event_ext_tickboxes_fk_event_id_bo_events_id REFERENCES bo_events (id),
   --named
-  name        	varchar(50),
+  name        VARCHAR(50),
   --ordered
-  event_order  	integer not null
-                constraint bo_event_ext_tickboxes_event_order_positive check(event_order >= 0),
+  event_order INTEGER NOT NULL CONSTRAINT bo_event_ext_tickboxes_event_order_positive CHECK (event_order >= 0),
   --other
-  active        boolean not null default false
+  active      BOOLEAN NOT NULL DEFAULT FALSE
 );
-create index bo_event_ext_tickboxes_idx_event_order on bo_event_ext_tickboxes(event_id, event_order);
+CREATE INDEX bo_event_ext_tickboxes_idx_event_order
+  ON bo_event_ext_tickboxes (event_id, event_order);

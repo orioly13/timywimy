@@ -1,18 +1,24 @@
-create table sec_users(
+CREATE TABLE sec_users (
   --base
-  id          uuid not null
-              constraint sec_users_pk_id primary key
-              constraint sec_users_fk_id_base_id references a_base_entities(id),
+  id          UUID CONSTRAINT sec_users_pk_id PRIMARY KEY,
+  created_by  UUID CONSTRAINT sec_users_fk_created_by_sec_users_id REFERENCES sec_users (id),
+  created_ts  TIMESTAMP WITH TIME ZONE,
+  updated_by  UUID CONSTRAINT sec_users_fk_updated_by_sec_users_id REFERENCES sec_users (id),
+  updated_ts  TIMESTAMP WITH TIME ZONE,
+  deleted_by  UUID CONSTRAINT sec_users_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
+  deleted_ts  TIMESTAMP WITH TIME ZONE,
+  version     INTEGER     NOT NULL DEFAULT 0 CONSTRAINT sec_users_version CHECK (version >= 0),
   --named
-  name        varchar(50),
+  name        VARCHAR(50),
   --other
-  email       varchar(50)
-              constraint sec_users_uq_email unique not null,
-  password    varchar(50) not null,
-  role	      numeric(2,0),
-  active      boolean not null default false
+  email       VARCHAR(50) NOT NULL CONSTRAINT sec_users_uq_email UNIQUE,
+  password    VARCHAR(50) NOT NULL,
+  role        NUMERIC(2, 0),
+  active      BOOLEAN     NOT NULL DEFAULT FALSE,
+  banned      BOOLEAN     NOT NULL DEFAULT FALSE,
+  banned_by   UUID CONSTRAINT sec_users_fk_banned_by_sec_users_id REFERENCES sec_users (id),
+  banned_till TIMESTAMP WITH TIME ZONE
 );
 --root
-insert into a_base_entities(id, created_ts) values(uuid_generate_v4(), now());
-insert into sec_users(id, name, email, password, role, active)
-    values((select base.id from a_base_entities base limit 1), 'root', 'karlikve1ik@gmail.com','time@LORD', 1, true);
+INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
+VALUES (uuid_generate_v4(), now(), 'root', 'karlikve1ik@gmail.com', 'time@LORD', 1, TRUE);

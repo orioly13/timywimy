@@ -1,25 +1,15 @@
 package com.timywimy.model.common;
 
-import com.timywimy.model.security.User;
-
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class DefaultEntityImpl extends BaseEntityImpl implements OwnedEntity, NamedEntity, DescribedEntity {
+public abstract class DefaultEntityImpl extends OwnedEntityImpl implements NamedEntity, DescribedEntity {
 
-    private User owner;
+    @Column(name = "name", columnDefinition = "varchar(50)")
     private String name;
+    @Column(name = "description", columnDefinition = "varchar(255)")
     private String description;
-
-    @Override
-    public User getOwner() {
-        return owner;
-    }
-
-    @Override
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
 
     @Override
     public String getName() {

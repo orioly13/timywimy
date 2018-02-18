@@ -30,4 +30,8 @@ public interface Task extends OwnedEntity, DescribedEntity, DateTimeZoneEntity {
     Event getEvent();
 
     void setEvent(Event event);
+
+    TaskGroup getGroup();
+
+    void setGroup(TaskGroup group);
 }

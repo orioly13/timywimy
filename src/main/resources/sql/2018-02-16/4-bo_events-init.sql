@@ -1,25 +1,31 @@
-create table bo_events(
+CREATE TABLE bo_events (
   --base
-  id            uuid not null
-                constraint bo_events_pk_id primary key
-                constraint bo_events_fk_id_base_id references a_base_entities(id),
+  id          UUID CONSTRAINT bo_events_pk_id PRIMARY KEY,
+  created_by  UUID CONSTRAINT bo_events_fk_created_by_sec_users_id REFERENCES sec_users (id),
+  created_ts  TIMESTAMP WITH TIME ZONE,
+  updated_by  UUID CONSTRAINT bo_events_fk_updated_by_sec_users_id REFERENCES sec_users (id),
+  updated_ts  TIMESTAMP WITH TIME ZONE,
+  deleted_by  UUID CONSTRAINT bo_events_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
+  deleted_ts  TIMESTAMP WITH TIME ZONE,
+  version     INTEGER NOT NULL DEFAULT 0 CONSTRAINT bo_events_version CHECK (version >= 0),
   --owned
-  owner_id      uuid not null
-                constraint bo_events_fk_owner_id_sec_users_id references sec_users(id),
+  owner_id    UUID    NOT NULL CONSTRAINT bo_events_fk_owner_id_sec_users_id REFERENCES sec_users (id),
   --named
-  name        	varchar(50),
+  name        VARCHAR(50),
   --described
-  description 	varchar(255),
+  description VARCHAR(255),
   --durable
-  duration		  interval,
+  duration    TIMESTAMP WITHOUT TIME ZONE,
   --datetimezone
-  date 			    date,
-  time			    time,
-  zone			    varchar(20),
+  date        DATE,
+  time        TIME,
+  zone        VARCHAR(20),
   --schedule link
-  schedule_id   uuid
-                constraint bo_events_fk_schedule_id_bo_schedules_id references bo_schedules(id)
+  schedule_id UUID CONSTRAINT bo_events_fk_schedule_id_bo_schedules_id REFERENCES bo_schedules (id)
 );
-create index bo_events_idx_owner_id on bo_events(owner_id);
-create index bo_events_idx_date_time_zone on bo_events(owner_id, date, time, zone);
-create index bo_events_idx_name on bo_events(owner_id, name);
+CREATE INDEX bo_events_idx_owner_id
+  ON bo_events (owner_id);
+CREATE INDEX bo_events_idx_date_time_zone
+  ON bo_events (owner_id, date, time, zone);
+CREATE INDEX bo_events_idx_name
+  ON bo_events (owner_id, name);

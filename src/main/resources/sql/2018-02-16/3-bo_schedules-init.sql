@@ -1,19 +1,25 @@
-create table bo_schedules(
+CREATE TABLE bo_schedules (
   --base
-  id            uuid not null
-                constraint bo_schedules_pk_id primary key
-                constraint bo_schedules_fk_id_base_id references a_base_entities(id),
+  id          UUID CONSTRAINT bo_schedules_pk_id PRIMARY KEY,
+  created_by  UUID CONSTRAINT bo_schedules_fk_created_by_sec_users_id REFERENCES sec_users (id),
+  created_ts  TIMESTAMP WITH TIME ZONE,
+  updated_by  UUID CONSTRAINT bo_schedules_fk_updated_by_sec_users_id REFERENCES sec_users (id),
+  updated_ts  TIMESTAMP WITH TIME ZONE,
+  deleted_by  UUID CONSTRAINT bo_schedules_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
+  deleted_ts  TIMESTAMP WITH TIME ZONE,
+  version     INTEGER NOT NULL DEFAULT 0 CONSTRAINT bo_schedules_version CHECK (version >= 0),
   --owned
-  owner_id      uuid not null
-                constraint bo_schedules_fk_owner_id_sec_users_id references sec_users(id),
+  owner_id    UUID    NOT NULL CONSTRAINT bo_schedules_fk_owner_id_sec_users_id REFERENCES sec_users (id),
   --named
-  name        	varchar(50),
+  name        VARCHAR(50),
   --described
-  description 	varchar(255),
+  description VARCHAR(255),
   --durable
-  duration		  interval,
+  duration    TIMESTAMP WITHOUT TIME ZONE,
   --other fields
-  cron          varchar(20)
+  cron        VARCHAR(20)
 );
-create index bo_schedules_idx_owner_id on bo_schedules(owner_id);
-create index bo_schedules_idx_name on bo_schedules(owner_id, name);
+CREATE INDEX bo_schedules_idx_owner_id
+  ON bo_schedules (owner_id);
+CREATE INDEX bo_schedules_idx_name
+  ON bo_schedules (owner_id, name);

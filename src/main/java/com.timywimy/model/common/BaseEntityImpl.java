@@ -30,7 +30,7 @@ public abstract class BaseEntityImpl implements BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime deletedTs;
     @Version
-    @Column(name = "version", columnDefinition = "numeric(2,0)", nullable = false)
+    @Column(name = "version", columnDefinition = "integer", nullable = false)
     private int version;
 
     @Override
