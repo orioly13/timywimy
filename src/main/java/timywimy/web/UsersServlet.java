@@ -1,4 +1,6 @@
 package timywimy.web;
 
-public class UsersServlet {
+import javax.servlet.http.HttpServlet;
+
+public class UsersServlet extends HttpServlet {
 }

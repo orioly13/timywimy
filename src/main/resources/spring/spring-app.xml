@@ -15,8 +15,6 @@
     <!-- Not necessary, already included with component-scan -->
     <!--<context:annotation-config/>-->
 
-    <context:component-scan base-package="timywimy.repository"/>
-
     <context:component-scan base-package="timywimy.service"/>
 
     <context:component-scan base-package="timywimy.web"/>

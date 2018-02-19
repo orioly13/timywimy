@@ -6,14 +6,25 @@
 
     <display-name>TimyWimy</display-name>
 
+    <!--Servlets-->
     <servlet>
-        <servlet-name>restServlet</servlet-name>
-        <servlet-class>timywimy.web.RestServlet</servlet-class>
+        <servlet-name>apiServlet</servlet-name>
+        <servlet-class>timywimy.web.APIServlet</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>restServlet</servlet-name>
-        <url-pattern>/rest</url-pattern>
-    </servlet-mapping>
+    <servlet>
+        <servlet-name>usersServlet</servlet-name>
+        <servlet-class>timywimy.web.UsersServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
 
+    <!--Mappings-->
+    <servlet-mapping>
+        <servlet-name>apiServlet</servlet-name>
+        <url-pattern>/api</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>usersServlet</servlet-name>
+        <url-pattern>/rest/users</url-pattern>
+    </servlet-mapping>
 </web-app>

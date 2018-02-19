@@ -1,7 +1,15 @@
 package timywimy.web.controllers;
 
-import org.springframework.stereotype.Controller;
 
-@Controller
-public class APIController {
+import timywimy.web.dto.User;
+
+import java.util.UUID;
+
+public interface APIController {
+
+    UUID register(User user);
+
+    UUID openSession(User user);
+
+    boolean closeSession(UUID sessionId);
 }

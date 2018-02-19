@@ -15,7 +15,6 @@ import java.util.Collection;
 @Entity
 @Table(name = "sec_users")
 public class UserImpl extends NamedEntityImpl implements User {
-
     //unique corresponds to constraint
     @Column(name = "email", columnDefinition = "varchar(50)", nullable = false, unique = true)
     private String email;
