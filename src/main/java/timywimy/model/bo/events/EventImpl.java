@@ -19,7 +19,7 @@ public class EventImpl extends DefaultEntityImpl implements Event {
     @Embedded
     private DateTimeZone dateTimeZone;
     @Column(name = "duration", columnDefinition = "timestamp without time zone")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime duration;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")

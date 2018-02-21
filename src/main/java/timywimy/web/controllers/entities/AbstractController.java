@@ -7,13 +7,13 @@ import java.util.UUID;
 
 public interface AbstractController<T extends BaseEntity> {
 
-    boolean create(T entity, UUID createdBy);
+    T create(T entity, UUID session);
 
-    T get(UUID id, UUID user);
+    T get(UUID id, UUID session);
 
-    T update(T entity, UUID updatedBy);
+    T update(T entity, UUID session);
 
-    boolean delete(T entity, UUID deletedBy);
+    boolean delete(UUID id, UUID session);
 
-    List<T> getAll(UUID user);
+    List<T> getAll(UUID session);
 }

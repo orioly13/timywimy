@@ -32,7 +32,7 @@ public class APIControllerImpl implements APIController {
         return apiService.closeSession(sessionId);
     }
 
-    public timywimy.model.security.User getUserBySession(UUID sessionId) {
-        return null;
-    }
+//    public timywimy.model.security.User getUserBySession(UUID sessionId) {
+//        return null;
+//    }
 }

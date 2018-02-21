@@ -15,7 +15,7 @@ public class ScheduleImpl extends DefaultEntityImpl implements Schedule {
     @Column(name = "cron", columnDefinition = "varchar(20)")
     private String cron;
     @Column(name = "duration", columnDefinition = "timestamp without time zone")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime duration;
 
 

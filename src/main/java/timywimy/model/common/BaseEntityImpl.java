@@ -17,17 +17,17 @@ public abstract class BaseEntityImpl implements BaseEntity {
     @Column(name = "created_by", columnDefinition = "uuid")
     private UUID createdBy;
     @Column(name = "created_ts", columnDefinition = "timestamp with time zone")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime createdTs;
     @Column(name = "updated_by", columnDefinition = "uuid")
     private UUID updatedBy;
     @Column(name = "updated_ts", columnDefinition = "timestamp with time zone")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime updatedTs;
     @Column(name = "deleted_by", columnDefinition = "uuid")
     private UUID deletedBy;
     @Column(name = "deleted_ts", columnDefinition = "timestamp with time zone")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime deletedTs;
     @Version
     @Column(name = "version", columnDefinition = "integer", nullable = false)

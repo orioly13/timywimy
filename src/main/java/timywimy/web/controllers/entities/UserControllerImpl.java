@@ -21,32 +21,32 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public User getByEmail(String email, UUID user) {
-        return null;
+    public User getByEmail(String email, UUID session) {
+        return service.getByEmail(email, session);
     }
 
     @Override
-    public boolean create(User entity, UUID createdBy) {
-        return false;
+    public User create(User entity, UUID session) {
+        return service.create(entity, session);
     }
 
     @Override
-    public User get(UUID id, UUID user) {
-        return null;
+    public User get(UUID id, UUID session) {
+        return service.get(id, session);
     }
 
     @Override
-    public User update(User entity, UUID updatedBy) {
-        return null;
+    public User update(User entity, UUID session) {
+        return service.update(entity, session);
     }
 
     @Override
-    public boolean delete(User entity, UUID deletedBy) {
-        return false;
+    public boolean delete(UUID id, UUID session) {
+        return service.delete(id, session);
     }
 
     @Override
-    public List<User> getAll(UUID user) {
-        return null;
+    public List<User> getAll(UUID session) {
+        return service.getAll(session);
     }
 }

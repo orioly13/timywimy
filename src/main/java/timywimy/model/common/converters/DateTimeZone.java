@@ -10,10 +10,10 @@ import java.util.Objects;
 public class DateTimeZone {
 
     @Column(name = "date", columnDefinition = "date")
-    @Temporal(TemporalType.DATE)
+//    @Temporal(TemporalType.DATE)
     private LocalDate date;
     @Column(name = "time", columnDefinition = "time")
-    @Temporal(TemporalType.TIME)
+//    @Temporal(TemporalType.TIME)
     private LocalTime time;
     @Column(name = "zone", columnDefinition = "varchar(20)")
     @Convert(converter = ZoneIdConverter.class)

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface UserController extends AbstractController<User> {
 
-    User getByEmail(String email, UUID user);
+    User getByEmail(String email, UUID session);
 //
 //    boolean ban(UUID idToBan, UUID bannedBy, ZonedDateTime bannedTill);
 //

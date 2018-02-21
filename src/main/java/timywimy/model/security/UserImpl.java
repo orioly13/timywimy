@@ -31,7 +31,7 @@ public class UserImpl extends NamedEntityImpl implements User {
     @JoinColumn(name = "banned_by")
     private User bannedBy;
     @Column(name = "banned_till", columnDefinition = "timestamp with time zone")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime bannedTill;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
