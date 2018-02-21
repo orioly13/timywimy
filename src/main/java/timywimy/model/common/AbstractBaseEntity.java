@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @MappedSuperclass
-public abstract class BaseEntityImpl implements BaseEntity {
+public abstract class AbstractBaseEntity implements BaseEntity {
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")

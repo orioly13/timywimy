@@ -2,7 +2,6 @@ package timywimy.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import timywimy.model.security.User;
 import timywimy.model.security.UserImpl;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.entities.UserRepository;
@@ -15,9 +14,9 @@ import java.util.UUID;
 @Repository
 public class APIRepositoryImpl implements APIRepository {
 
-    private Map<UUID, User> sessions;
+    private Map<UUID, UserImpl> sessions;
     private final UserRepository userRepository;
-    private final User apiUser;
+    private final UserImpl apiUser;
 
     @Autowired
     public APIRepositoryImpl(UserRepository userRepository) {
@@ -38,7 +37,7 @@ public class APIRepositoryImpl implements APIRepository {
         if (userRepository.getByEmail(userDTO.getEmail()) != null) {
             throw new RuntimeException("user already registered");
         }
-        User saved = userRepository.save(createFromUserDTO(userDTO), apiUser.getId());
+        UserImpl saved = userRepository.save(createFromUserDTO(userDTO), apiUser.getId());
         if (saved == null) {
             throw new RuntimeException("failed to register user");
         }
@@ -54,7 +53,7 @@ public class APIRepositoryImpl implements APIRepository {
 //                StringUtil.isEmpty(userDTO.getPassword())) {
 //            throw new RuntimeException("user with email,pass should be provided");
 //        }
-        User byEmail = userRepository.getByEmail(userDTO.getEmail());
+        UserImpl byEmail = userRepository.getByEmail(userDTO.getEmail());
         if (byEmail == null || !byEmail.getPassword().equals(userDTO.getPassword())) {
             throw new RuntimeException("user with email and pass not found");
         }
@@ -73,19 +72,19 @@ public class APIRepositoryImpl implements APIRepository {
     }
 
     @Override
-    public User getUserBySession(UUID sessionId) {
+    public UserImpl getUserBySession(UUID sessionId) {
 //        if (sessionId == null) {
 //            throw new RuntimeException("session should be provided");
 //        }
-        User user = sessions.get(sessionId);
+        UserImpl user = sessions.get(sessionId);
         if (user == null) {
             throw new RuntimeException("user not found");
         }
         return user;
     }
 
-    private User createFromUserDTO(timywimy.web.dto.User dto) {
-        User user = new UserImpl();
+    private UserImpl createFromUserDTO(timywimy.web.dto.User dto) {
+        UserImpl user = new UserImpl();
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
         user.setRole(Role.USER);

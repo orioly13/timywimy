@@ -4,7 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class DefaultEntityImpl extends OwnedEntityImpl implements NamedEntity, DescribedEntity {
+public abstract class AbstractDefaultEntity extends AbstractOwnedEntity implements NamedEntity, DescribedEntity {
 
     @Column(name = "name", columnDefinition = "varchar(50)")
     private String name;

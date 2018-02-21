@@ -1,10 +1,11 @@
 package timywimy.model.security;
 
-import timywimy.model.bo.events.Event;
-import timywimy.model.bo.events.Schedule;
-import timywimy.model.bo.tasks.Task;
-import timywimy.model.bo.tasks.TaskGroup;
-import timywimy.model.common.NamedEntityImpl;
+import timywimy.model.bo.events.EventImpl;
+import timywimy.model.bo.events.ScheduleImpl;
+import timywimy.model.bo.tasks.TaskGroupImpl;
+import timywimy.model.bo.tasks.TaskImpl;
+import timywimy.model.common.AbstractNamedEntity;
+import timywimy.model.common.NamedEntity;
 import timywimy.model.security.converters.Role;
 import timywimy.model.security.converters.RoleConverter;
 
@@ -14,7 +15,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "sec_users")
-public class UserImpl extends NamedEntityImpl implements User {
+public class UserImpl extends AbstractNamedEntity implements NamedEntity {
     //unique corresponds to constraint
     @Column(name = "email", columnDefinition = "varchar(50)", nullable = false, unique = true)
     private String email;
@@ -29,128 +30,126 @@ public class UserImpl extends NamedEntityImpl implements User {
     private boolean banned;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "banned_by")
-    private User bannedBy;
+    private UserImpl bannedBy;
     @Column(name = "banned_till", columnDefinition = "timestamp with time zone")
 //    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime bannedTill;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<Schedule> schedules;
+    private Collection<ScheduleImpl> schedules;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<Event> events;
+    private Collection<EventImpl> events;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<TaskGroup> taskGroups;
+    private Collection<TaskGroupImpl> taskGroups;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<Task> tasks;
+    private Collection<TaskImpl> tasks;
 
 
-    @Override
     public String getEmail() {
         return email;
     }
 
-    @Override
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    @Override
+
     public String getPassword() {
         return password;
     }
 
-    @Override
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @Override
+
     public Role getRole() {
         return role;
     }
 
-    @Override
+
     public void setRole(Role role) {
         this.role = role;
     }
 
-    @Override
+
     public boolean isActive() {
         return active;
     }
 
-    @Override
+
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    @Override
+
     public boolean isBanned() {
         return banned;
     }
 
-    @Override
+
     public void setBanned(boolean banned) {
         this.banned = banned;
     }
 
-    @Override
-    public User getBannedBy() {
+
+    public UserImpl getBannedBy() {
         return bannedBy;
     }
 
-    @Override
-    public void setBannedBy(User bannedBy) {
+
+    public void setBannedBy(UserImpl bannedBy) {
         this.bannedBy = bannedBy;
     }
 
-    @Override
+
     public ZonedDateTime getBannedTill() {
         return bannedTill;
     }
 
-    @Override
+
     public void setBannedTill(ZonedDateTime bannedTill) {
         this.bannedTill = bannedTill;
     }
 
-    @Override
-    public Collection<Schedule> getSchedules() {
+
+    public Collection<ScheduleImpl> getSchedules() {
         return schedules;
     }
 
-    @Override
-    public void setSchedules(Collection<Schedule> schedules) {
+
+    public void setSchedules(Collection<ScheduleImpl> schedules) {
         this.schedules = schedules;
     }
 
-    @Override
-    public Collection<Event> getEvents() {
+
+    public Collection<EventImpl> getEvents() {
         return events;
     }
 
-    @Override
-    public void setEvents(Collection<Event> events) {
+
+    public void setEvents(Collection<EventImpl> events) {
         this.events = events;
     }
 
-    @Override
-    public Collection<TaskGroup> getTaskGroups() {
+
+    public Collection<TaskGroupImpl> getTaskGroups() {
         return taskGroups;
     }
 
-    @Override
-    public void setTaskGroups(Collection<TaskGroup> taskGroups) {
+    public void setTaskGroups(Collection<TaskGroupImpl> taskGroups) {
         this.taskGroups = taskGroups;
     }
 
-    @Override
-    public Collection<Task> getTasks() {
+
+    public Collection<TaskImpl> getTasks() {
         return tasks;
     }
 
-    @Override
-    public void setTasks(Collection<Task> tasks) {
+
+    public void setTasks(Collection<TaskImpl> tasks) {
         this.tasks = tasks;
     }
 

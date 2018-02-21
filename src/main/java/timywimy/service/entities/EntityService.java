@@ -1,7 +1,6 @@
 package timywimy.service.entities;
 
 import timywimy.model.common.BaseEntity;
-import timywimy.model.security.User;
 
 import java.util.List;
 import java.util.UUID;

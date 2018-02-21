@@ -1,8 +1,10 @@
 package timywimy.model.bo.events;
 
-import timywimy.model.bo.events.extensions.common.EventExtension;
-import timywimy.model.bo.tasks.Task;
-import timywimy.model.common.DefaultEntityImpl;
+import timywimy.model.bo.events.extensions.common.EventExtensionImpl;
+import timywimy.model.bo.tasks.TaskImpl;
+import timywimy.model.common.AbstractDefaultEntity;
+import timywimy.model.common.DateTimeZoneEntity;
+import timywimy.model.common.DurableEntity;
 import timywimy.model.common.converters.DateTimeZone;
 
 import javax.persistence.*;
@@ -14,7 +16,7 @@ import java.util.List;
         @Index(name = "bo_events_idx_owner_id", columnList = "owner_id"),
         @Index(name = "bo_events_idx_date_time_zone", columnList = "owner_id,date,time,zone"),
         @Index(name = "bo_events_idx_name", columnList = "owner_id,name")})
-public class EventImpl extends DefaultEntityImpl implements Event {
+public class EventImpl extends AbstractDefaultEntity implements DateTimeZoneEntity, DurableEntity {
 
     @Embedded
     private DateTimeZone dateTimeZone;
@@ -22,41 +24,39 @@ public class EventImpl extends DefaultEntityImpl implements Event {
 //    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime duration;
 
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
+//    private List<EventExtensionImpl> extensions;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
-    private List<EventExtension> extensions;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
-    private List<Task> tasks;
+    private List<TaskImpl> tasks;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schedule_id")
-    private Schedule schedule;
+    private ScheduleImpl schedule;
 
-    @Override
-    public List<EventExtension> getExtensions() {
-        return extensions;
-    }
+//    public List<EventExtensionImpl> getExtensions() {
+//        return extensions;
+//    }
+//
+//    public void setExtensions(List<EventExtensionImpl> extensions) {
+//        this.extensions = extensions;
+//    }
 
-    @Override
-    public void setExtensions(List<EventExtension> extensions) {
-        this.extensions = extensions;
-    }
 
-    @Override
-    public List<Task> getTasks() {
+    public List<TaskImpl> getTasks() {
         return tasks;
     }
 
-    @Override
-    public void setTasks(List<Task> tasks) {
+
+    public void setTasks(List<TaskImpl> tasks) {
         this.tasks = tasks;
     }
 
-    @Override
-    public Schedule getSchedule() {
+
+    public ScheduleImpl getSchedule() {
         return schedule;
     }
 
-    @Override
-    public void setSchedule(Schedule schedule) {
+
+    public void setSchedule(ScheduleImpl schedule) {
         this.schedule = schedule;
     }
 

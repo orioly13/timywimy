@@ -2,7 +2,7 @@ package timywimy.repository.entities;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import timywimy.model.security.User;
+import timywimy.model.security.UserImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +23,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     @Transactional
-    public User save(User entity, UUID updatedBy) {
+    public UserImpl save(UserImpl entity, UUID updatedBy) {
         if (entity.isNew()) {
             entity.setCreatedBy(updatedBy);
             entityManager.persist(entity);
@@ -37,10 +37,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     //todo retrieve names from some kind of model,not strings
     @Override
-    public User get(UUID id) {
+    public UserImpl get(UUID id) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> userRoot = criteria.from(User.class);
+        CriteriaQuery<UserImpl> criteria = builder.createQuery(UserImpl.class);
+        Root<UserImpl> userRoot = criteria.from(UserImpl.class);
 
         criteria.select(userRoot).where(
                 builder.and(
@@ -53,8 +53,8 @@ public class UserRepositoryImpl implements UserRepository {
     @Transactional
     public boolean delete(UUID id, UUID deletedBy) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaUpdate<User> criteria = builder.createCriteriaUpdate(User.class);
-        Root<User> userRoot = criteria.from(User.class);
+        CriteriaUpdate<UserImpl> criteria = builder.createCriteriaUpdate(UserImpl.class);
+        Root<UserImpl> userRoot = criteria.from(UserImpl.class);
         criteria.set(userRoot.get("deleted_by"), deletedBy).
                 set(userRoot.get("deleted_ts"), ZonedDateTime.now()).
                 where(builder.and(
@@ -64,10 +64,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<UserImpl> getAll() {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> userRoot = criteria.from(User.class);
+        CriteriaQuery<UserImpl> criteria = builder.createQuery(UserImpl.class);
+        Root<UserImpl> userRoot = criteria.from(UserImpl.class);
         criteria.select(userRoot).where(
                 builder.isNotNull(userRoot.get("deleted_ts")))
                 .orderBy(builder.asc(userRoot.get("name")));
@@ -77,10 +77,10 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     @Override
-    public User getByEmail(String email) {
+    public UserImpl getByEmail(String email) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> userRoot = criteria.from(User.class);
+        CriteriaQuery<UserImpl> criteria = builder.createQuery(UserImpl.class);
+        Root<UserImpl> userRoot = criteria.from(UserImpl.class);
         criteria.select(userRoot).where(
                 builder.and(
                         builder.equal(userRoot.get("email"), email),

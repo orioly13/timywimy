@@ -1,9 +1,10 @@
 package timywimy.model.bo.tasks;
 
-import timywimy.model.bo.events.Event;
+import timywimy.model.bo.events.EventImpl;
 import timywimy.model.bo.tasks.converters.Priority;
 import timywimy.model.bo.tasks.converters.PriorityConverter;
-import timywimy.model.common.DefaultEntityImpl;
+import timywimy.model.common.DateTimeZoneEntity;
+import timywimy.model.common.AbstractDefaultEntity;
 import timywimy.model.common.converters.DateTimeZone;
 
 import javax.persistence.*;
@@ -13,20 +14,20 @@ import java.util.List;
 @Table(name = "bo_tasks",
         indexes = {@Index(name = "bo_tasks_idx_date_time_zone", columnList = "owner_id,date,time,zone"),
                 @Index(name = "bo_tasks_idx_priority", columnList = "owner_id,priority")})
-public class TaskImpl extends DefaultEntityImpl implements Task {
+public class TaskImpl extends AbstractDefaultEntity implements DateTimeZoneEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private Task parent;
+    private TaskImpl parent;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private List<Task> children;
+    private List<TaskImpl> children;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
-    private Event event;
+    private EventImpl event;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
-    private TaskGroup group;
+    private TaskGroupImpl group;
 
     @Embedded
     private DateTimeZone dateTimeZone;
@@ -36,63 +37,56 @@ public class TaskImpl extends DefaultEntityImpl implements Task {
     @Column(name = "completed", columnDefinition = "boolean", nullable = false)
     private boolean completed;
 
-    @Override
-    public Task getParent() {
+    public TaskImpl getParent() {
         return parent;
     }
 
-    @Override
-    public void setParent(Task parent) {
+    public void setParent(TaskImpl parent) {
         this.parent = parent;
     }
 
-    @Override
-    public List<Task> getChildren() {
+    public List<TaskImpl> getChildren() {
         return children;
     }
 
-    @Override
-    public void setChildren(List<Task> children) {
+    public void setChildren(List<TaskImpl> children) {
         this.children = children;
     }
 
-    @Override
     public Priority getPriority() {
         return priority;
     }
 
-    @Override
     public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
-    @Override
+
     public boolean isCompleted() {
         return completed;
     }
 
-    @Override
+
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 
-    @Override
-    public Event getEvent() {
+
+    public EventImpl getEvent() {
         return event;
     }
 
-    @Override
-    public void setEvent(Event event) {
+
+    public void setEvent(EventImpl event) {
         this.event = event;
     }
 
-    @Override
-    public TaskGroup getGroup() {
+
+    public TaskGroupImpl getGroup() {
         return group;
     }
 
-    @Override
-    public void setGroup(TaskGroup group) {
+    public void setGroup(TaskGroupImpl group) {
         this.group = group;
     }
 

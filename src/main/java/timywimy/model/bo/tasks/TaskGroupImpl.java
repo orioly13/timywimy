@@ -1,6 +1,6 @@
 package timywimy.model.bo.tasks;
 
-import timywimy.model.common.DefaultEntityImpl;
+import timywimy.model.common.AbstractDefaultEntity;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -8,43 +8,39 @@ import java.util.Collection;
 @Entity
 @Table(name = "bo_task_groups",
         indexes = {@Index(name = "bo_task_groups_idx_name", columnList = "owner_id,name")})
-public class TaskGroupImpl extends DefaultEntityImpl implements TaskGroup {
+public class TaskGroupImpl extends AbstractDefaultEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private TaskGroup parent;
+    private TaskGroupImpl parent;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private Collection<TaskGroup> children;
+    private Collection<TaskGroupImpl> children;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
-    private Collection<Task> tasks;
+    private Collection<TaskImpl> tasks;
 
-    @Override
-    public TaskGroup getParent() {
+
+    public TaskGroupImpl getParent() {
         return parent;
     }
 
-    @Override
-    public void setParent(TaskGroup parent) {
+    public void setParent(TaskGroupImpl parent) {
         this.parent = parent;
     }
 
-    @Override
-    public Collection<TaskGroup> getChildren() {
+    public Collection<TaskGroupImpl> getChildren() {
         return children;
     }
 
-    @Override
-    public void setChildren(Collection<TaskGroup> children) {
+
+    public void setChildren(Collection<TaskGroupImpl> children) {
         this.children = children;
     }
 
-    @Override
-    public Collection<Task> getTasks() {
+    public Collection<TaskImpl> getTasks() {
         return tasks;
     }
 
-    @Override
-    public void setTasks(Collection<Task> tasks) {
+    public void setTasks(Collection<TaskImpl> tasks) {
         this.tasks = tasks;
     }
 }

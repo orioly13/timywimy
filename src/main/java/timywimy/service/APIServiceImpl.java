@@ -2,7 +2,7 @@ package timywimy.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import timywimy.model.security.User;
+import timywimy.model.security.UserImpl;
 import timywimy.repository.APIRepository;
 import timywimy.util.StringUtil;
 
@@ -49,7 +49,7 @@ public class APIServiceImpl implements APIService {
     }
 
     @Override
-    public User getUserBySession(UUID sessionId) {
+    public UserImpl getUserBySession(UUID sessionId) {
         if (sessionId == null) {
             throw new RuntimeException("session should be provided");
         }

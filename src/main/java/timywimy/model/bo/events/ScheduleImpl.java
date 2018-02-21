@@ -1,6 +1,7 @@
 package timywimy.model.bo.events;
 
-import timywimy.model.common.DefaultEntityImpl;
+import timywimy.model.common.AbstractDefaultEntity;
+import timywimy.model.common.DurableEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.List;
 @Table(name = "bo_schedules",
         indexes = {@Index(name = "bo_schedules_idx_owner_id", columnList = "owner_id"),
                 @Index(name = "bo_schedules_idx_name", columnList = "owner_id,name")})
-public class ScheduleImpl extends DefaultEntityImpl implements Schedule {
+public class ScheduleImpl extends AbstractDefaultEntity implements DurableEntity {
 
     @Column(name = "cron", columnDefinition = "varchar(20)")
     private String cron;
@@ -20,25 +21,21 @@ public class ScheduleImpl extends DefaultEntityImpl implements Schedule {
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
-    private List<Event> instances;
+    private List<EventImpl> instances;
 
-    @Override
     public String getCron() {
         return cron;
     }
 
-    @Override
     public void setCron(String cron) {
         this.cron = cron;
     }
 
-    @Override
-    public List<Event> getInstances() {
+    public List<EventImpl> getInstances() {
         return instances;
     }
 
-    @Override
-    public void setInstances(List<Event> instances) {
+    public void setInstances(List<EventImpl> instances) {
         this.instances = instances;
     }
 

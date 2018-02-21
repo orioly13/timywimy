@@ -1,12 +1,12 @@
 package timywimy.web.controllers.entities;
 
-import timywimy.model.security.User;
+import timywimy.model.security.UserImpl;
 
 import java.util.UUID;
 
-public interface UserController extends AbstractController<User> {
+public interface UserController extends AbstractController<UserImpl> {
 
-    User getByEmail(String email, UUID session);
+    UserImpl getByEmail(String email, UUID session);
 //
 //    boolean ban(UUID idToBan, UUID bannedBy, ZonedDateTime bannedTill);
 //

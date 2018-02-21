@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import timywimy.model.security.User;
+import timywimy.model.security.UserImpl;
 import timywimy.service.entities.UserService;
 
 import java.util.List;
@@ -21,22 +21,22 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public User getByEmail(String email, UUID session) {
+    public UserImpl getByEmail(String email, UUID session) {
         return service.getByEmail(email, session);
     }
 
     @Override
-    public User create(User entity, UUID session) {
+    public UserImpl create(UserImpl entity, UUID session) {
         return service.create(entity, session);
     }
 
     @Override
-    public User get(UUID id, UUID session) {
+    public UserImpl get(UUID id, UUID session) {
         return service.get(id, session);
     }
 
     @Override
-    public User update(User entity, UUID session) {
+    public UserImpl update(UserImpl entity, UUID session) {
         return service.update(entity, session);
     }
 
@@ -46,7 +46,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public List<User> getAll(UUID session) {
+    public List<UserImpl> getAll(UUID session) {
         return service.getAll(session);
     }
 }

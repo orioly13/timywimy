@@ -6,7 +6,7 @@ import timywimy.model.common.OrderedEntity;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-@MappedSuperclass
+//@MappedSuperclass
 public abstract class DefaultEventExtensionImpl extends EventExtensionImpl implements NamedEntity, OrderedEntity {
 
     @Column(name = "name", columnDefinition = "varchar(50)")

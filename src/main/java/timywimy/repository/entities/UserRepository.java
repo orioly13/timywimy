@@ -1,9 +1,9 @@
 package timywimy.repository.entities;
 
-import timywimy.model.security.User;
+import timywimy.model.security.UserImpl;
 
-public interface UserRepository extends EntityRepository<User> {
+public interface UserRepository extends EntityRepository<UserImpl> {
 
-    User getByEmail(String email);
+    UserImpl getByEmail(String email);
 
 }

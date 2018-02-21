@@ -1,6 +1,6 @@
 package timywimy.model.common;
 
-import timywimy.model.security.User;
+import timywimy.model.security.UserImpl;
 
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -8,19 +8,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class OwnedEntityImpl extends BaseEntityImpl implements OwnedEntity {
+public abstract class AbstractOwnedEntity extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
+    private UserImpl owner;
 
-    @Override
-    public User getOwner() {
+    public UserImpl getOwner() {
         return owner;
     }
 
-    @Override
-    public void setOwner(User owner) {
+    public void setOwner(UserImpl owner) {
         this.owner = owner;
     }
 }
