@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "bo_schedules",
         indexes = {@Index(name = "bo_schedules_idx_owner_id", columnList = "owner_id"),
                 @Index(name = "bo_schedules_idx_name", columnList = "owner_id,name")})
-public class ScheduleImpl extends AbstractDefaultEntity implements DurableEntity {
+public class Schedule extends AbstractDefaultEntity implements DurableEntity {
 
     @Column(name = "cron", columnDefinition = "varchar(20)")
     private String cron;
@@ -21,7 +21,7 @@ public class ScheduleImpl extends AbstractDefaultEntity implements DurableEntity
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
-    private List<EventImpl> instances;
+    private List<Event> instances;
 
     public String getCron() {
         return cron;
@@ -31,11 +31,11 @@ public class ScheduleImpl extends AbstractDefaultEntity implements DurableEntity
         this.cron = cron;
     }
 
-    public List<EventImpl> getInstances() {
+    public List<Event> getInstances() {
         return instances;
     }
 
-    public void setInstances(List<EventImpl> instances) {
+    public void setInstances(List<Event> instances) {
         this.instances = instances;
     }
 

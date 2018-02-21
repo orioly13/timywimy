@@ -17,5 +17,5 @@ public interface APIRepository {
     boolean closeSession(UUID sessionId);
 
     //returs model.User by session
-    timywimy.model.security.UserImpl getUserBySession(UUID sessionId);
+    timywimy.model.security.User getUserBySession(UUID sessionId);
 }

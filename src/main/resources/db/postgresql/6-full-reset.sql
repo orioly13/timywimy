@@ -34,7 +34,7 @@ CREATE TABLE sec_users (
 );
 --root
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
-VALUES ('3fca3433-9dbb-4654-b0fb-2b6abfea72ff', now(), 'root', 'lol@kek.cheburek', 'time@LORD', 1, TRUE);
+VALUES ('3088b1fc-43c2-4951-8b78-1f56261c16ca', now(), 'root', 'lol@kek.cheburek', 'time@LORD', 1, TRUE);
 
 CREATE TABLE bo_schedules (
   --base

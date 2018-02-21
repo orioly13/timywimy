@@ -3,9 +3,6 @@ package timywimy.web;
 import org.slf4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import timywimy.repository.APIRepositoryImpl;
-import timywimy.repository.entities.UserRepositoryImpl;
-import timywimy.service.APIServiceImpl;
 import timywimy.util.StringUtil;
 import timywimy.web.controllers.APIController;
 import timywimy.web.dto.User;
@@ -28,8 +25,8 @@ public class APIServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml","spring/spring-db.xml");
-        api =springContext.getBean(APIController.class);
+        springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
+        api = springContext.getBean(APIController.class);
     }
 
     @Override
@@ -39,29 +36,36 @@ public class APIServlet extends HttpServlet {
         String userName = request.getParameter("user_name");
         String userEmail = request.getParameter("user_email");
         String userPass = request.getParameter("user_pass");
+        String session1 = request.getParameter("session");
+        User user = new User();
+        user.setEmail(userEmail);
+        user.setName(userName);
+        user.setPassword(userPass);
+
         if (StringUtil.isEmpty(method)) {
             response.getWriter().append("NO METHOD,LOL");
         } else {
             switch (method) {
                 case "register":
-                    response.getWriter().append("REGISTER,LOL");
-                    User user = new User();
-                    user.setEmail(userEmail);
-                    user.setName(userName);
-                    user.setPassword(userPass);
+                    response.getWriter().append("REGISTER,LOL\n");
                     UUID register = api.register(user);
                     response.getWriter().append(register.toString());
                     break;
                 case "login":
-                    response.getWriter().append("REGISTER,LOL");
+                    response.getWriter().append("LOGIN,LOL\n");
+                    UUID session = api.openSession(user);
+                    response.getWriter().append(session.toString());
                     break;
                 case "logout":
-                    response.getWriter().append("REGISTER,LOL");
+                    response.getWriter().append("LOGOUT,LOL\n");
+                    Boolean coole = api.closeSession(UUID.fromString(session1));
+                    response.getWriter().append(coole.toString());
                     break;
                 default:
                     response.getWriter().append("UNKNOWN METHOD,LOL");
                     break;
             }
+            int stop = 0;
         }
 
     }

@@ -3,11 +3,11 @@ package timywimy.model.bo.events.extensions.common;
 import timywimy.model.common.NamedEntity;
 import timywimy.model.common.OrderedEntity;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 
-//@MappedSuperclass
-public abstract class DefaultEventExtensionImpl extends EventExtensionImpl implements NamedEntity, OrderedEntity {
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class AbstractDefaultEventExtension extends AbstractEventExtension implements NamedEntity, OrderedEntity {
 
     @Column(name = "name", columnDefinition = "varchar(50)")
     private String name;

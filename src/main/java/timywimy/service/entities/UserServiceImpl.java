@@ -3,7 +3,7 @@ package timywimy.service.entities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import timywimy.model.security.UserImpl;
+import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.entities.UserRepository;
 import timywimy.service.APIService;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl extends AbstractEntityService<UserImpl> implements UserService {
+public class UserServiceImpl extends AbstractEntityService<User> implements UserService {
 
     private final UserRepository repository;
 
@@ -25,21 +25,21 @@ public class UserServiceImpl extends AbstractEntityService<UserImpl> implements 
     }
 
     @Override
-    public UserImpl create(UserImpl entity, UUID userSession) {
+    public User create(User entity, UUID userSession) {
         Assert.notNull(entity, "entity must not be null");
         Assert.notNull(userSession, "user must not be null");
         return repository.save(entity, getUserBySession(userSession).getId());
     }
 
     @Override
-    public UserImpl update(UserImpl entity, UUID userSession) {
+    public User update(User entity, UUID userSession) {
         Assert.notNull(entity, "id must not be null");
         Assert.notNull(userSession, "user must not be null");
         return repository.save(entity, getUserBySession(userSession).getId());
     }
 
     @Override
-    public UserImpl get(UUID id, UUID userSession) {
+    public User get(UUID id, UUID userSession) {
         Assert.notNull(id, "entity must not be null");
         Assert.notNull(userSession, "user must not be null");
         getUserBySession(userSession);
@@ -54,13 +54,13 @@ public class UserServiceImpl extends AbstractEntityService<UserImpl> implements 
     }
 
     @Override
-    public List<UserImpl> getAll(UUID userSession) {
+    public List<User> getAll(UUID userSession) {
         getUserBySession(userSession);
         return repository.getAll();
     }
 
-    private UserImpl getUserBySession(UUID session) {
-        UserImpl userBySession = apiService.getUserBySession(session);
+    private User getUserBySession(UUID session) {
+        User userBySession = apiService.getUserBySession(session);
         if (!Role.ADMIN.equals(userBySession.getRole())) {
             throw new RuntimeException("not enough rights");
         }
@@ -68,7 +68,7 @@ public class UserServiceImpl extends AbstractEntityService<UserImpl> implements 
     }
 
     @Override
-    public UserImpl getByEmail(String email, UUID session) {
+    public User getByEmail(String email, UUID session) {
         getUserBySession(session);
         return repository.getByEmail(email);
     }

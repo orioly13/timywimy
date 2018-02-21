@@ -1,11 +1,10 @@
 package timywimy.model.security;
 
-import timywimy.model.bo.events.EventImpl;
-import timywimy.model.bo.events.ScheduleImpl;
-import timywimy.model.bo.tasks.TaskGroupImpl;
-import timywimy.model.bo.tasks.TaskImpl;
+import timywimy.model.bo.events.Event;
+import timywimy.model.bo.events.Schedule;
+import timywimy.model.bo.tasks.TaskGroup;
+import timywimy.model.bo.tasks.Task;
 import timywimy.model.common.AbstractNamedEntity;
-import timywimy.model.common.NamedEntity;
 import timywimy.model.security.converters.Role;
 import timywimy.model.security.converters.RoleConverter;
 
@@ -15,7 +14,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "sec_users")
-public class UserImpl extends AbstractNamedEntity implements NamedEntity {
+public class User extends AbstractNamedEntity{
     //unique corresponds to constraint
     @Column(name = "email", columnDefinition = "varchar(50)", nullable = false, unique = true)
     private String email;
@@ -30,19 +29,19 @@ public class UserImpl extends AbstractNamedEntity implements NamedEntity {
     private boolean banned;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "banned_by")
-    private UserImpl bannedBy;
+    private User bannedBy;
     @Column(name = "banned_till", columnDefinition = "timestamp with time zone")
 //    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime bannedTill;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<ScheduleImpl> schedules;
+    private Collection<Schedule> schedules;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<EventImpl> events;
+    private Collection<Event> events;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<TaskGroupImpl> taskGroups;
+    private Collection<TaskGroup> taskGroups;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<TaskImpl> tasks;
+    private Collection<Task> tasks;
 
 
     public String getEmail() {
@@ -95,12 +94,12 @@ public class UserImpl extends AbstractNamedEntity implements NamedEntity {
     }
 
 
-    public UserImpl getBannedBy() {
+    public User getBannedBy() {
         return bannedBy;
     }
 
 
-    public void setBannedBy(UserImpl bannedBy) {
+    public void setBannedBy(User bannedBy) {
         this.bannedBy = bannedBy;
     }
 
@@ -115,41 +114,41 @@ public class UserImpl extends AbstractNamedEntity implements NamedEntity {
     }
 
 
-    public Collection<ScheduleImpl> getSchedules() {
+    public Collection<Schedule> getSchedules() {
         return schedules;
     }
 
 
-    public void setSchedules(Collection<ScheduleImpl> schedules) {
+    public void setSchedules(Collection<Schedule> schedules) {
         this.schedules = schedules;
     }
 
 
-    public Collection<EventImpl> getEvents() {
+    public Collection<Event> getEvents() {
         return events;
     }
 
 
-    public void setEvents(Collection<EventImpl> events) {
+    public void setEvents(Collection<Event> events) {
         this.events = events;
     }
 
 
-    public Collection<TaskGroupImpl> getTaskGroups() {
+    public Collection<TaskGroup> getTaskGroups() {
         return taskGroups;
     }
 
-    public void setTaskGroups(Collection<TaskGroupImpl> taskGroups) {
+    public void setTaskGroups(Collection<TaskGroup> taskGroups) {
         this.taskGroups = taskGroups;
     }
 
 
-    public Collection<TaskImpl> getTasks() {
+    public Collection<Task> getTasks() {
         return tasks;
     }
 
 
-    public void setTasks(Collection<TaskImpl> tasks) {
+    public void setTasks(Collection<Task> tasks) {
         this.tasks = tasks;
     }
 

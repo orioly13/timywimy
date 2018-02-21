@@ -1,12 +1,12 @@
 package timywimy.service.entities;
 
-import timywimy.model.security.UserImpl;
+import timywimy.model.security.User;
 
 import java.util.UUID;
 
-public interface UserService extends EntityService<UserImpl> {
+public interface UserService extends EntityService<User> {
 
-    UserImpl getByEmail(String email, UUID session);
+    User getByEmail(String email, UUID session);
 
 //    boolean ban(UUID idToBan, User bannedBy, ZonedDateTime bannedTill);
 //

@@ -1,6 +1,7 @@
 package timywimy.model.common;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -13,21 +14,22 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Id
     @Column(name = "id", columnDefinition = "uuid")
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID id;
     @Column(name = "created_by", columnDefinition = "uuid")
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID createdBy;
     @Column(name = "created_ts", columnDefinition = "timestamp with time zone")
-//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime createdTs;
     @Column(name = "updated_by", columnDefinition = "uuid")
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID updatedBy;
     @Column(name = "updated_ts", columnDefinition = "timestamp with time zone")
-//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime updatedTs;
     @Column(name = "deleted_by", columnDefinition = "uuid")
+    @Type(type="org.hibernate.type.PostgresUUIDType")
     private UUID deletedBy;
     @Column(name = "deleted_ts", columnDefinition = "timestamp with time zone")
-//    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime deletedTs;
     @Version
     @Column(name = "version", columnDefinition = "integer", nullable = false)

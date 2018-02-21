@@ -8,39 +8,39 @@ import java.util.Collection;
 @Entity
 @Table(name = "bo_task_groups",
         indexes = {@Index(name = "bo_task_groups_idx_name", columnList = "owner_id,name")})
-public class TaskGroupImpl extends AbstractDefaultEntity {
+public class TaskGroup extends AbstractDefaultEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private TaskGroupImpl parent;
+    private TaskGroup parent;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private Collection<TaskGroupImpl> children;
+    private Collection<TaskGroup> children;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
-    private Collection<TaskImpl> tasks;
+    private Collection<Task> tasks;
 
 
-    public TaskGroupImpl getParent() {
+    public TaskGroup getParent() {
         return parent;
     }
 
-    public void setParent(TaskGroupImpl parent) {
+    public void setParent(TaskGroup parent) {
         this.parent = parent;
     }
 
-    public Collection<TaskGroupImpl> getChildren() {
+    public Collection<TaskGroup> getChildren() {
         return children;
     }
 
 
-    public void setChildren(Collection<TaskGroupImpl> children) {
+    public void setChildren(Collection<TaskGroup> children) {
         this.children = children;
     }
 
-    public Collection<TaskImpl> getTasks() {
+    public Collection<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(Collection<TaskImpl> tasks) {
+    public void setTasks(Collection<Task> tasks) {
         this.tasks = tasks;
     }
 }

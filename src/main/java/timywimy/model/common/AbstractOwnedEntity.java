@@ -1,6 +1,6 @@
 package timywimy.model.common;
 
-import timywimy.model.security.UserImpl;
+import timywimy.model.security.User;
 
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -12,13 +12,13 @@ public abstract class AbstractOwnedEntity extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private UserImpl owner;
+    private User owner;
 
-    public UserImpl getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(UserImpl owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 }

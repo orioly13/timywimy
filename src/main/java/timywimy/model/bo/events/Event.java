@@ -1,7 +1,7 @@
 package timywimy.model.bo.events;
 
-import timywimy.model.bo.events.extensions.common.EventExtensionImpl;
-import timywimy.model.bo.tasks.TaskImpl;
+import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
+import timywimy.model.bo.tasks.Task;
 import timywimy.model.common.AbstractDefaultEntity;
 import timywimy.model.common.DateTimeZoneEntity;
 import timywimy.model.common.DurableEntity;
@@ -9,14 +9,14 @@ import timywimy.model.common.converters.DateTimeZone;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 @Entity
 @Table(name = "bo_events", indexes = {
         @Index(name = "bo_events_idx_owner_id", columnList = "owner_id"),
         @Index(name = "bo_events_idx_date_time_zone", columnList = "owner_id,date,time,zone"),
         @Index(name = "bo_events_idx_name", columnList = "owner_id,name")})
-public class EventImpl extends AbstractDefaultEntity implements DateTimeZoneEntity, DurableEntity {
+public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, DurableEntity {
 
     @Embedded
     private DateTimeZone dateTimeZone;
@@ -24,39 +24,40 @@ public class EventImpl extends AbstractDefaultEntity implements DateTimeZoneEnti
 //    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime duration;
 
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
-//    private List<EventExtensionImpl> extensions;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event")
-    private List<TaskImpl> tasks;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", targetEntity = AbstractEventExtension.class)
+    private Collection<AbstractEventExtension> extensions;
+    //THIS OT @LazyCollection(LazyCollectionOption.FALSE) (two eager collections cause excetions)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",targetEntity = Task.class)
+    private Collection<Task> tasks;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "schedule_id")
-    private ScheduleImpl schedule;
+    private Schedule schedule;
 
-//    public List<EventExtensionImpl> getExtensions() {
-//        return extensions;
-//    }
-//
-//    public void setExtensions(List<EventExtensionImpl> extensions) {
-//        this.extensions = extensions;
-//    }
+    public Collection<AbstractEventExtension> getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(Collection<AbstractEventExtension> extensions) {
+        this.extensions = extensions;
+    }
 
 
-    public List<TaskImpl> getTasks() {
+    public Collection<Task> getTasks() {
         return tasks;
     }
 
 
-    public void setTasks(List<TaskImpl> tasks) {
+    public void setTasks(Collection<Task> tasks) {
         this.tasks = tasks;
     }
 
 
-    public ScheduleImpl getSchedule() {
+    public Schedule getSchedule() {
         return schedule;
     }
 
 
-    public void setSchedule(ScheduleImpl schedule) {
+    public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
     }
 
