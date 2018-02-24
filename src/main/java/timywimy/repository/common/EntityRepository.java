@@ -1,4 +1,4 @@
-package timywimy.repository.entities;
+package timywimy.repository.common;
 
 import timywimy.model.common.BaseEntity;
 
@@ -9,9 +9,9 @@ public interface EntityRepository<T extends BaseEntity> {
 
     T get(UUID id);
 
-    T save(T entity, UUID updatedBy);
+    T save(T entity, UUID userId);
 
-    boolean delete(UUID id, UUID deletedBy);
+    boolean delete(UUID id, UUID userId);
 
     List<T> getAll();
 }

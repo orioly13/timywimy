@@ -5,13 +5,11 @@ import timywimy.model.common.BaseEntity;
 import java.util.List;
 import java.util.UUID;
 
-public interface AbstractController<T extends BaseEntity> {
-
-    T create(T entity, UUID session);
+public interface EntityController<T extends BaseEntity> {
 
     T get(UUID id, UUID session);
 
-    T update(T entity, UUID session);
+    T save(T entity, UUID session);
 
     boolean delete(UUID id, UUID session);
 

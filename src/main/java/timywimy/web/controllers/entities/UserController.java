@@ -4,7 +4,7 @@ import timywimy.model.security.User;
 
 import java.util.UUID;
 
-public interface UserController extends AbstractController<User> {
+public interface UserController extends EntityController<User> {
 
     User getByEmail(String email, UUID session);
 //

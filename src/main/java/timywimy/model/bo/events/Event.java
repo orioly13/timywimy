@@ -5,7 +5,7 @@ import timywimy.model.bo.tasks.Task;
 import timywimy.model.common.AbstractDefaultEntity;
 import timywimy.model.common.DateTimeZoneEntity;
 import timywimy.model.common.DurableEntity;
-import timywimy.model.common.converters.DateTimeZone;
+import timywimy.model.common.DateTimeZone;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

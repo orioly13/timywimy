@@ -1,6 +1,5 @@
 package timywimy.web.controllers.entities;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,24 +11,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-public class UserControllerImpl implements UserController {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final UserService service;
+public class UserControllerImpl extends AbstractEntityController<User> implements UserController {
 
     @Autowired
     public UserControllerImpl(UserService service) {
-        Assert.notNull(service, "UserService should be provided");
-        this.service = service;
-    }
-
-    @Override
-    public User getByEmail(String email, UUID session) {
-        return service.getByEmail(email, session);
-    }
-
-    @Override
-    public User create(User entity, UUID session) {
-        return service.create(entity, session);
+        super(service,
+                LoggerFactory.getLogger(UserControllerImpl.class));
     }
 
     @Override
@@ -38,8 +25,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public User update(User entity, UUID session) {
-        return service.update(entity, session);
+    public User save(User entity, UUID session) {
+        return service.save(entity, session);
     }
 
     @Override
@@ -51,4 +38,12 @@ public class UserControllerImpl implements UserController {
     public List<User> getAll(UUID session) {
         return service.getAll(session);
     }
+
+    @Override
+    public User getByEmail(String email, UUID session) {
+        Assert.notNull(email, "entity class must not be null");
+        Assert.notNull(session, "user session must not be null");
+        return ((UserService) service).getByEmail(email, session);
+    }
+
 }

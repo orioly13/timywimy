@@ -14,20 +14,20 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Id
     @Column(name = "id", columnDefinition = "uuid")
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID id;
     @Column(name = "created_by", columnDefinition = "uuid")
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID createdBy;
     @Column(name = "created_ts", columnDefinition = "timestamp with time zone")
     private ZonedDateTime createdTs;
     @Column(name = "updated_by", columnDefinition = "uuid")
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID updatedBy;
     @Column(name = "updated_ts", columnDefinition = "timestamp with time zone")
     private ZonedDateTime updatedTs;
     @Column(name = "deleted_by", columnDefinition = "uuid")
-    @Type(type="org.hibernate.type.PostgresUUIDType")
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID deletedBy;
     @Column(name = "deleted_ts", columnDefinition = "timestamp with time zone")
     private ZonedDateTime deletedTs;
@@ -119,9 +119,10 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     @PreUpdate
     @PrePersist
     public void updateTimeStamps() {
-        updatedTs = ZonedDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
+        updatedTs = now;
         if (createdTs == null) {
-            createdTs = ZonedDateTime.now();
+            createdTs = now;
         }
     }
 //    @Override

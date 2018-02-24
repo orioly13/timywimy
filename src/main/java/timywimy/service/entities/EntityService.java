@@ -7,13 +7,11 @@ import java.util.UUID;
 
 public interface EntityService<T extends BaseEntity> {
 
-    T create(T entity, UUID userSession);
+    T get(UUID entityId, UUID userSession);
 
-    T update(T entity, UUID userSession);
+    T save(T entity, UUID userSession);
 
-    T get(UUID id, UUID userSession);
-
-    boolean delete(UUID id, UUID userSession);
+    boolean delete(UUID entityId, UUID userSession);
 
     List<T> getAll(UUID userSession);
 }

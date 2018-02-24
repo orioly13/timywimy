@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
-import timywimy.repository.entities.UserRepository;
+import timywimy.repository.UserRepository;
 import timywimy.util.StringUtil;
 
 import javax.annotation.PostConstruct;

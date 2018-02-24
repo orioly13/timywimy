@@ -3,9 +3,9 @@ package timywimy.model.bo.tasks;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.tasks.converters.Priority;
 import timywimy.model.bo.tasks.converters.PriorityConverter;
-import timywimy.model.common.DateTimeZoneEntity;
 import timywimy.model.common.AbstractDefaultEntity;
-import timywimy.model.common.converters.DateTimeZone;
+import timywimy.model.common.DateTimeZone;
+import timywimy.model.common.DateTimeZoneEntity;
 
 import javax.persistence.*;
 import java.util.List;

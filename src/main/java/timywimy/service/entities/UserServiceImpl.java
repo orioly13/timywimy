@@ -1,75 +1,56 @@
 package timywimy.service.entities;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
-import timywimy.repository.entities.UserRepository;
+import timywimy.repository.UserRepository;
 import timywimy.service.APIService;
 
+import javax.annotation.PostConstruct;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl extends AbstractEntityService<User> implements UserService {
+public class UserServiceImpl extends AbstractEntityWithRightsService<User> implements UserService {
 
-    private final UserRepository repository;
+    public UserServiceImpl(APIService apiService, UserRepository repository) {
+        super(apiService, repository);
+    }
 
-    @Autowired
-    public UserServiceImpl(UserRepository repository, APIService apiService) {
-        super(apiService);
-        Assert.notNull(repository, "UserRepository should be provided");
-        this.repository = repository;
+    @PostConstruct
+    private void initRoles() {
+        super.setRoles(Collections.singletonList(Role.ADMIN));
     }
 
     @Override
-    public User create(User entity, UUID userSession) {
-        Assert.notNull(entity, "entity must not be null");
-        Assert.notNull(userSession, "user must not be null");
-        return repository.save(entity, getUserBySession(userSession).getId());
+    public User get(UUID entityId, UUID userSession) {
+        return get(User.class, entityId, userSession);
     }
 
     @Override
-    public User update(User entity, UUID userSession) {
-        Assert.notNull(entity, "id must not be null");
-        Assert.notNull(userSession, "user must not be null");
-        return repository.save(entity, getUserBySession(userSession).getId());
+    public User save(User entity, UUID userSession) {
+        return save(User.class, entity, userSession);
     }
 
     @Override
-    public User get(UUID id, UUID userSession) {
-        Assert.notNull(id, "entity must not be null");
-        Assert.notNull(userSession, "user must not be null");
-        getUserBySession(userSession);
-        return repository.get(id);
-    }
-
-    @Override
-    public boolean delete(UUID id, UUID userSession) {
-        Assert.notNull(id, "entity must not be null");
-        Assert.notNull(userSession, "user must not be null");
-        return repository.delete(id, getUserBySession(userSession).getId());
+    public boolean delete(UUID entityId, UUID userSession) {
+        return delete(User.class, entityId, userSession);
     }
 
     @Override
     public List<User> getAll(UUID userSession) {
-        getUserBySession(userSession);
-        return repository.getAll();
-    }
-
-    private User getUserBySession(UUID session) {
-        User userBySession = apiService.getUserBySession(session);
-        if (!Role.ADMIN.equals(userBySession.getRole())) {
-            throw new RuntimeException("not enough rights");
-        }
-        return userBySession;
+        return getAll(User.class, userSession);
     }
 
     @Override
     public User getByEmail(String email, UUID session) {
-        getUserBySession(session);
-        return repository.getByEmail(email);
+        Assert.notNull(email, "entity class must not be null");
+        Assert.notNull(session, "user session must not be null");
+        User userBySession = getUserBySession(session);
+        assertUserRole(userBySession.getRole());
+        return ((UserRepository) repository).getByEmail(email);
     }
 
 //    @Override
