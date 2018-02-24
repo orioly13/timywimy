@@ -17,16 +17,10 @@
     <!--system-properties-mode="OVERRIDE"-->
     <context:property-placeholder location="classpath:db/postgresql/postgres.properties"/>
 
-    <!--init db, only in test runs-->
-    <!--<jdbc:initialize-database data-source="dataSource" enabled="${db.init}">-->
-    <!--&lt;!&ndash;<jdbc:script location="classpath:db/${jdbc.initLocation}"/>&ndash;&gt;-->
-    <!--<jdbc:script encoding="utf-8" location="classpath:db/postgresql/6-full-reset.sql"/>-->
-    <!--</jdbc:initialize-database>-->
-
     <bean id="dataSource"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+          class="org.apache.tomcat.jdbc.pool.DataSource">
         <property name="driverClassName" value="${db.driverClassName}"/>
-        <property name="url" value="${db.host}"/>
+        <property name="url" value="${db.url}"/>
         <property name="username" value="${db.username}"/>
         <property name="password" value="${db.password}"/>
     </bean>

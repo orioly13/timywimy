@@ -27,6 +27,7 @@
         <spring.version>5.0.4.RELEASE</spring.version>
         <!-- Postgresql-->
         <postgresql.version>42.1.4</postgresql.version>
+        <tomcat.version>8.5.15</tomcat.version>
     </properties>
 
     <build>
@@ -102,6 +103,12 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>${tomcat.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
