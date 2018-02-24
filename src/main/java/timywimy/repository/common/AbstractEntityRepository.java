@@ -22,10 +22,12 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         this.builder = entityManager.getCriteriaBuilder();
     }
 
+    protected void assertGet(UUID entityId) {
+        Assert.notNull(entityId, "entityId should be provided");
+    }
 
     protected T get(Class<T> entityClass, UUID entityId) {
         Assert.notNull(entityClass, "entity class should be provided to construct get query");
-        Assert.notNull(entityId, "entityId should be provided");
 
         CriteriaQuery<T> criteria = builder.createQuery(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
@@ -34,12 +36,14 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());
     }
 
-    protected T save(Class<T> entityClass, T entity, UUID userId) {
-        Assert.notNull(entityClass, "entity class should be provided to construct query");
+    protected void assertSave(T entity, UUID userId) {
         Assert.notNull(entity, "entity should be provided");
-        Assert.notNull(userId, "userId entityId should be provided");
+        Assert.notNull(userId, "userId should be provided");
         Assert.isNull(entity.getDeletedTs(), "cannot save with deletedTs (use delete method)");
+    }
 
+    protected T save(Class<T> entityClass, T entity, UUID userId) {
+        Assert.notNull(entityClass, "entity class should be provided to construct get query");
         if (entity.isNew()) {
             entity.setCreatedBy(userId);
             entityManager.persist(entity);
@@ -55,10 +59,13 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         }
     }
 
+    protected void assertDelete(UUID entityId, UUID userId) {
+        Assert.notNull(entityId, "entityId should be provided");
+        Assert.notNull(userId, "userId should be provided");
+    }
+
     protected boolean delete(Class<T> entityClass, UUID entityId, UUID userId) {
         Assert.notNull(entityClass, "entity class should be provided to construct get query");
-        Assert.notNull(entityId, "entity should be provided");
-        Assert.notNull(userId, "userId entityId should be provided");
 
         CriteriaUpdate<T> criteria = builder.createCriteriaUpdate(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
@@ -71,7 +78,7 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     }
 
     protected List<T> getAll(Class<T> entityClass) {
-        Assert.notNull(entityClass, "entity class should be provided to construct query");
+        Assert.notNull(entityClass, "entity class should be provided to construct get query");
 
         CriteriaQuery<T> criteria = builder.createQuery(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);

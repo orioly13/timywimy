@@ -8,25 +8,23 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
     <!--repo beans in old fashion way-->
-    <context:annotation-config/>
+    <!--<context:annotation-config/>-->
     <bean class="timywimy.repository.UserRepositoryImpl" id="userRepository"/>
-
-    <!--<bean class="timywimy.repository.APIRepositoryImpl" entityId="apiRepository"/>-->
+    <bean class="timywimy.repository.EventRepositoryImpl" id="eventRepository"/>
 
     <!--db properties-->
     <!--system-properties-mode="OVERRIDE"-->
     <context:property-placeholder location="classpath:db/postgresql/postgres-test.properties"/>
 
     <!--init db, only in test runs-->
-    <jdbc:initialize-database data-source="dataSource" enabled="${db.init}">
-        <jdbc:script encoding="utf-8" location="classpath:db/postgresql/6-full-reset-test.sql"/>
-        <jdbc:script location="classpath:db/postgresql/7-full-init-test.sql"/>
+    <jdbc:initialize-database>
+        <jdbc:script encoding="utf-8" location="classpath:db/postgresql/6-full-reset.sql"/>
     </jdbc:initialize-database>
 
     <bean id="dataSource"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+          class="${db.dataSourceClass}">
         <property name="driverClassName" value="${db.driverClassName}"/>
-        <property name="url" value="${db.host}"/>
+        <property name="url" value="${db.url}"/>
         <property name="username" value="${db.username}"/>
         <property name="password" value="${db.password}"/>
     </bean>

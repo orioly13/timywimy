@@ -32,9 +32,6 @@ CREATE TABLE sec_users (
   banned_by   UUID CONSTRAINT sec_users_fk_banned_by_sec_users_id REFERENCES sec_users (id),
   banned_till TIMESTAMP WITH TIME ZONE
 );
---root
-INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
-VALUES ('3088b1fc-43c2-4951-8b78-1f56261c16ca', now(), 'root', 'lol@kek.cheburek', 'time@LORD', 1, TRUE);
 
 CREATE TABLE bo_schedules (
   --base
