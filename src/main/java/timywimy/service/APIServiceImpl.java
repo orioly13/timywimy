@@ -6,9 +6,11 @@ import org.springframework.util.Assert;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
+import timywimy.service.dto.UserSession;
 import timywimy.util.StringUtil;
 
 import javax.annotation.PostConstruct;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +19,7 @@ import java.util.UUID;
 public class APIServiceImpl implements APIService {
 
     private final UserRepository userRepository;
-    private Map<UUID, User> sessions;
+    private Map<UUID, UserSession> sessions;
     private User apiUser;
 
     @Autowired
@@ -35,8 +37,8 @@ public class APIServiceImpl implements APIService {
 
     @Override
     public UUID register(timywimy.web.dto.User userDTO) {
-        if (userDTO == null ||
-                StringUtil.isEmpty(userDTO.getEmail()) ||
+        Assert.notNull(userDTO, "user should be provided");
+        if (StringUtil.isEmpty(userDTO.getEmail()) ||
                 StringUtil.isEmpty(userDTO.getPassword()) ||
                 StringUtil.isEmpty(userDTO.getName())) {
             throw new RuntimeException("user with email, pass and name should be provided");
@@ -49,15 +51,14 @@ public class APIServiceImpl implements APIService {
             throw new RuntimeException("failed to register user");
         }
         UUID session = UUID.randomUUID();
-        sessions.put(session, saved);
+        sessions.put(session, new UserSession(session, saved));
         return session;
     }
 
     @Override
     public UUID openSession(timywimy.web.dto.User userDTO) {
-        if (userDTO == null ||
-                StringUtil.isEmpty(userDTO.getEmail()) ||
-                StringUtil.isEmpty(userDTO.getPassword())) {
+        Assert.notNull(userDTO, "user should be provided");
+        if (StringUtil.isEmpty(userDTO.getEmail()) || StringUtil.isEmpty(userDTO.getPassword())) {
             throw new RuntimeException("user with email,pass should be provided");
         }
         User byEmail = userRepository.getByEmail(userDTO.getEmail());
@@ -65,29 +66,26 @@ public class APIServiceImpl implements APIService {
             throw new RuntimeException("user with email and pass not found");
         }
         UUID session = UUID.randomUUID();
-        sessions.put(session, byEmail);
+        sessions.put(session, new UserSession(session, byEmail));
         return session;
     }
 
     @Override
     public boolean closeSession(UUID sessionId) {
-        if (sessionId == null) {
-            throw new RuntimeException("session should be provided");
-        }
+        Assert.notNull(sessionId, "session should be provided");
         sessions.remove(sessionId);
         return true;
     }
 
     @Override
     public User getUserBySession(UUID sessionId) {
-        if (sessionId == null) {
-            throw new RuntimeException("session should be provided");
+        Assert.notNull(sessionId, "session should be provided");
+        UserSession entry = sessions.get(sessionId);
+        if (entry.getExpiryDate().isAfter(ZonedDateTime.now())) {
+            sessions.remove(sessionId);
+            return null;
         }
-        User user = sessions.get(sessionId);
-        if (user == null) {
-            throw new RuntimeException("user not found");
-        }
-        return user;
+        return entry.getUser();
     }
 
     private User createFromUserDTO(timywimy.web.dto.User dto) {

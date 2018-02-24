@@ -19,8 +19,8 @@
 
     <!--init db, only in test runs-->
     <!--<jdbc:initialize-database data-source="dataSource" enabled="${db.init}">-->
-        <!--&lt;!&ndash;<jdbc:script location="classpath:db/${jdbc.initLocation}"/>&ndash;&gt;-->
-        <!--<jdbc:script encoding="utf-8" location="classpath:db/postgresql/6-full-reset.sql"/>-->
+    <!--&lt;!&ndash;<jdbc:script location="classpath:db/${jdbc.initLocation}"/>&ndash;&gt;-->
+    <!--<jdbc:script encoding="utf-8" location="classpath:db/postgresql/6-full-reset.sql"/>-->
     <!--</jdbc:initialize-database>-->
 
     <!--no pooling-->
@@ -32,10 +32,9 @@
         <property name="password" value="${db.password}"/>
     </bean>
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:dataSource-ref="dataSource"
-          p:packagesToScan="timywimy.model">
-        <!--p:persistenceUnitName="persistenceUnit">-->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="timywimy.model"/>
 
         <property name="jpaPropertyMap">
             <map>
@@ -46,8 +45,8 @@
         </property>
 
         <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-                  p:showSql="${jpa.showSql}">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="true"/>
             </bean>
         </property>
     </bean>
@@ -55,17 +54,7 @@
     <tx:annotation-driven/>
 
     <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
+    <!--p:name-subname=value same as property-->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="entityManagerFactory"/>
-
-    <!--
-        <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
-        <bean entityId="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-            <constructor-arg ref="dataSource"/>
-        </bean>
-
-        <bean entityId="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-            <constructor-arg ref="dataSource"/>
-        </bean>
-    -->
 </beans>
