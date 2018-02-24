@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static org.slf4j.LoggerFactory.getLogger;
-
 public class APIServlet extends HttpServlet {
     private static final Logger log = getLogger(APIServlet.class);
     private ConfigurableApplicationContext springContext;

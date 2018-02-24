@@ -35,7 +35,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    //todo retrieve names from some kind of model,not strings
     @Override
     public User get(UUID id) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();

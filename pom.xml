@@ -17,14 +17,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Hibernate -->
-        <hibernate.version>5.2.12.Final</hibernate.version>
-        <hibernate-validator.version>6.0.5.Final</hibernate-validator.version>
-        <guava.version>23.0</guava.version>
+        <hibernate.version>5.2.13.Final</hibernate.version>
+        <!--<hibernate-validator.version>6.0.5.Final</hibernate-validator.version>-->
+        <!--<guava.version>23.0</guava.version>-->
         <!-- logging-->
         <logback.version>1.2.3</logback.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <!--<slf4j.version>1.7.25</slf4j.version>-->
         <!--Spring-->
-        <spring.version>4.3.12.RELEASE</spring.version>
+        <spring.version>5.0.4.RELEASE</spring.version>
         <!-- Postgresql-->
         <postgresql.version>42.1.4</postgresql.version>
     </properties>
@@ -47,11 +47,11 @@
 
     <dependencies>
         <!--GUAVA-->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.guava</groupId>-->
+            <!--<artifactId>guava</artifactId>-->
+            <!--<version>${guava.version}</version>-->
+        <!--</dependency>-->
         <!--servlet-->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -66,45 +66,20 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
-        </dependency>
-
-
-
         <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-jpamodelgen</artifactId>-->
-            <!--<version>${hibernate.version}</version>-->
-            <!--<scope>provided</scope>-->
+            <!--<groupId>org.hibernate.validator</groupId>-->
+            <!--<artifactId>hibernate-validator</artifactId>-->
+            <!--<version>${hibernate-validator.version}</version>-->
         <!--</dependency>-->
 
-        <!-- Logging with SLF4J & LogBack -->
-
-        <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-        <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>${slf4j.version}</version>
-        <scope>runtime</scope>
-        </dependency>
-
+        <!-- Logging with SLF4J & LogBack  (SLF4J is dependency in Logback)-->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring -->
+        <!-- Spring (spring core is dependency in Context) -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -121,18 +96,6 @@
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-web</artifactId>-->
-            <!--<version>${spring.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-jdbc</artifactId>-->
-            <!--<version>${spring.version}</version>-->
-        <!--</dependency>-->
 
         <!--Postgres-->
         <dependency>
