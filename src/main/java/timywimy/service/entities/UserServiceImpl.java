@@ -16,12 +16,11 @@ public class UserServiceImpl extends AbstractEntityService<User> implements User
 
     private final UserRepository repository;
 
-
     @Autowired
     public UserServiceImpl(UserRepository repository, APIService apiService) {
         super(apiService);
+        Assert.notNull(repository, "UserRepository should be provided");
         this.repository = repository;
-
     }
 
     @Override

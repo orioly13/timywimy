@@ -2,6 +2,7 @@ package timywimy.web.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import timywimy.service.APIService;
 import timywimy.web.dto.User;
 
@@ -14,6 +15,7 @@ public class APIControllerImpl implements APIController {
 
     @Autowired
     public APIControllerImpl(APIService apiService) {
+        Assert.notNull(apiService,"APIService should be provided");
         this.apiService = apiService;
     }
 

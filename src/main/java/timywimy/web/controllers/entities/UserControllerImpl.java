@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import timywimy.model.security.User;
 import timywimy.service.entities.UserService;
 
@@ -17,6 +18,7 @@ public class UserControllerImpl implements UserController {
 
     @Autowired
     public UserControllerImpl(UserService service) {
+        Assert.notNull(service, "UserService should be provided");
         this.service = service;
     }
 
