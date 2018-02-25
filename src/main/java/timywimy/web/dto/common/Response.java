@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import timywimy.util.exception.ErrorCode;
 
-@JsonPropertyOrder(value = {"request_id","code","message","body"})
+@JsonPropertyOrder(value = {"request_id", "code", "message", "body"})
 public class Response<T> {
     @JsonProperty("request_id")
     private int requestId;
@@ -12,18 +12,25 @@ public class Response<T> {
     private String message;
     private T body;
 
-    public Response() {
-        this.requestId = 0;
-        this.code = ErrorCode.OK.getCode();
-        this.message = null;
-        this.body = null;
-    }
+//    public Response() {
+//        this.requestId = 0;
+//        this.code = ErrorCode.OK.getCode();
+//        this.message = null;
+//        this.body = null;
+//    }
 
     public Response(int requestId, T body) {
         this.requestId = requestId;
         this.code = ErrorCode.OK.getCode();
         this.message = ErrorCode.OK.getMessage();
         this.body = body;
+    }
+
+    public Response(int requestId, ErrorCode errorCode) {
+        this.requestId = requestId;
+        this.code = errorCode.getCode();
+        this.message = errorCode.getMessage();
+        this.body = null;
     }
 
     public int getCode() {

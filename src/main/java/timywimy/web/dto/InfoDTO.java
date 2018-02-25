@@ -1,8 +1,11 @@
 package timywimy.web.dto;
 
-import timywimy.web.dto.common.BasicDTO;
 
-public class InfoDTO implements BasicDTO {
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder(value = {"name","version"})
+public class InfoDTO {
+
     private String name;
     private String version;
 

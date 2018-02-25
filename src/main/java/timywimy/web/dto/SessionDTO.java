@@ -1,16 +1,24 @@
 package timywimy.web.dto;
 
-import timywimy.web.dto.common.BasicDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public class SessionDTO implements BasicDTO {
+@JsonPropertyOrder(value = {"session", "expiry_ts", "user"})
+public class SessionDTO {
 
     private UUID session;
-    //todo property name and convert
+    @JsonProperty("expiry_ts")
     private ZonedDateTime expiryTs;
     private UserDTO user;
+
+    public SessionDTO(UUID session, ZonedDateTime expiryTs, UserDTO user) {
+        this.session = session;
+        this.expiryTs = expiryTs;
+        this.user = user;
+    }
 
     public UUID getSession() {
         return session;

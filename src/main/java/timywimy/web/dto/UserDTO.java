@@ -1,10 +1,11 @@
 package timywimy.web.dto;
 
-import timywimy.web.dto.common.BasicDTO;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.UUID;
 
-public class UserDTO implements BasicDTO {
+@JsonPropertyOrder(value = {"id", "email", "name", "password", "token"})
+public class UserDTO {
     //todo expand with events and shit
     private UUID id;
     private String email;
