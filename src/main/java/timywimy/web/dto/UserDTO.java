@@ -1,19 +1,24 @@
 package timywimy.web.dto;
 
-public class UserDTO implements ControllerObject{
+import timywimy.web.dto.common.BasicDTO;
 
+import java.util.UUID;
+
+public class UserDTO implements BasicDTO {
+    //todo expand with events and shit
+    private UUID id;
     private String email;
     private String password;
     private String name;
-//    private String token;
+    private String token;
 
-//    public UUID getId() {
-//        return id;
-//    }
-//
-//    public void setId(UUID id) {
-//        this.id = id;
-//    }
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
@@ -39,11 +44,11 @@ public class UserDTO implements ControllerObject{
         this.name = name;
     }
 
-//    public String getToken() {
-//        return token;
-//    }
-//
-//    public void setToken(String token) {
-//        this.token = token;
-//    }
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

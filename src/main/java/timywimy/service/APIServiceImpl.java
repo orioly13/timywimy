@@ -78,6 +78,11 @@ public class APIServiceImpl implements APIService {
         return true;
     }
 
+    @Override
+    public UserDTO updateProfile(UserDTO user, UUID sessionId) {
+        return null;
+    }
+
     //internal methods called by other services
     @Override
     public User getUserBySession(UUID sessionId) {

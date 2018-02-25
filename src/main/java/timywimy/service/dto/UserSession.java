@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class UserSession {
-
+    //todo 30 minutes move to service config
     private UUID uuid;
     private User user;
     private ZonedDateTime expiryDate;

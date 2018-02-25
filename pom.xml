@@ -25,6 +25,8 @@
         <!--<slf4j.version>1.7.25</slf4j.version>-->
         <!--Spring-->
         <spring.version>5.0.4.RELEASE</spring.version>
+        <!--JSON-->
+        <jackson.version>2.9.4</jackson.version>
         <!-- Postgresql-->
         <postgresql.version>42.1.4</postgresql.version>
         <tomcat.version>8.5.15</tomcat.version>
@@ -71,11 +73,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate.validator</groupId>-->
-            <!--<artifactId>hibernate-validator</artifactId>-->
-            <!--<version>${hibernate-validator.version}</version>-->
-        <!--</dependency>-->
 
         <!-- Logging with SLF4J & LogBack  (SLF4J is dependency in Logback)-->
         <dependency>
@@ -100,6 +97,19 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
+        <!--JSON-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!--Postgres db and tomcat connection pool-->
@@ -128,12 +138,6 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.assertj</groupId>-->
-            <!--<artifactId>assertj-core</artifactId>-->
-            <!--<version>${assertj.version}</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
     </dependencies>
 
     <profiles>

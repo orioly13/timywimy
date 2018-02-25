@@ -1,5 +1,6 @@
 package timywimy.service;
 
+import timywimy.model.security.User;
 import timywimy.web.dto.UserDTO;
 
 import java.util.UUID;
@@ -14,6 +15,9 @@ public interface APIService {
     //closes current session
     boolean closeSession(UUID sessionId);
 
+    //closes current session
+    UserDTO updateProfile(UserDTO user, UUID sessionId);
+
     //returs model.User by session
-    timywimy.model.security.User getUserBySession(UUID sessionId);
+    User getUserBySession(UUID sessionId);
 }
