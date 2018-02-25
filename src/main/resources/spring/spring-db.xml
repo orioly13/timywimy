@@ -16,7 +16,7 @@
 
     <!--db properties-->
     <!--system-properties-mode="OVERRIDE"-->
-    <context:property-placeholder location="classpath:db/postgresql/postgres.properties"/>
+    <context:property-placeholder location="classpath:properties/postgres.properties"/>
 
     <bean id="dataSource"
           class="${db.dataSourceClass}">

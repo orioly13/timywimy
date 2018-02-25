@@ -1,4 +1,4 @@
-package timywimy.web;
+package timywimy.web.util;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;

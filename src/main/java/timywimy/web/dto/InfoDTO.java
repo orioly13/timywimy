@@ -3,8 +3,13 @@ package timywimy.web.dto;
 import timywimy.web.dto.common.BasicDTO;
 
 public class InfoDTO implements BasicDTO {
-    private String name = "TimyWimy API";
-    private String version = "0.1";
+    private String name;
+    private String version;
+
+    public InfoDTO(String name, String version) {
+        this.name = name;
+        this.version = version;
+    }
 
     public String getName() {
         return name;
