@@ -1,4 +1,4 @@
-package timywimy.repository;
+package timywimy.unit.repository;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -17,6 +17,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
+import timywimy.repository.UserRepository;
 import timywimy.util.UserTestData;
 
 import java.time.ZonedDateTime;

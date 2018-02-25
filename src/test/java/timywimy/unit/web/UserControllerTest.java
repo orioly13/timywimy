@@ -1,4 +1,4 @@
-package timywimy.web;
+package timywimy.unit.web;
 
 public class UserControllerTest {
 }

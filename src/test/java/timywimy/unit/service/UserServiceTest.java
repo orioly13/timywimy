@@ -1,4 +1,4 @@
-package timywimy.service;
+package timywimy.unit.service;
 
 public class UserServiceTest {
 }
