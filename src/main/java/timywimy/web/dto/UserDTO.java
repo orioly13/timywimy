@@ -1,11 +1,11 @@
 package timywimy.web.dto;
 
-public class User {
+public class UserDTO implements ControllerObject{
 
     private String email;
     private String password;
     private String name;
-    private String token;
+//    private String token;
 
 //    public UUID getId() {
 //        return id;
@@ -39,11 +39,11 @@ public class User {
         this.name = name;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
+//    public String getToken() {
+//        return token;
+//    }
+//
+//    public void setToken(String token) {
+//        this.token = token;
+//    }
 }

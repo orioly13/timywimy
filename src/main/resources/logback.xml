@@ -3,9 +3,13 @@
 
     <!-- To enable JMX Management -->
     <jmxConfigurator/>
+    <property name="PRO_HOME" value="E:/projects/timywimy/" />
+
+    <timestamp key="byDay" datePattern="yyyy-MM-dd" />
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>${TOPJAVA_ROOT}/log/topjava.log</file>
+
+        <file>${PRO_HOME}/log/api_${byDay}.log</file>
 
         <encoder>
             <charset>UTF-8</charset>

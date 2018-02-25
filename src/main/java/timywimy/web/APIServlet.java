@@ -5,7 +5,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import timywimy.util.StringUtil;
 import timywimy.web.controllers.APIController;
-import timywimy.web.dto.User;
+import timywimy.web.dto.UserDTO;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -36,7 +36,7 @@ public class APIServlet extends HttpServlet {
         String userEmail = request.getParameter("user_email");
         String userPass = request.getParameter("user_pass");
         String session1 = request.getParameter("session");
-        User user = new User();
+        UserDTO user = new UserDTO();
         user.setEmail(userEmail);
         user.setName(userName);
         user.setPassword(userPass);

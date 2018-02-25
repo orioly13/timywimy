@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import timywimy.service.APIService;
-import timywimy.web.dto.User;
+import timywimy.web.dto.UserDTO;
 
 import java.util.UUID;
 
@@ -20,12 +20,12 @@ public class APIControllerImpl implements APIController {
     }
 
     @Override
-    public UUID register(User user) {
+    public UUID register(UserDTO user) {
         return apiService.register(user);
     }
 
     @Override
-    public UUID openSession(User user) {
+    public UUID openSession(UserDTO user) {
         return apiService.openSession(user);
     }
 

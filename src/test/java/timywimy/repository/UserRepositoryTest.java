@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringRunner.class)
 @Sql(scripts = {"classpath:db/postgresql/1-init-users.sql"}, config = @SqlConfig(encoding = "UTF-8"))
 public class UserRepositoryTest {
-    private static final Logger log = LoggerFactory.getLogger(UserRepositoryTest.class);
+    private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired
     private UserRepository repository;
 

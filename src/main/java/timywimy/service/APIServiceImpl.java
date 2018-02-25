@@ -8,6 +8,7 @@ import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
 import timywimy.service.dto.UserSession;
 import timywimy.util.StringUtil;
+import timywimy.web.dto.UserDTO;
 
 import javax.annotation.PostConstruct;
 import java.time.ZonedDateTime;
@@ -36,7 +37,7 @@ public class APIServiceImpl implements APIService {
     }
 
     @Override
-    public UUID register(timywimy.web.dto.User userDTO) {
+    public UUID register(UserDTO userDTO) {
         Assert.notNull(userDTO, "user should be provided");
         if (StringUtil.isEmpty(userDTO.getEmail()) ||
                 StringUtil.isEmpty(userDTO.getPassword()) ||
@@ -56,7 +57,7 @@ public class APIServiceImpl implements APIService {
     }
 
     @Override
-    public UUID openSession(timywimy.web.dto.User userDTO) {
+    public UUID openSession(UserDTO userDTO) {
         Assert.notNull(userDTO, "user should be provided");
         if (StringUtil.isEmpty(userDTO.getEmail()) || StringUtil.isEmpty(userDTO.getPassword())) {
             throw new RuntimeException("user with email,pass should be provided");
@@ -77,6 +78,7 @@ public class APIServiceImpl implements APIService {
         return true;
     }
 
+    //internal methods called by other services
     @Override
     public User getUserBySession(UUID sessionId) {
         Assert.notNull(sessionId, "session should be provided");
@@ -88,7 +90,7 @@ public class APIServiceImpl implements APIService {
         return entry.getUser();
     }
 
-    private User createFromUserDTO(timywimy.web.dto.User dto) {
+    private User createFromUserDTO(UserDTO dto) {
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());

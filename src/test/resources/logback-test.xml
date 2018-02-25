@@ -4,6 +4,7 @@
         <resetJUL>true</resetJUL>
     </contextListener>
 
+    <!--general test logs-->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
@@ -11,10 +12,11 @@
         </encoder>
     </appender>
 
+    <!--result test log-->
     <appender name="result" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>UTF-8</charset>
-            <pattern>%magenta(%msg%n)</pattern>
+            <pattern>%green(%msg%n)</pattern>
         </encoder>
     </appender>
     <logger name="result" level="INFO" additivity="false">
@@ -24,7 +26,7 @@
     <!--<logger name="org.postgresql" level="debug"/>-->
     <!--<logger name="org.springframework.jdbc" level="debug"/>-->
 
-    <logger name="timywimy" level="debug"/>
+    <!--<logger name="timywimy" level="debug"/>-->
 
     <root level="INFO">
         <appender-ref ref="console"/>
