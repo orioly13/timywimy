@@ -1,14 +1,14 @@
 package timywimy.util.exception;
 
-public class APIException extends RuntimeException {
+public class RestException extends RuntimeException {
     protected ErrorCode errorCode;
 
-    public APIException(ErrorCode errorCode) {
+    public RestException(ErrorCode errorCode) {
         super();
         this.errorCode = errorCode;
     }
 
-    public APIException(ErrorCode errorCode, Exception e) {
+    public RestException(ErrorCode errorCode, Exception e) {
         super(e);
         this.errorCode = errorCode;
     }

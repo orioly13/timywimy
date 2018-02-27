@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class APIObjectMapper extends ObjectMapper {
-    public APIObjectMapper() {
+public class RestResponseObjectMapper extends ObjectMapper {
+    public RestResponseObjectMapper() {
         super();
         setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }

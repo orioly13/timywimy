@@ -1,6 +1,6 @@
 package timywimy.util.exception;
 
-public class ControllerException extends APIException {
+public class ControllerException extends RestException {
 
     public ControllerException(ErrorCode errorCode) {
         super(errorCode);

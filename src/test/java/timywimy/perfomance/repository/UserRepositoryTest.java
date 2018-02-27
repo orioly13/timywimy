@@ -1,9 +1,6 @@
 package timywimy.perfomance.repository;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
@@ -27,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = {"classpath:db/postgresql/1-init-users.sql"}, config = @SqlConfig(encoding = "UTF-8"))
+@Ignore
 public class UserRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired

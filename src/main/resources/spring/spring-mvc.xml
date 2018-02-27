@@ -13,12 +13,15 @@
     <context:property-placeholder location="classpath:properties/controllers.properties"/>
     <context:component-scan base-package="timywimy.web"/>
 
+    <mvc:interceptors>
+        <bean id="requestIdInterceptor" class="timywimy.web.util.RestRequestIdInterceptor"/>
+    </mvc:interceptors>
     <mvc:annotation-driven>
         <mvc:message-converters>
-            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
-            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+            <!--<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>-->
+            <!--<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>-->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-                <property name="objectMapper" ref="APIObjectMapper"/>
+                <property name="objectMapper" ref="restResponseObjectMapper"/>
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
