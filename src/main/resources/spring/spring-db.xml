@@ -40,7 +40,7 @@
 
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="showSql" value="true"/>
+                <property name="showSql" value="${hibernate.showSql}"/>
             </bean>
         </property>
     </bean>
