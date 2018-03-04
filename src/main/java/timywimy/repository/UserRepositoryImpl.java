@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
+@Transactional(readOnly = true)
 public class UserRepositoryImpl extends AbstractEntityRepository<User> implements UserRepository {
 
     @Override

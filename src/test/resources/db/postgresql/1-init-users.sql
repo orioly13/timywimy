@@ -8,7 +8,7 @@ INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('19f7231e-1996-11e8-accf-0ed5f89f718b', now(), 'admin', 'admin@user.test', 'evan', 1, TRUE);
 --user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
-VALUES ('19f725c6-1996-11e8-accf-0ed5f89f718b', now(), 'user', 'user@user.test', '123', 0, TRUE);
+VALUES ('19f725c6-1996-11e8-accf-0ed5f89f718b', now(), 'user', 'user@user.com', 'P@1ui$$pass', 0, TRUE);
 --deleted user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active, deleted_ts)
 VALUES ('19f7294a-1996-11e8-accf-0ed5f89f718b', now(), 'deleted_user', 'deleted_user@user.test', '2345', 0, TRUE, now());

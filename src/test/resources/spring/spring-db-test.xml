@@ -19,6 +19,7 @@
     <!--init db, only in test runs-->
     <jdbc:initialize-database>
         <jdbc:script encoding="utf-8" location="classpath:db/postgresql/6-full-reset.sql"/>
+        <jdbc:script encoding="utf-8" location="classpath:db/postgresql/1-init-users.sql"/>
     </jdbc:initialize-database>
 
     <bean id="dataSource"

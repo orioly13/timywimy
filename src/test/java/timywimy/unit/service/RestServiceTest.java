@@ -17,6 +17,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import timywimy.service.RestService;
+import timywimy.util.UserTestData;
+import timywimy.web.dto.Session;
+import timywimy.web.dto.User;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringRunner.class)
 @TestPropertySource(locations = {"classpath:properties/api-test.properties"})
 @Sql(scripts = {"classpath:db/postgresql/1-init-users.sql"}, config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
 public class RestServiceTest {
     private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired
@@ -56,8 +58,42 @@ public class RestServiceTest {
                 results +
                 "\n---------------------------------");
     }
+
+    //todo  no email,no pass, no name
+    //todo  invalid email, invalid pass
+    //todo  already exists
     @Test
     public  void validRegister(){
-        log.info("got here");
+        service.register(UserTestData.getNewUserDTO());
+    }
+    //todo no email,no pass, no name
+    //todo invalid email, invalid pass
+    //todo user not found
+    @Test
+    public  void validOpenSession(){
+        service.openSession(UserTestData.getExistingUserDTO());
+    }
+
+    @Test
+    public  void validCloseSession(){
+        Session session = service.openSession(UserTestData.getExistingUserDTO());
+        service.closeSession(session.getSession());
+    }
+
+    @Test
+    public  void validUpdateProfile(){
+        User existingUserDTO = UserTestData.getExistingUserDTO();
+        Session session = service.openSession(existingUserDTO);
+        existingUserDTO.setName("ALFRED");
+        existingUserDTO.setPassword(null);
+        existingUserDTO.setEmail(null);
+        service.updateProfile(session.getSession(),existingUserDTO);
+    }
+
+
+    @Test
+    public  void validGetUserBySession(){
+        Session session = service.openSession(UserTestData.getExistingUserDTO());
+        service.getUserBySession(session.getSession());
     }
 }

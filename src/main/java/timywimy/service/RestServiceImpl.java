@@ -87,7 +87,8 @@ public class RestServiceImpl implements RestService {
         }
 
         UUID session = UUID.randomUUID();
-        UserSession userSession = sessions.put(session, new UserSession(session, savedUser, expireMinutes));
+        UserSession userSession = new UserSession(session, savedUser, expireMinutes);
+        sessions.put(session, userSession);
         return new Session(session, userSession.getExpiryDate(), new User(savedUser.getEmail(), savedUser.getName()));
     }
 
@@ -107,7 +108,8 @@ public class RestServiceImpl implements RestService {
         }
 
         UUID session = UUID.randomUUID();
-        UserSession userSession = sessions.put(session, new UserSession(session, userByEmail, expireMinutes));
+        UserSession userSession = new UserSession(session, userByEmail, expireMinutes);
+        sessions.put(session, userSession);
         return new Session(session, userSession.getExpiryDate(), new User(userByEmail.getEmail(), userByEmail.getName()));
     }
 
@@ -165,7 +167,7 @@ public class RestServiceImpl implements RestService {
     public timywimy.model.security.User getUserBySession(UUID sessionId) {
         RequestUtil.validateEmptyField(ServiceException.class, sessionId, "session");
         UserSession entry = sessions.get(sessionId);
-        if (entry.getExpiryDate().isAfter(ZonedDateTime.now())) {
+        if (entry.getExpiryDate().isBefore(ZonedDateTime.now())) {
             sessions.remove(sessionId);
             return null;
         }
