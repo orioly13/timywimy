@@ -2,30 +2,25 @@ package timywimy.util.exception;
 
 public class RestException extends RuntimeException {
     protected ErrorCode errorCode;
-    protected String message;
+//    protected String message;
 
     public RestException(ErrorCode errorCode) {
-        super();
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
     public RestException(ErrorCode errorCode, String message) {
-        super();
+        super(message);
         this.errorCode = errorCode;
-        this.message = message;
     }
 
     public RestException(ErrorCode errorCode, String message, Exception e) {
-        super(e);
+        super(message,e);
         this.errorCode = errorCode;
-        this.message = message;
     }
 
     public ErrorCode getErrorCode() {
         return errorCode;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

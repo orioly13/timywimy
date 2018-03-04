@@ -2,6 +2,10 @@ package timywimy.repository.common;
 
 import org.springframework.util.Assert;
 import timywimy.model.common.BaseEntity;
+import timywimy.util.PairFieldName;
+import timywimy.util.RequestUtil;
+import timywimy.util.exception.ErrorCode;
+import timywimy.util.exception.RepositoryException;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -23,11 +27,11 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     }
 
     protected void assertGet(UUID entityId) {
-        Assert.notNull(entityId, "entityId should be provided");
+        RequestUtil.validateEmptyField(RepositoryException.class, entityId, "entityId");
     }
 
     protected T get(Class<T> entityClass, UUID entityId) {
-        Assert.notNull(entityClass, "entity class should be provided to construct get query");
+        Assert.notNull(entityClass, "entity class should be provided to construct query");
 
         CriteriaQuery<T> criteria = builder.createQuery(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
@@ -37,13 +41,15 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     }
 
     protected void assertSave(T entity, UUID userId) {
-        Assert.notNull(entity, "entity should be provided");
-        Assert.notNull(userId, "userId should be provided");
-        Assert.isNull(entity.getDeletedTs(), "cannot save with deletedTs (use delete method)");
+        RequestUtil.validateEmptyFields(RepositoryException.class,
+                new PairFieldName<>(entity, "entity"), new PairFieldName<>(userId, "user"));
+        if (entity.getDeletedTs() != null) {
+            throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "deleteTs can't be used with update");
+        }
     }
 
     protected T save(Class<T> entityClass, T entity, UUID userId) {
-        Assert.notNull(entityClass, "entity class should be provided to construct get query");
+        Assert.notNull(entityClass, "entity class should be provided to construct query");
         if (entity.isNew()) {
             entity.setCreatedBy(userId);
             entityManager.persist(entity);
@@ -60,12 +66,12 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     }
 
     protected void assertDelete(UUID entityId, UUID userId) {
-        Assert.notNull(entityId, "entityId should be provided");
-        Assert.notNull(userId, "userId should be provided");
+        RequestUtil.validateEmptyFields(RepositoryException.class,
+                new PairFieldName<>(entityId, "entity id"), new PairFieldName<>(userId, "user id"));
     }
 
     protected boolean delete(Class<T> entityClass, UUID entityId, UUID userId) {
-        Assert.notNull(entityClass, "entity class should be provided to construct get query");
+        Assert.notNull(entityClass, "entity class should be provided to construct query");
 
         CriteriaUpdate<T> criteria = builder.createCriteriaUpdate(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
@@ -93,7 +99,7 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         } else if (resultList.size() == 1) {
             return resultList.get(0);
         } else {
-            throw new RuntimeException("Multiple results by entityId returned");
+            throw new RepositoryException(ErrorCode.INTERNAL_REPOSITORY, "Multiple results by entityId returned");
         }
     }
 

@@ -2,19 +2,20 @@ package timywimy.model.security;
 
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
-import timywimy.model.bo.tasks.TaskGroup;
 import timywimy.model.bo.tasks.Task;
+import timywimy.model.bo.tasks.TaskGroup;
 import timywimy.model.common.AbstractNamedEntity;
 import timywimy.model.security.converters.Role;
 import timywimy.model.security.converters.RoleConverter;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 
 @Entity
 @Table(name = "sec_users")
-public class User extends AbstractNamedEntity{
+public class User extends AbstractNamedEntity {
     //unique corresponds to constraint
     @Column(name = "email", columnDefinition = "varchar(50)", nullable = false, unique = true)
     private String email;

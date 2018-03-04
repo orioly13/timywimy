@@ -19,6 +19,7 @@ import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
 import timywimy.util.UserTestData;
+import timywimy.util.exception.RepositoryException;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -96,7 +97,7 @@ public class UserRepositoryTest {
 
     @Test
     public void getInvalidNullId() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(RepositoryException.class);
         thrown.expectMessage("entityId should be provided");
         repository.get(null);
     }
@@ -112,7 +113,7 @@ public class UserRepositoryTest {
 
     @Test
     public void getInvalidNoEmail() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(RepositoryException.class);
         thrown.expectMessage("email should be provided");
         repository.getByEmail(null);
     }
@@ -146,22 +147,22 @@ public class UserRepositoryTest {
 
     @Test
     public void saveInvalidNoEntity() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
+        thrown.expect(RepositoryException.class);
         thrown.expectMessage("entity should be provided");
         repository.save(null, UserTestData.ROOT_ID);
     }
 
     @Test
     public void saveInvalidNoUserId() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("userId should be provided");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("user should be provided");
         repository.save(UserTestData.getNewUser(), null);
     }
 
     @Test
     public void saveInvalidNoEmail() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("user.email should be provided");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("user email should be provided");
         User newUser = UserTestData.getNewUser();
         newUser.setEmail("");
         repository.save(newUser, UserTestData.ROOT_ID);
@@ -169,8 +170,8 @@ public class UserRepositoryTest {
 
     @Test
     public void saveInvalidNoPassword() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("user.password should be provided");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("user password should be provided");
         User newUser = UserTestData.getNewUser();
         newUser.setPassword("");
         repository.save(newUser, UserTestData.ROOT_ID);
@@ -178,8 +179,8 @@ public class UserRepositoryTest {
 
     @Test
     public void saveInvalidNoName() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("user.name should be provided");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("user name should be provided");
         User newUser = UserTestData.getNewUser();
         newUser.setName("");
         repository.save(newUser, UserTestData.ROOT_ID);
@@ -187,8 +188,8 @@ public class UserRepositoryTest {
 
     @Test
     public void saveInvalidDuplicateEmail() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("user with this email already exists");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("User with this email already registered");
         User newUser = UserTestData.getNewUser();
         newUser.setEmail(repository.get(UserTestData.USER_ID).getEmail());
         repository.save(newUser, UserTestData.ROOT_ID);
@@ -196,8 +197,8 @@ public class UserRepositoryTest {
 
     @Test
     public void saveInvalidWithDeletedTs() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("cannot save with deletedTs (use delete method)");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("deleteTs can't be used with update");
         User newUser = UserTestData.getNewUser();
         newUser.setDeletedTs(ZonedDateTime.now());
         repository.save(newUser, UserTestData.ROOT_ID);
@@ -222,15 +223,15 @@ public class UserRepositoryTest {
 
     @Test
     public void deleteInvalidNoEntityId() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("entityId should be provided");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("entity id should be provided");
         repository.delete(null, UserTestData.ROOT_ID);
     }
 
     @Test
     public void deleteInvalidNoUser() throws Exception {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("userId should be provided");
+        thrown.expect(RepositoryException.class);
+        thrown.expectMessage("user id should be provided");
         repository.delete(UserTestData.USER_ID, null);
     }
 

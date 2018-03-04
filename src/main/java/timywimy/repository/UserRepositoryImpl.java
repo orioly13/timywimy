@@ -1,11 +1,15 @@
 package timywimy.repository;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractEntityRepository;
-import timywimy.util.StringUtil;
+import timywimy.util.PairFieldName;
+import timywimy.util.RequestUtil;
+import timywimy.util.exception.ErrorCode;
+import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -13,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-@Transactional(readOnly = true)
 public class UserRepositoryImpl extends AbstractEntityRepository<User> implements UserRepository {
 
     @Override
@@ -23,20 +26,22 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ConstraintViolationException.class})
     public User save(User entity, UUID userId) {
         assertSave(entity, userId);
-        Assert.isTrue(!StringUtil.isEmpty(entity.getName()), "user.name should be provided");
-        Assert.isTrue(!StringUtil.isEmpty(entity.getPassword()), "user.password should be provided");
-        Assert.isTrue(!StringUtil.isEmpty(entity.getEmail()), "user.email should be provided");
+        RequestUtil.validateEmptyFields(RepositoryException.class,
+                new PairFieldName<>(entity.getEmail(), "user email"),
+                new PairFieldName<>(entity.getPassword(), "user password"),
+                new PairFieldName<>(entity.getName(), "user name"));
         User byEmail = getByEmail(entity.getEmail());
-        Assert.isTrue(byEmail == null || byEmail.getId().equals(entity.getId()), "user with this email already exists");
-
+        if (byEmail != null && !byEmail.getId().equals(entity.getId())) {
+            throw new RepositoryException(ErrorCode.USER_ALREADY_REGISTERED);
+        }
         return save(User.class, entity, userId);
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ConstraintViolationException.class})
     public boolean delete(UUID id, UUID userId) {
         assertDelete(id, userId);
 
@@ -55,7 +60,7 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
 
     @Override
     public User getByEmail(String email) {
-        Assert.isTrue(!StringUtil.isEmpty(email), "email should be provided");
+        RequestUtil.validateEmptyField(RepositoryException.class, email, "email");
 
         CriteriaQuery<User> criteria = builder.createQuery(User.class);
         Root<User> userRoot = criteria.from(User.class);

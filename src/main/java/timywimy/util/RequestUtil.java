@@ -27,7 +27,7 @@ public class RequestUtil {
         if (field == null ||
                 field instanceof String && StringUtil.isOnlySpaces((String) field)) {
             constructAndThrowException(exClass, ErrorCode.REQUEST_VALIDATION_EMPTY_FIELDS,
-                    String.format("%s should be provided", fieldName));
+                    StringUtil.isEmpty(fieldName) ? null : String.format("%s should be provided", fieldName));
         }
     }
 

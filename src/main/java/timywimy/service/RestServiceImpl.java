@@ -69,7 +69,7 @@ public class RestServiceImpl implements RestService {
 
     @Override
     public Session register(User user) {
-        RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(user, "user"));
+        RequestUtil.validateEmptyField(ServiceException.class, user, "user");
         RequestUtil.validateEmptyFields(ServiceException.class,
                 new PairFieldName<>(user.getEmail(), "email"),
                 new PairFieldName<>(user.getPassword(), "password"),
@@ -79,7 +79,7 @@ public class RestServiceImpl implements RestService {
         validatePasswordPattern(user.getPassword());
 
         if (userRepository.getByEmail(lowerCaseEmail) != null) {
-            throw new ServiceException(ErrorCode.REGISTER_ALREADY_REGISTERED, String.format("email:%s", user.getEmail()));
+            throw new ServiceException(ErrorCode.USER_ALREADY_REGISTERED, String.format("email:%s", user.getEmail()));
         }
         timywimy.model.security.User savedUser = userRepository.save(createFromUserDTO(user), apiUser.getId());
         if (savedUser == null) {
@@ -93,7 +93,7 @@ public class RestServiceImpl implements RestService {
 
     @Override
     public Session openSession(User user) {
-        RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(user, "user"));
+        RequestUtil.validateEmptyField(ServiceException.class, user, "user");
         RequestUtil.validateEmptyFields(ServiceException.class,
                 new PairFieldName<>(user.getEmail(), "email"),
                 new PairFieldName<>(user.getPassword(), "password"));
@@ -113,21 +113,21 @@ public class RestServiceImpl implements RestService {
 
     @Override
     public boolean closeSession(UUID sessionId) {
-        RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(sessionId, "session"));
+        RequestUtil.validateEmptyField(ServiceException.class, sessionId, "session");
         sessions.remove(sessionId);
         return true;
     }
 
     @Override
     public User updateProfile(UUID sessionId, User user) {
-        RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(sessionId, "session"));
+        RequestUtil.validateEmptyField(ServiceException.class, sessionId, "session");
         //find session
         timywimy.model.security.User userBySession = getUserBySession(sessionId);
         if (userBySession == null) {
             throw new ServiceException(ErrorCode.SESSION_NOT_FOUND);
         }
 
-        RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(user, "user"));
+        RequestUtil.validateEmptyField(ServiceException.class, user, "user");
         //email change check
         if (!StringUtil.isEmpty(user.getEmail())) {
             String lowerCaseEmail = user.getEmail().toLowerCase();
@@ -135,14 +135,14 @@ public class RestServiceImpl implements RestService {
                 validateEmailPattern(lowerCaseEmail);
                 timywimy.model.security.User byEmail = userRepository.getByEmail(lowerCaseEmail);
                 if (byEmail != null) {
-                    throw new ServiceException(ErrorCode.REGISTER_ALREADY_REGISTERED, String.format("email:%s", user.getEmail()));
+                    throw new ServiceException(ErrorCode.USER_ALREADY_REGISTERED, String.format("email:%s", user.getEmail()));
                 }
                 userBySession.setEmail(lowerCaseEmail);
             }
         }
         //password change check
         if (!StringUtil.isEmpty(user.getPassword())) {
-            RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(user.getOldPassword(), "old password"));
+            RequestUtil.validateEmptyField(ServiceException.class, user.getOldPassword(), "old password");
             if (userBySession.getPassword().equals(user.getOldPassword())) {
                 validatePasswordPattern(user.getPassword());
                 userBySession.setPassword(user.getPassword());
@@ -163,7 +163,7 @@ public class RestServiceImpl implements RestService {
     //internal methods called by other services
     @Override
     public timywimy.model.security.User getUserBySession(UUID sessionId) {
-        RequestUtil.validateEmptyFields(ServiceException.class, new PairFieldName<>(sessionId, "session"));
+        RequestUtil.validateEmptyField(ServiceException.class, sessionId, "session");
         UserSession entry = sessions.get(sessionId);
         if (entry.getExpiryDate().isAfter(ZonedDateTime.now())) {
             sessions.remove(sessionId);

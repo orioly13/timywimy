@@ -12,17 +12,17 @@ public enum ErrorCode {
     REQUEST_VALIDATION_INVALID_FIELDS(3, "Some fields are invalid"),
 
     REGISTER_FAILED_TO_PERSIST(10, "Failed to persist user"),
-    REGISTER_ALREADY_REGISTERED(11, "User with this email already registered"),
+    USER_ALREADY_REGISTERED(11, "User with this email already registered"),
 
     SESSION_NOT_FOUND(12, "Session is closed or expired, please open a new one"),
-    SESSION_USER_NOT_FOUND(13, "User with provided credentials not found");
+    SESSION_USER_NOT_FOUND(13, "User with provided credentials not found"),
 
 
-//    INTERNAL_REPOSITORY(101, "Internal General Error (Repository level)"),
+    INTERNAL_REPOSITORY(101, "Internal General Error (Repository level)"),
 //
-//    INTERNAL_SERVICE(201, "Internal General Error (Service level)"),
+    INTERNAL_SERVICE(201, "Internal General Error (Service level)"),
 //
-//    INTERNAL_CONTROLLER(301, "Internal General Error (Controller level)");
+    INTERNAL_CONTROLLER(301, "Internal General Error (Controller level)");
 
     private static final Map<Integer, ErrorCode> mapByCode;
 
