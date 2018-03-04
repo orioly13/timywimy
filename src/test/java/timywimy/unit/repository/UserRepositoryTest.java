@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @ContextConfiguration({
         "classpath:spring/spring-db-test.xml"
 })
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = {"classpath:db/postgresql/1-init-users.sql"}, config = @SqlConfig(encoding = "UTF-8"))
 public class UserRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger("result");
