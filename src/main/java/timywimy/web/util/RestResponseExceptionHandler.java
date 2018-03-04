@@ -27,10 +27,13 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     protected Response<Object> handleGeneral(Exception ex, WebRequest request) {
         return new Response<>(logWithId(ex, request), ErrorCode.INTERNAL_GENERAL);
     }
+
     //handles all custom errors
     @ExceptionHandler(value = {RestException.class})
     @ResponseBody
     protected Response<Object> handeRestExcpetions(RestException ex, WebRequest request) {
-        return new Response<>(logWithId(ex, request), ex.getErrorCode() == null ? ErrorCode.INTERNAL_GENERAL : ex.getErrorCode());
+        ErrorCode errorCode = ex.getErrorCode() == null ? ErrorCode.INTERNAL_GENERAL : ex.getErrorCode();
+        String message = ex.getMessage() == null ? errorCode.getMessage() : ex.getMessage();
+        return new Response<>(logWithId(ex, request), errorCode, message);
     }
 }

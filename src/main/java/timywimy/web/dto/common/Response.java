@@ -26,6 +26,13 @@ public class Response<T> {
         this.response = null;
     }
 
+    public Response(Integer requestId, ErrorCode errorCode, String message) {
+        this.requestId = requestId;
+        this.code = errorCode.getCode();
+        this.message = message;
+        this.response = null;
+    }
+
     public Integer getCode() {
         return code;
     }

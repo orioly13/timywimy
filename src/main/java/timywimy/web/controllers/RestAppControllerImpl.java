@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-import timywimy.service.APIService;
-import timywimy.web.dto.InfoDTO;
-import timywimy.web.dto.SessionDTO;
-import timywimy.web.dto.UserDTO;
+import timywimy.service.RestService;
+import timywimy.web.dto.Info;
+import timywimy.web.dto.Session;
+import timywimy.web.dto.User;
 import timywimy.web.dto.common.Response;
 
 import java.util.UUID;
@@ -16,65 +16,60 @@ import java.util.UUID;
 @RestController //with RestController there is no need to add @ResponseBody to all requests
 @RequestMapping("/")
 public class RestAppControllerImpl implements RestAppController {
-    //    private static final Logger log = LoggerFactory.getLogger(RestAppControllerImpl.class);
-    private final APIService apiService;
+    private final RestService restService;
     private final String apiName;
-    private String apiVersion;
+    private final String apiVersion;
 
     @Autowired
-    public RestAppControllerImpl(APIService apiService,
+    public RestAppControllerImpl(RestService restService,
                                  @Value("${api.info.name}") String apiName,
                                  @Value("${api.info.version}") String apiVersion) {
         this.apiName = apiName;
         this.apiVersion = apiVersion;
-        Assert.notNull(apiService, "APIService should be provided");
-        this.apiService = apiService;
+        Assert.notNull(restService, "APIService should be provided");
+        this.restService = restService;
     }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<InfoDTO> info(@RequestAttribute(value = "timywimy.request.id") Integer requestId) {
-        return new Response<>(requestId, new InfoDTO(apiName, apiVersion));
+    public Response<Info> info(@RequestAttribute(value = "timywimy.request.id") Integer requestId) {
+        return new Response<>(requestId, new Info(apiName, apiVersion));
     }
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/register")
-    public Response<SessionDTO> register(@RequestBody UserDTO user,
-                                         @RequestAttribute(value = "timywimy.request.id") Integer requestId) {
-        UUID session = apiService.register(user);
-        user.setPassword(null);
-        return new Response<>(requestId, new SessionDTO(session, null, user));
+    public Response<Session> register(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                      @RequestBody User user) {
+        Session session = restService.register(user);
+        return new Response<>(requestId, session);
     }
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/open-session")
-    public Response<SessionDTO> openSession(@RequestBody UserDTO user,
-                                            @RequestAttribute(value = "timywimy.request.id") Integer requestId) {
-        UUID session = apiService.openSession(user);
-        user.setPassword(null);
-        return new Response<>(requestId, new SessionDTO(session, null, user));
+    public Response<Session> openSession(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                         @RequestBody User user) {
+        Session session = restService.openSession(user);
+        return new Response<>(requestId, session);
 
     }
 
     @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/close-session")
-    public Response<Boolean> closeSession(@RequestHeader(name = "X-Auth-Session") UUID session,
-                                          @RequestAttribute(value = "timywimy.request.id") Integer requestId) {
-        boolean res = apiService.closeSession(session);
+    public Response<Boolean> closeSession(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                          @RequestHeader(name = "X-Auth-Session") UUID session) {
+        boolean res = restService.closeSession(session);
         return new Response<>(requestId, res);
     }
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE, value = "/update-profile")
-    public Response<UserDTO> updateProfile(@RequestBody UserDTO user,
-                                           @RequestHeader(name = "X-Auth-Session") UUID session,
-                                           @RequestAttribute(value = "timywimy.request.id") Integer requestId) {
-        UserDTO updatedUser = apiService.updateProfile(user, session);
-        updatedUser.setPassword(null);
-        updatedUser.setId(null);
+    public Response<User> updateProfile(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                        @RequestHeader(name = "X-Auth-Session") UUID session,
+                                        @RequestBody User user) {
+        User updatedUser = restService.updateProfile(session, user);
         return new Response<>(requestId, updatedUser);
     }
 }

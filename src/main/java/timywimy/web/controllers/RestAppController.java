@@ -1,22 +1,22 @@
 package timywimy.web.controllers;
 
 
-import timywimy.web.dto.SessionDTO;
-import timywimy.web.dto.UserDTO;
-import timywimy.web.dto.InfoDTO;
+import timywimy.web.dto.Info;
+import timywimy.web.dto.Session;
+import timywimy.web.dto.User;
 import timywimy.web.dto.common.Response;
 
 import java.util.UUID;
 
 public interface RestAppController {
 
-    Response<InfoDTO> info(Integer requestId);
+    Response<Info> info(Integer requestId);
 
-    Response<SessionDTO> register(UserDTO user, Integer requestId);
+    Response<Session> register(Integer requestId, User user);
 
-    Response<SessionDTO> openSession(UserDTO user, Integer requestId);
+    Response<Session> openSession(Integer requestId, User user);
 
-    Response<Boolean> closeSession(UUID session, Integer requestId);
+    Response<Boolean> closeSession(Integer requestId, UUID session);
 
-    Response<UserDTO> updateProfile(UserDTO user, UUID session, Integer requestId);
+    Response<User> updateProfile(Integer requestId, UUID session, User user);
 }

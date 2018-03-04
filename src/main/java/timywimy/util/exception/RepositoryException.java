@@ -6,7 +6,11 @@ public class RepositoryException extends RestException {
         super(errorCode);
     }
 
-    public RepositoryException(ErrorCode errorCode, Exception e) {
-        super(errorCode, e);
+    public RepositoryException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
+
+    public RepositoryException(ErrorCode errorCode, String message, Exception e) {
+        super(errorCode, message, e);
     }
 }

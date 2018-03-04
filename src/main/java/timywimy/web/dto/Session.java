@@ -7,14 +7,17 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @JsonPropertyOrder(value = {"session", "expiry_ts", "user"})
-public class SessionDTO {
+public class Session {
 
     private UUID session;
     @JsonProperty("expiry_ts")
     private ZonedDateTime expiryTs;
-    private UserDTO user;
+    private User user;
 
-    public SessionDTO(UUID session, ZonedDateTime expiryTs, UserDTO user) {
+    public Session() {
+    }
+
+    public Session(UUID session, ZonedDateTime expiryTs, User user) {
         this.session = session;
         this.expiryTs = expiryTs;
         this.user = user;
@@ -36,11 +39,11 @@ public class SessionDTO {
         this.expiryTs = expiryTs;
     }
 
-    public UserDTO getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

@@ -6,21 +6,20 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class UserSession {
-    //todo 30 minutes move to service config
     private UUID uuid;
     private User user;
     private ZonedDateTime expiryDate;
 
-    public UserSession(User user) {
+    public UserSession(User user, Long expireMinutes) {
         this.user = user;
         this.uuid = UUID.randomUUID();
-        this.expiryDate = ZonedDateTime.now().plusMinutes(30L);
+        this.expiryDate = ZonedDateTime.now().plusMinutes(expireMinutes);
     }
 
-    public UserSession(UUID session, User user) {
+    public UserSession(UUID session, User user, Long expireMinutes) {
         this.user = user;
         this.uuid = session;
-        this.expiryDate = ZonedDateTime.now().plusMinutes(30L);
+        this.expiryDate = ZonedDateTime.now().plusMinutes(expireMinutes);
     }
 
     public UUID getUuid() {

@@ -6,7 +6,7 @@ import timywimy.model.common.BaseEntity;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.common.EntityRepository;
-import timywimy.service.APIService;
+import timywimy.service.RestService;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,8 +16,8 @@ public abstract class AbstractEntityWithRightsService<T extends BaseEntity> exte
     protected List<Role> roles;
 
     @Autowired
-    protected AbstractEntityWithRightsService(APIService apiService, EntityRepository<T> repository) {
-        super(apiService, repository);
+    protected AbstractEntityWithRightsService(RestService restService, EntityRepository<T> repository) {
+        super(restService, repository);
     }
 
     protected void setRoles(List<Role> roles) {

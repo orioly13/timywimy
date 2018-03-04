@@ -5,7 +5,7 @@ import org.springframework.util.Assert;
 import timywimy.model.security.User;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
-import timywimy.service.APIService;
+import timywimy.service.RestService;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -15,8 +15,8 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl extends AbstractEntityWithRightsService<User> implements UserService {
 
-    public UserServiceImpl(APIService apiService, UserRepository repository) {
-        super(apiService, repository);
+    public UserServiceImpl(RestService restService, UserRepository repository) {
+        super(restService, repository);
     }
 
     @PostConstruct

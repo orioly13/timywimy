@@ -6,7 +6,11 @@ public class ControllerException extends RestException {
         super(errorCode);
     }
 
-    public ControllerException(ErrorCode errorCode, Exception e) {
-        super(errorCode, e);
+    public ControllerException(ErrorCode errorCode, String message) {
+        super(errorCode, message);
+    }
+
+    public ControllerException(ErrorCode errorCode, String message, Exception e) {
+        super(errorCode, message, e);
     }
 }
