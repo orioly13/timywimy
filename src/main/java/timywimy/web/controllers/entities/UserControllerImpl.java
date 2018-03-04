@@ -1,49 +1,93 @@
 package timywimy.web.controllers.entities;
 
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
-import timywimy.model.security.User;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import timywimy.service.entities.UserService;
+import timywimy.web.dto.User;
+import timywimy.web.dto.common.Response;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Controller
-public class UserControllerImpl extends AbstractEntityController<User> implements UserController {
+@RestController
+@RequestMapping("/entities/users")
+public class UserControllerImpl extends AbstractEntityController<User, timywimy.model.security.User> implements UserController {
 
     @Autowired
     public UserControllerImpl(UserService service) {
-        super(service,
-                LoggerFactory.getLogger(UserControllerImpl.class));
+        super(service);
     }
 
     @Override
-    public User get(UUID id, UUID session) {
-        return service.get(id, session);
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
+    public Response<User> get(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                              @RequestHeader(name = "X-Auth-Session") UUID session,
+                              @PathVariable("id") UUID entityId) {
+        return new Response<>(requestId, service.get(entityId, session));
     }
 
     @Override
-    public User save(User entity, UUID session) {
-        return service.save(entity, session);
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/new")
+    public Response<User> create(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                 @RequestHeader(name = "X-Auth-Session") UUID session,
+                                 @RequestBody User entity) {
+        entity.setId(null);
+        return new Response<>(requestId, service.save(entity, session));
     }
 
     @Override
-    public boolean delete(UUID id, UUID session) {
-        return service.delete(id, session);
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/update")
+    public Response<User> update(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                 @RequestHeader(name = "X-Auth-Session") UUID session,
+                                 @PathVariable("id") UUID entityId,
+                                 @RequestBody User entity) {
+        entity.setId(entityId);
+        return new Response<>(requestId, service.save(entity, session));
+    }
+
+
+    @Override
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/delete")
+    public Response<Boolean> delete(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                    @PathVariable("id") UUID entityId,
+                                    @RequestHeader(name = "X-Auth-Session") UUID session) {
+        return new Response<>(requestId, service.delete(entityId, session));
     }
 
     @Override
-    public List<User> getAll(UUID session) {
-        return service.getAll(session);
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<List<User>> getAll(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                       @RequestHeader(name = "X-Auth-Session") UUID session) {
+        return new Response<>(requestId, service.getAll(session));
     }
 
     @Override
-    public User getByEmail(String email, UUID session) {
-        Assert.notNull(email, "entity class must not be null");
-        Assert.notNull(session, "user session must not be null");
-        return ((UserService) service).getByEmail(email, session);
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/byEmail")
+    public Response<User> getByEmail(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                     @RequestParam("email") String email,
+                                     @RequestHeader(name = "X-Auth-Session") UUID session) {
+        return new Response<>(requestId, ((UserService) service).getByEmail(email, session));
+    }
+
+    @Override
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/ban")
+    public Response<Boolean> ban(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                 @PathVariable("id") UUID idToBan,
+                                 @RequestHeader(name = "X-Auth-Session") UUID bannedBy,
+                                 @RequestParam(value = "banned_till", required = false) ZonedDateTime bannedTill) {
+        return new Response<>(requestId, ((UserService) service).ban(idToBan, bannedBy, bannedTill));
+    }
+
+    @Override
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/unban")
+    public Response<Boolean> unBan(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                   @PathVariable("id") UUID bannedId,
+                                   @RequestHeader(name = "X-Auth-Session") UUID unbannedBy) {
+        return new Response<>(requestId, ((UserService) service).unBan(bannedId, unbannedBy));
     }
 
 }

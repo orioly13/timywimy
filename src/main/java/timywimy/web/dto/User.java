@@ -3,9 +3,10 @@ package timywimy.web.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@JsonPropertyOrder(value = {"id", "email", "name", "password", "token", "old_password"})
+@JsonPropertyOrder(value = {"id", "email", "name", "password", "old_password", "token", "banned", "banned_till"})
 public class User {
     //todo expand with events and shit
     private UUID id;
@@ -15,6 +16,9 @@ public class User {
     private String token;
     @JsonProperty("old_password")
     private String oldPassword;
+    private Boolean banned;
+    @JsonProperty("banned_till")
+    private ZonedDateTime bannedTill;
 
     public User() {
     }
@@ -70,5 +74,21 @@ public class User {
 
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+
+    public Boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(Boolean banned) {
+        this.banned = banned;
+    }
+
+    public ZonedDateTime getBannedTill() {
+        return bannedTill;
+    }
+
+    public void setBannedTill(ZonedDateTime bannedTill) {
+        this.bannedTill = bannedTill;
     }
 }

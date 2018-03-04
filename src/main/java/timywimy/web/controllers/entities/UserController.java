@@ -1,15 +1,18 @@
 package timywimy.web.controllers.entities;
 
-import timywimy.model.security.User;
 
+import timywimy.web.dto.User;
+import timywimy.web.dto.common.Response;
+
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public interface UserController extends EntityController<User> {
 
-    User getByEmail(String email, UUID session);
-//
-//    boolean ban(UUID idToBan, UUID bannedBy, ZonedDateTime bannedTill);
-//
-//    boolean unBan(UUID bannedId, UUID bannedBy);
+    Response<User> getByEmail(Integer requestId, String email, UUID session);
+
+    Response<Boolean> ban(Integer requestId, UUID idToBan, UUID bannedBy, ZonedDateTime bannedTill);
+
+    Response<Boolean> unBan(Integer requestId, UUID bannedId, UUID unbannedBy);
 
 }

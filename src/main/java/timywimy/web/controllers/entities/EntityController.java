@@ -1,17 +1,20 @@
 package timywimy.web.controllers.entities;
 
-import timywimy.model.common.BaseEntity;
+
+import timywimy.web.dto.common.Response;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface EntityController<T extends BaseEntity> {
+public interface EntityController<T> {
 
-    T get(UUID id, UUID session);
+    Response<T> get(Integer requestId, UUID session, UUID entityId);
 
-    T save(T entity, UUID session);
+    Response<T> create(Integer requestId, UUID session, T entity);
 
-    boolean delete(UUID id, UUID session);
+    Response<T> update(Integer requestId, UUID session, UUID entityId, T entity);
 
-    List<T> getAll(UUID session);
+    Response<Boolean> delete(Integer requestId, UUID session, UUID entityId);
+
+    Response<List<T>> getAll(Integer requestId, UUID session);
 }

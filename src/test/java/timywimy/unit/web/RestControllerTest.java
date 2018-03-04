@@ -74,13 +74,13 @@ public class RestControllerTest {
         }
     };
 
-    @PostConstruct
-    private void postConstruct() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .addFilter(CHARACTER_ENCODING_FILTER)
-                .build();
-    }
+//    @PostConstruct
+//    private void postConstruct() {
+//        mockMvc = MockMvcBuilders
+//                .webAppContextSetup(webApplicationContext)
+//                .addFilter(CHARACTER_ENCODING_FILTER)
+//                .build();
+//    }
 
 
     @AfterClass

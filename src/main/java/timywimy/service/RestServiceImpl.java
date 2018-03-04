@@ -126,7 +126,7 @@ public class RestServiceImpl implements RestService {
         //find session
         timywimy.model.security.User userBySession = getUserBySession(sessionId);
         if (userBySession == null) {
-            throw new ServiceException(ErrorCode.SESSION_NOT_FOUND);
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
         }
 
         RequestUtil.validateEmptyField(ServiceException.class, user, "user");
