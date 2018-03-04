@@ -6,7 +6,8 @@
 
     <!-- Not necessary, already included with component-scan -->
     <!--<context:annotation-config/>-->
-    <context:property-placeholder location="classpath:properties/services.properties"/>
+    <!--<import resource="spring-db.xml"/>-->
+    <context:property-placeholder location="classpath:properties/api.properties"/>
     <context:component-scan base-package="timywimy.service"/>
 
 </beans>
