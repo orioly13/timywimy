@@ -43,9 +43,6 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     protected void assertSave(T entity, UUID userId) {
         RequestUtil.validateEmptyFields(RepositoryException.class,
                 new PairFieldName<>(entity, "entity"), new PairFieldName<>(userId, "user"));
-        if (entity.getDeletedTs() != null) {
-            throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "deleteTs can't be used with update");
-        }
     }
 
     protected T save(Class<T> entityClass, T entity, UUID userId) {
@@ -55,11 +52,6 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
             entityManager.persist(entity);
             return entity;
         } else {
-            //find entity and check if it's deleted (if not- update)
-            T foundEntity = entityManager.find(entityClass, entity.getId());
-            if (foundEntity == null || foundEntity.getDeletedTs() != null) {
-                return null;
-            }
             entity.setUpdatedBy(userId);
             return entityManager.merge(entity);
         }
@@ -73,12 +65,9 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     protected boolean delete(Class<T> entityClass, UUID entityId, UUID userId) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
 
-        CriteriaUpdate<T> criteria = builder.createCriteriaUpdate(entityClass);
+        CriteriaDelete<T> criteria = builder.createCriteriaDelete(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
-        criteria.set(queryRoot.get("deletedBy"), userId).
-                set(queryRoot.get("updatedBy"), userId).
-                set(queryRoot.get("deletedTs"), ZonedDateTime.now()).
-                where(getIdExpression(queryRoot, entityId));
+        criteria.where(getIdExpression(queryRoot, entityId));
 
         return entityManager.createQuery(criteria).executeUpdate() != 0;
     }
@@ -88,7 +77,7 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
 
         CriteriaQuery<T> criteria = builder.createQuery(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
-        criteria.select(queryRoot).where(getDeletedTsExpression(queryRoot, null));
+        criteria.select(queryRoot);
 
         return entityManager.createQuery(criteria).getResultList();
     }
@@ -104,16 +93,16 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     }
 
     protected Expression<Boolean> getIdExpression(Root<T> queryRoot, UUID entityId) {
-        return getDeletedTsExpression(queryRoot, builder.equal(queryRoot.get("id"), entityId));
+        return builder.equal(queryRoot.get("id"), entityId);
     }
 
-    protected Expression<Boolean> getDeletedTsExpression(Root<T> queryRoot, Expression<Boolean> expression) {
-        if (expression == null) {
-            return builder.isNull(queryRoot.get("deletedTs"));
-        } else {
-            return builder.and(
-                    expression,
-                    builder.isNull(queryRoot.get("deletedTs")));
-        }
-    }
+//    protected Expression<Boolean> getDeletedTsExpression(Root<T> queryRoot, Expression<Boolean> expression) {
+//        if (expression == null) {
+//            return builder.isNull(queryRoot.get("deletedTs"));
+//        } else {
+//            return builder.and(
+//                    expression,
+//                    builder.isNull(queryRoot.get("deletedTs")));
+//        }
+//    }
 }

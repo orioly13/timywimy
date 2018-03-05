@@ -53,8 +53,8 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
     public List<User> getAll() {
         CriteriaQuery<User> criteria = builder.createQuery(User.class);
         Root<User> userRoot = criteria.from(User.class);
-        criteria.select(userRoot).where(getDeletedTsExpression(userRoot, null))
-                .orderBy(builder.asc(userRoot.get("name")));
+        criteria.select(userRoot).
+                orderBy(builder.asc(userRoot.get("name")));
 
         return entityManager.createQuery(criteria).getResultList();
     }
@@ -65,8 +65,7 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
 
         CriteriaQuery<User> criteria = builder.createQuery(User.class);
         Root<User> userRoot = criteria.from(User.class);
-        criteria.select(userRoot).where(
-                getDeletedTsExpression(userRoot, builder.equal(userRoot.get("email"), email)));
+        criteria.select(userRoot).where(builder.equal(userRoot.get("email"), email));
 
         return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());
     }

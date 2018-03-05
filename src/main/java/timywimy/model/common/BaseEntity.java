@@ -25,13 +25,13 @@ public interface BaseEntity {
 
     void setUpdatedTs(ZonedDateTime updatedTs);
 
-    UUID getDeletedBy();
-
-    void setDeletedBy(UUID deletedBy);
-
-    ZonedDateTime getDeletedTs();
-
-    void setDeletedTs(ZonedDateTime deletedTs);
+//    UUID getDeletedBy();
+//
+//    void setDeletedBy(UUID deletedBy);
+//
+//    ZonedDateTime getDeletedTs();
+//
+//    void setDeletedTs(ZonedDateTime deletedTs);
 
     int getVersion();
 

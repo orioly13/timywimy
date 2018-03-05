@@ -47,8 +47,9 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     public List<Event> getAll() {
         CriteriaQuery<Event> criteria = builder.createQuery(Event.class);
         Root<Event> userRoot = criteria.from(Event.class);
-        criteria.select(userRoot).where(getDeletedTsExpression(userRoot, null))
-                .orderBy(builder.asc(userRoot.get("owner.id")), builder.asc(userRoot.get("dateTimeZone")));
+        criteria.select(userRoot).
+                orderBy(builder.asc(userRoot.get("owner.id")),
+                        builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();
     }
@@ -56,7 +57,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     @Override
     public Collection<Event> getAllByOwner(User owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
-        return getAllByOwner(owner.getEvents());
+        return owner.getEvents();
     }
 
     @Override

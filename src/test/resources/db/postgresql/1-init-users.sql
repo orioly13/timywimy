@@ -9,9 +9,9 @@ VALUES ('19f7231e-1996-11e8-accf-0ed5f89f718b', now(), 'admin', 'admin@user.test
 --user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('19f725c6-1996-11e8-accf-0ed5f89f718b', now(), 'user', 'user@user.com', 'P@1ui$$pass', 0, TRUE);
---deleted user
-INSERT INTO sec_users (id, created_ts, name, email, password, role, active, deleted_ts)
-VALUES ('19f7294a-1996-11e8-accf-0ed5f89f718b', now(), 'deleted_user', 'deleted_user@user.test.com', 'pL@se145', 0, TRUE, now());
+--inactive user
+INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
+VALUES ('19f7294a-1996-11e8-accf-0ed5f89f718b', now(), 'inactive_user', 'inactive_user@user.com', 'P@1ui$$pass', 0, FALSE);
 --invalid role user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('ea7d161f-743a-4863-9277-770a95591d3e', now(), 'invalid_role_user', 'invalid_role_user@user.test.com', 'pL@se145', 14, TRUE);

@@ -77,7 +77,7 @@ public class UserRepositoryTest {
         //user is not in DB
         Assert.assertNull(repository.get(UserTestData.NO_EXISTENT_USER_ID));
         //user is deleted (deleted_ts not null)
-        Assert.assertNull(repository.get(UserTestData.DELETED_USER_ID));
+        Assert.assertNull(repository.get(UserTestData.INACTIVE_USER_ID));
     }
 
     @Test
@@ -128,10 +128,10 @@ public class UserRepositoryTest {
         Assert.assertNull(notExisted);
         Assert.assertNull(repository.get(UserTestData.NO_EXISTENT_USER_ID));
         //update deleted user
-        newUser.setId(UserTestData.DELETED_USER_ID);
+        newUser.setId(UserTestData.INACTIVE_USER_ID);
         User deletedUser = repository.save(newUser, UserTestData.ROOT_ID);
         Assert.assertNull(deletedUser);
-        Assert.assertNull(repository.get(UserTestData.DELETED_USER_ID));
+        Assert.assertNull(repository.get(UserTestData.INACTIVE_USER_ID));
 
         //create user
         User createdUser = repository.save(UserTestData.getNewUser(), UserTestData.ROOT_ID);
@@ -216,9 +216,9 @@ public class UserRepositoryTest {
         Assert.assertEquals(notExisted, false);
         Assert.assertNull(repository.get(UserTestData.NO_EXISTENT_USER_ID));
         //deleted
-        boolean deleted = repository.delete(UserTestData.DELETED_USER_ID, UserTestData.ROOT_ID);
+        boolean deleted = repository.delete(UserTestData.INACTIVE_USER_ID, UserTestData.ROOT_ID);
         Assert.assertEquals(deleted, false);
-        Assert.assertNull(repository.get(UserTestData.DELETED_USER_ID));
+        Assert.assertNull(repository.get(UserTestData.INACTIVE_USER_ID));
     }
 
     @Test

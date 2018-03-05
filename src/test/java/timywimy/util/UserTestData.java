@@ -8,7 +8,8 @@ public class UserTestData {
     public static final UUID ROOT_ID = UUID.fromString("3088b1fc-43c2-4951-8b78-1f56261c16ca");
     public static final UUID ADMIN_ID = UUID.fromString("19f7231e-1996-11e8-accf-0ed5f89f718b");
     public static final UUID USER_ID = UUID.fromString("19f725c6-1996-11e8-accf-0ed5f89f718b");
-    public static final UUID DELETED_USER_ID = UUID.fromString("19f7294a-1996-11e8-accf-0ed5f89f718b");
+    public static final UUID INACTIVE_USER_ID = UUID.fromString("19f7294a-1996-11e8-accf-0ed5f89f718b");
+    public static final UUID DELETED_USER_ID = UUID.fromString("4bffe4c9-6080-42fd-b190-e13536866175");
     public static final UUID NO_EXISTENT_USER_ID = UUID.fromString("d6e55696-ab79-4b81-8bd1-d5aa7f3f2fe4");
     public static final UUID INVALID_ROLE_USER_ID = UUID.fromString("ea7d161f-743a-4863-9277-770a95591d3e");
 

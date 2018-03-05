@@ -47,8 +47,9 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     public List<Schedule> getAll() {
         CriteriaQuery<Schedule> criteria = builder.createQuery(Schedule.class);
         Root<Schedule> userRoot = criteria.from(Schedule.class);
-        criteria.select(userRoot).where(getDeletedTsExpression(userRoot, null))
-                .orderBy(builder.asc(userRoot.get("owner.id")), builder.asc(userRoot.get("dateTimeZone")));
+        criteria.select(userRoot).
+                orderBy(builder.asc(userRoot.get("owner.id")),
+                        builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();
     }
@@ -56,7 +57,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     @Override
     public Collection<Schedule> getAllByOwner(User owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
-        return getAllByOwner(owner.getSchedules());
+        return owner.getSchedules();
     }
 
     @Override

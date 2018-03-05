@@ -26,11 +26,11 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     private UUID updatedBy;
     @Column(name = "updated_ts", columnDefinition = "timestamp with time zone")
     private ZonedDateTime updatedTs;
-    @Column(name = "deleted_by", columnDefinition = "uuid")
-    @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private UUID deletedBy;
-    @Column(name = "deleted_ts", columnDefinition = "timestamp with time zone")
-    private ZonedDateTime deletedTs;
+//    @Column(name = "deleted_by", columnDefinition = "uuid")
+//    @Type(type = "org.hibernate.type.PostgresUUIDType")
+//    private UUID deletedBy;
+//    @Column(name = "deleted_ts", columnDefinition = "timestamp with time zone")
+//    private ZonedDateTime deletedTs;
     @Version
     @Column(name = "version", columnDefinition = "integer", nullable = false)
     private int version;
@@ -84,26 +84,26 @@ public abstract class AbstractBaseEntity implements BaseEntity {
     public void setUpdatedTs(ZonedDateTime updatedTs) {
         this.updatedTs = updatedTs;
     }
-
-    @Override
-    public UUID getDeletedBy() {
-        return deletedBy;
-    }
-
-    @Override
-    public void setDeletedBy(UUID deletedBy) {
-        this.deletedBy = deletedBy;
-    }
-
-    @Override
-    public ZonedDateTime getDeletedTs() {
-        return deletedTs;
-    }
-
-    @Override
-    public void setDeletedTs(ZonedDateTime deletedTs) {
-        this.deletedTs = deletedTs;
-    }
+//
+//    @Override
+//    public UUID getDeletedBy() {
+//        return deletedBy;
+//    }
+//
+//    @Override
+//    public void setDeletedBy(UUID deletedBy) {
+//        this.deletedBy = deletedBy;
+//    }
+//
+//    @Override
+//    public ZonedDateTime getDeletedTs() {
+//        return deletedTs;
+//    }
+//
+//    @Override
+//    public void setDeletedTs(ZonedDateTime deletedTs) {
+//        this.deletedTs = deletedTs;
+//    }
 
     @Override
     public int getVersion() {

@@ -5,8 +5,8 @@ CREATE TABLE bo_events (
   created_ts  TIMESTAMP WITH TIME ZONE,
   updated_by  UUID CONSTRAINT bo_events_fk_updated_by_sec_users_id REFERENCES sec_users (id),
   updated_ts  TIMESTAMP WITH TIME ZONE,
-  deleted_by  UUID CONSTRAINT bo_events_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
-  deleted_ts  TIMESTAMP WITH TIME ZONE,
+--   deleted_by  UUID CONSTRAINT bo_events_fk_deleted_by_sec_users_id REFERENCES sec_users (id),
+--   deleted_ts  TIMESTAMP WITH TIME ZONE,
   version     INTEGER NOT NULL DEFAULT 0 CONSTRAINT bo_events_version CHECK (version >= 0),
   --owned
   owner_id    UUID    NOT NULL CONSTRAINT bo_events_fk_owner_id_sec_users_id REFERENCES sec_users (id),

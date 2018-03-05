@@ -50,8 +50,9 @@ public class TaskGroupRepositoryImpl extends AbstractOwnedEntityRepository<TaskG
     public List<TaskGroup> getAll() {
         CriteriaQuery<TaskGroup> criteria = builder.createQuery(TaskGroup.class);
         Root<TaskGroup> userRoot = criteria.from(TaskGroup.class);
-        criteria.select(userRoot).where(getDeletedTsExpression(userRoot, null))
-                .orderBy(builder.asc(userRoot.get("owner.id")), builder.asc(userRoot.get("dateTimeZone")));
+        criteria.select(userRoot).
+                orderBy(builder.asc(userRoot.get("owner.id")),
+                builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();
     }
@@ -59,7 +60,7 @@ public class TaskGroupRepositoryImpl extends AbstractOwnedEntityRepository<TaskG
     @Override
     public Collection<TaskGroup> getAllByOwner(User owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
-        return getAllByOwner(owner.getTaskGroups());
+        return owner.getTaskGroups();
     }
 
     @Override
