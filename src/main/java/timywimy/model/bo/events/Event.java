@@ -24,12 +24,12 @@ public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, 
 //    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime duration;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "event", targetEntity = AbstractEventExtension.class)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", targetEntity = AbstractEventExtension.class)
     private Collection<AbstractEventExtension> extensions;
     //THIS OT @LazyCollection(LazyCollectionOption.FALSE) (two eager collections cause excetions)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",targetEntity = Task.class)
     private Collection<Task> tasks;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 

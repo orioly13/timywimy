@@ -5,6 +5,7 @@ import timywimy.model.common.DurableEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,7 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
-    private List<Event> instances;
+    private Collection<Event> instances;
 
     public String getCron() {
         return cron;
@@ -31,11 +32,11 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
         this.cron = cron;
     }
 
-    public List<Event> getInstances() {
+    public Collection<Event> getInstances() {
         return instances;
     }
 
-    public void setInstances(List<Event> instances) {
+    public void setInstances(Collection<Event> instances) {
         this.instances = instances;
     }
 

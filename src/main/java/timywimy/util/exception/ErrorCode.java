@@ -19,7 +19,7 @@ public enum ErrorCode {
 
     SESSION_USER_NOT_FOUND(13, "User with provided credentials not found"),
     ENTITY_NOT_FOUND(14, "Entity with this id not found"),
-
+    ENTITY_DIFFERENT_OWNER(15,"Only owner of entity can do this"),
 
     INTERNAL_REPOSITORY(101, "Internal General Error (Repository level)"),
     //

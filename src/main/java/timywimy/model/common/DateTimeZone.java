@@ -215,4 +215,9 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
         return false;
     }
 
+    public static DateTimeZone now() {
+        ZonedDateTime now = ZonedDateTime.now();
+        return new DateTimeZone(now.toLocalDate(), now.toLocalTime(), now.getZone());
+    }
+
 }
