@@ -1,5 +1,3 @@
---dropping all users before
-DELETE FROM sec_users;
 --root (and API)
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('3088b1fc-43c2-4951-8b78-1f56261c16ca', now(), 'root', 'lol@kek.cheburek', 'time@LORD', 1, TRUE);

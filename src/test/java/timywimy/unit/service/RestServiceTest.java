@@ -27,7 +27,10 @@ import java.util.concurrent.TimeUnit;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource(locations = {"classpath:properties/api-test.properties"})
-@Sql(scripts = {"classpath:db/postgresql/1-init-users.sql"}, config = @SqlConfig(encoding = "UTF-8"))
+@Sql(scripts = {
+        "classpath:db/postgresql/0-delete-all-data.sql",
+        "classpath:db/postgresql/1-init-users.sql"},
+        config = @SqlConfig(encoding = "UTF-8"))
 public class RestServiceTest {
     private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired

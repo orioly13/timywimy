@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS "bo_event_ext_counters";
 DROP TABLE IF EXISTS "bo_events";
 DROP TABLE IF EXISTS "bo_schedules";
 DROP TABLE IF EXISTS "sec_users";
-DROP TABLE IF EXISTS "a_base_entities";
 
 CREATE TABLE sec_users (
   --base

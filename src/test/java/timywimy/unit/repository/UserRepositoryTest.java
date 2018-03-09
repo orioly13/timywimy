@@ -21,7 +21,6 @@ import timywimy.repository.UserRepository;
 import timywimy.util.UserTestData;
 import timywimy.util.exception.RepositoryException;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +29,10 @@ import java.util.concurrent.TimeUnit;
         "classpath:spring/spring-db-test.xml"
 })
 @RunWith(SpringJUnit4ClassRunner.class)
-@Sql(scripts = {"classpath:db/postgresql/1-init-users.sql"}, config = @SqlConfig(encoding = "UTF-8"))
+@Sql(scripts = {
+        "classpath:db/postgresql/0-delete-all-data.sql",
+        "classpath:db/postgresql/1-init-users.sql"},
+        config = @SqlConfig(encoding = "UTF-8"))
 public class UserRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired
@@ -233,7 +235,7 @@ public class UserRepositoryTest {
         List<User> all = repository.getAll();
         Assert.assertNotNull(all);
         Assert.assertEquals(all.size(), 5);
-        for(int i=0;i<all.size();i++){
+        for (int i = 0; i < all.size(); i++) {
 
         }
     }

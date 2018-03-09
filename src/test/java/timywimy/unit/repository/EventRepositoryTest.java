@@ -35,7 +35,11 @@ import java.util.concurrent.TimeUnit;
         "classpath:spring/spring-db-test.xml"
 })
 @RunWith(SpringJUnit4ClassRunner.class)
-@Sql(scripts = {"classpath:db/postgresql/2-init-events.sql"}, config = @SqlConfig(encoding = "UTF-8"))
+@Sql(scripts = {
+        "classpath:db/postgresql/0-delete-all-data.sql",
+        "classpath:db/postgresql/1-init-users.sql",
+        "classpath:db/postgresql/2-init-events.sql"},
+        config = @SqlConfig(encoding = "UTF-8"))
 public class EventRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired
