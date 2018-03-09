@@ -1,8 +1,7 @@
-package timywimy.model.common;
+package timywimy.model.common.util;
 
 import timywimy.model.common.converters.ZoneIdConverter;
 import timywimy.util.TimeFormatUtil;
-import timywimy.util.exception.UncomparableTypesException;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -24,8 +23,8 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
 
     @Transient
     private boolean initialized;
-    @Transient
-    private LocalDateTime localDateTime;
+//    @Transient
+//    private LocalDateTime localDateTime;
     @Transient
     private ZonedDateTime zonedDateTime;
 
@@ -66,14 +65,14 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
         this.zone = zone;
         initialized = false;
     }
-
-    public LocalDateTime getLocalDateTime() {
-        if (!initialized) {
-            init();
-        }
-        return localDateTime;
-    }
-
+//
+//    public LocalDateTime getLocalDateTime() {
+//        if (!initialized) {
+//            init();
+//        }
+//        return localDateTime;
+//    }
+    //returns in UTC if no zone
     public ZonedDateTime getZonedDateTime() {
         if (!initialized) {
             init();
@@ -82,33 +81,40 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
     }
 
     //initialize dates
-
-    private void init() {
-        initLocalDateTime();
-        initOffsetDateTime();
-        initialized = true;
-    }
-
-    private void initLocalDateTime() {
-        if (date == null || time == null) {
-            localDateTime = null;
-        } else {
-            localDateTime = LocalDateTime.of(date, time);
+    public void initIfNeeded() {
+        if (!initialized) {
+            init();
         }
     }
 
+    private void init() {
+//        initLocalDateTime();
+        initOffsetDateTime();
+        initialized = true;
+    }
+//
+//    private void initLocalDateTime() {
+//        if (date == null) {
+//            localDateTime = null;
+//        } else {
+//            localDateTime = LocalDateTime.of(date, time == null ? LocalTime.MIDNIGHT : time);
+//        }
+//    }
+
     private void initOffsetDateTime() {
-        if (date == null || time == null || zone == null) {
+        if (date == null) {
             zonedDateTime = null;
         } else {
-            zonedDateTime = ZonedDateTime.of(date, time, zone);
+            zonedDateTime = ZonedDateTime.of(date,
+                    time == null ? LocalTime.MIDNIGHT : time,
+                    zone == null ? ZoneId.of("UTC") : zone);
         }
     }
 
     @Override
     public String toString() {
         return String.format("DateTimeZone(%s, %s, %s)",
-                TimeFormatUtil.toString(date), TimeFormatUtil.toString(date), zone);
+                TimeFormatUtil.toString(date), TimeFormatUtil.toString(time), TimeFormatUtil.toString(zone));
     }
 
     @Override
@@ -122,8 +128,7 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
         DateTimeZone that = (DateTimeZone) o;
         return Objects.equals(date, that.date) &&
                 Objects.equals(time, that.time) &&
-                Objects.equals(zone, that.zone) &&
-                super.equals(o);
+                Objects.equals(zone, that.zone);
     }
 
     @Override
@@ -135,6 +140,12 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
     public int compareTo(DateTimeZone o) {
         if (o == null) {
             throw new NullPointerException();
+        }
+        if (!this.initialized) {
+            this.init();
+        }
+        if (!o.initialized) {
+            o.init();
         }
         if (this.equals(o)) {
             return 0;
@@ -149,70 +160,26 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
         if (that == null) {
             throw new NullPointerException();
         }
-        if (canCompareAsZonedDateTime(that)) {
-            return zonedDateTime.isAfter(that.zonedDateTime);
+        if (!this.initialized) {
+            this.init();
         }
-        if (canCompareAsLocalDateTime(that)) {
-            return localDateTime.isAfter(that.localDateTime);
+        if (!that.initialized) {
+            that.init();
         }
-        if (canCompareAsLocalDate(that)) {
-            return date.isAfter(that.date);
-        } else {
-            throw new UncomparableTypesException();
-        }
+        return zonedDateTime.isAfter(that.zonedDateTime);
     }
 
     public boolean isBefore(DateTimeZone that) {
         if (that == null) {
             throw new NullPointerException();
         }
-        if (canCompareAsZonedDateTime(that)) {
-            return zonedDateTime.isBefore(that.zonedDateTime);
+        if (!this.initialized) {
+            this.init();
         }
-        if (canCompareAsLocalDateTime(that)) {
-            return localDateTime.isBefore(that.localDateTime);
+        if (!that.initialized) {
+            that.init();
         }
-        if (canCompareAsLocalDate(that)) {
-            return date.isBefore(that.date);
-        } else {
-            throw new UncomparableTypesException();
-        }
-    }
-
-    private boolean canCompareAsZonedDateTime(DateTimeZone that) {
-        ZonedDateTime thisZonedDateTime = getZonedDateTime();
-        ZonedDateTime thatZonedDateTime = that.getZonedDateTime();
-        if (thisZonedDateTime == null && thatZonedDateTime != null ||
-                thisZonedDateTime != null && thatZonedDateTime == null) {
-            throw new UncomparableTypesException();
-        } else if (thisZonedDateTime != null) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean canCompareAsLocalDateTime(DateTimeZone that) {
-        LocalDateTime thisLocalDateTime = getLocalDateTime();
-        LocalDateTime thatLocalDateTime = that.getLocalDateTime();
-        if (thisLocalDateTime == null && thatLocalDateTime != null ||
-                thisLocalDateTime != null && thatLocalDateTime == null) {
-            throw new UncomparableTypesException();
-        } else if (thisLocalDateTime != null) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean canCompareAsLocalDate(DateTimeZone that) {
-        LocalDateTime thisLocalDateTime = getLocalDateTime();
-        LocalDateTime thatLocalDateTime = that.getLocalDateTime();
-        if (thisLocalDateTime == null && thatLocalDateTime != null ||
-                thisLocalDateTime != null && thatLocalDateTime == null) {
-            throw new UncomparableTypesException();
-        } else if (thisLocalDateTime != null) {
-            return true;
-        }
-        return false;
+        return zonedDateTime.isBefore(that.zonedDateTime);
     }
 
     public static DateTimeZone now() {

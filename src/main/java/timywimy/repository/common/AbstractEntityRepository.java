@@ -1,5 +1,6 @@
 package timywimy.repository.common;
 
+import org.hibernate.Criteria;
 import org.springframework.util.Assert;
 import timywimy.model.common.BaseEntity;
 import timywimy.util.PairFieldName;
@@ -13,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public abstract class AbstractEntityRepository<T extends BaseEntity> implements EntityRepository<T> {
@@ -35,6 +37,19 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
 
         CriteriaQuery<T> criteria = builder.createQuery(entityClass);
         Root<T> queryRoot = criteria.from(entityClass);
+        criteria.select(queryRoot).where(getIdExpression(queryRoot, entityId));
+
+        return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());
+    }
+
+    protected T get(Class<T> entityClass, UUID entityId,Set<String> fetchParameters) {
+        Assert.notNull(entityClass, "entity class should be provided to construct query");
+
+        CriteriaQuery<T> criteria = builder.createQuery(entityClass).distinct(true);
+        Root<T> queryRoot = criteria.from(entityClass);
+        for(String parameter:fetchParameters){
+            queryRoot.fetch(parameter,JoinType.LEFT);
+        }
         criteria.select(queryRoot).where(getIdExpression(queryRoot, entityId));
 
         return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());

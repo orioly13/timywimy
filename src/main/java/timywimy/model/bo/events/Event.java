@@ -5,11 +5,12 @@ import timywimy.model.bo.tasks.Task;
 import timywimy.model.common.AbstractDefaultEntity;
 import timywimy.model.common.DateTimeZoneEntity;
 import timywimy.model.common.DurableEntity;
-import timywimy.model.common.DateTimeZone;
+import timywimy.model.common.converters.DurationConverter;
+import timywimy.model.common.util.DateTimeZone;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Collection;
+import java.time.Duration;
+import java.util.List;
 
 @Entity
 @Table(name = "bo_events", indexes = {
@@ -20,34 +21,36 @@ public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, 
 
     @Embedded
     private DateTimeZone dateTimeZone;
-    @Column(name = "duration", columnDefinition = "timestamp without time zone")
-//    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime duration;
+    @Column(name = "duration", columnDefinition = "varchar(20)")
+    @Convert(converter = DurationConverter.class)
+    private Duration duration;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", targetEntity = AbstractEventExtension.class)
-    private Collection<AbstractEventExtension> extensions;
-    //THIS OT @LazyCollection(LazyCollectionOption.FALSE) (two eager collections cause excetions)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",targetEntity = Task.class)
-    private Collection<Task> tasks;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
+            targetEntity = AbstractEventExtension.class,
+            orphanRemoval = true, cascade = {CascadeType.REMOVE,CascadeType.REFRESH})
+    private List<AbstractEventExtension> extensions;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
+            targetEntity = Task.class)
+    private List<Task> tasks;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    public Collection<AbstractEventExtension> getExtensions() {
+    public List<AbstractEventExtension> getExtensions() {
         return extensions;
     }
 
-    public void setExtensions(Collection<AbstractEventExtension> extensions) {
+    public void setExtensions(List<AbstractEventExtension> extensions) {
         this.extensions = extensions;
     }
 
 
-    public Collection<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
 
-    public void setTasks(Collection<Task> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 
@@ -72,12 +75,12 @@ public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, 
     }
 
     @Override
-    public LocalDateTime getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
     @Override
-    public void setDuration(LocalDateTime duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 }

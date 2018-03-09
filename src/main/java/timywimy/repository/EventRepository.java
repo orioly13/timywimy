@@ -4,12 +4,14 @@ import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
 import timywimy.repository.common.EventTaskEntityRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public interface EventRepository extends EventTaskEntityRepository<Event> {
 
-    Collection<AbstractEventExtension> addEventExtensions(UUID eventId, Collection<AbstractEventExtension> eventExtensions, UUID userId);
+    List<AbstractEventExtension> addExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId);
 
-    Collection<AbstractEventExtension> removeEventExtension(UUID eventId, Collection<AbstractEventExtension> eventExtensions, UUID userId);
+    List<AbstractEventExtension> updateExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId);
+
+    List<AbstractEventExtension> deleteExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId);
 }

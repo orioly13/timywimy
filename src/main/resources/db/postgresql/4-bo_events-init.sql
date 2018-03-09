@@ -15,7 +15,7 @@ CREATE TABLE bo_events (
   --described
   description VARCHAR(255),
   --durable
-  duration    TIMESTAMP WITHOUT TIME ZONE,
+  duration    VARCHAR(12),
   --datetimezone
   date        DATE,
   time        TIME,

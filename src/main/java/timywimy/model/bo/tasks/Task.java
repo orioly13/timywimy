@@ -4,12 +4,11 @@ import timywimy.model.bo.events.Event;
 import timywimy.model.bo.tasks.converters.Priority;
 import timywimy.model.bo.tasks.converters.PriorityConverter;
 import timywimy.model.common.AbstractDefaultEntity;
-import timywimy.model.common.DateTimeZone;
+import timywimy.model.common.util.DateTimeZone;
 import timywimy.model.common.DateTimeZoneEntity;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "bo_tasks",
@@ -17,16 +16,16 @@ import java.util.List;
                 @Index(name = "bo_tasks_idx_priority", columnList = "owner_id,priority")})
 public class Task extends AbstractDefaultEntity implements DateTimeZoneEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_id")
     private Task parent;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL)
     private Collection<Task> children;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "event_id")
     private Event event;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")
     private TaskGroup group;
 

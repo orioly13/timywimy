@@ -3,7 +3,7 @@ package timywimy.repository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.tasks.Task;
-import timywimy.model.common.DateTimeZone;
+import timywimy.model.common.util.DateTimeZone;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractEventTaskEntityRepository;
 import timywimy.util.RequestUtil;
@@ -11,10 +11,7 @@ import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
@@ -24,6 +21,12 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
     public Task get(UUID id) {
         assertGet(id);
         return get(Task.class, id);
+    }
+
+    @Override
+    public Task get(UUID id, Set<String> properties) {
+        assertGet(id);
+        return get(Task.class, id, properties);
     }
 
     @Override
@@ -54,15 +57,15 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
     }
 
     @Override
-    public Collection<Task> getAllByOwner(User owner) {
+    public List<Task> getAllByOwner(User owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
         return owner.getTasks();
     }
 
     @Override
-    public Collection<Task> getByOwnerBetween(User owner, DateTimeZone start, DateTimeZone end) {
+    public List<Task> getByOwnerBetween(User owner, DateTimeZone start, DateTimeZone end) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
-        Collection<Task> allByOwner = getAllByOwner(owner);
+        List<Task> allByOwner = getAllByOwner(owner);
         return getBetween(allByOwner, start, end);
     }
 

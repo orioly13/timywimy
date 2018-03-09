@@ -14,6 +14,7 @@ import timywimy.util.exception.RepositoryException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -24,6 +25,12 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
     public User get(UUID id) {
         assertGet(id);
         return get(User.class, id);
+    }
+
+    @Override
+    public User get(UUID id, Set<String> properties) {
+        assertGet(id);
+        return get(User.class, id, properties);
     }
 
     @Override

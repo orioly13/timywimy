@@ -9,9 +9,8 @@ import timywimy.model.security.converters.Role;
 import timywimy.model.security.converters.RoleConverter;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "sec_users")
@@ -36,13 +35,13 @@ public class User extends AbstractNamedEntity {
     private ZonedDateTime bannedTill;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<Schedule> schedules;
+    private List<Schedule> schedules;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<Event> events;
+    private List<Event> events;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<TaskGroup> taskGroups;
+    private List<TaskGroup> taskGroups;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private Collection<Task> tasks;
+    private List<Task> tasks;
 
 
     public String getEmail() {
@@ -115,41 +114,41 @@ public class User extends AbstractNamedEntity {
     }
 
 
-    public Collection<Schedule> getSchedules() {
+    public List<Schedule> getSchedules() {
         return schedules;
     }
 
 
-    public void setSchedules(Collection<Schedule> schedules) {
+    public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
     }
 
 
-    public Collection<Event> getEvents() {
+    public List<Event> getEvents() {
         return events;
     }
 
 
-    public void setEvents(Collection<Event> events) {
+    public void setEvents(List<Event> events) {
         this.events = events;
     }
 
 
-    public Collection<TaskGroup> getTaskGroups() {
+    public List<TaskGroup> getTaskGroups() {
         return taskGroups;
     }
 
-    public void setTaskGroups(Collection<TaskGroup> taskGroups) {
+    public void setTaskGroups(List<TaskGroup> taskGroups) {
         this.taskGroups = taskGroups;
     }
 
 
-    public Collection<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
 
-    public void setTasks(Collection<Task> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 

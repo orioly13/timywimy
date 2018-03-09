@@ -1,10 +1,9 @@
 package timywimy.util;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 
 public class TimeFormatUtil {
@@ -40,6 +39,10 @@ public class TimeFormatUtil {
 
     public static String toString(ZonedDateTime zonedDateTime) {
         return zonedDateTime == null ? "" : zonedDateTime.format(DATE_TIME_ZONE_FORMATTER);
+    }
+
+    public static String toString(ZoneId zoneId) {
+        return zoneId == null ? "" : zoneId.getDisplayName(TextStyle.NARROW, Locale.ENGLISH);
     }
 
     //parse

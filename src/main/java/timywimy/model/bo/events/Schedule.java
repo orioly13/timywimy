@@ -2,11 +2,11 @@ package timywimy.model.bo.events;
 
 import timywimy.model.common.AbstractDefaultEntity;
 import timywimy.model.common.DurableEntity;
+import timywimy.model.common.converters.DurationConverter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "bo_schedules",
@@ -16,9 +16,9 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
 
     @Column(name = "cron", columnDefinition = "varchar(20)")
     private String cron;
-    @Column(name = "duration", columnDefinition = "timestamp without time zone")
-//    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime duration;
+    @Column(name = "duration", columnDefinition = "varchar(20)")
+    @Convert(converter = DurationConverter.class)
+    private Duration duration;
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
@@ -41,12 +41,12 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
     }
 
     @Override
-    public LocalDateTime getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
     @Override
-    public void setDuration(LocalDateTime duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 }

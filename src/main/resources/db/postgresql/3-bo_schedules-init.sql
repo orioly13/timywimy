@@ -15,7 +15,7 @@ CREATE TABLE bo_schedules (
   --described
   description VARCHAR(255),
   --durable
-  duration    TIMESTAMP WITHOUT TIME ZONE,
+  duration    VARCHAR(12),
   --other fields
   cron        VARCHAR(20)
 );

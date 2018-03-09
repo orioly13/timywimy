@@ -1,14 +1,14 @@
 package timywimy.repository.common;
 
 import timywimy.model.common.AbstractOwnedEntity;
-import timywimy.model.common.DateTimeZone;
 import timywimy.model.common.DateTimeZoneEntity;
+import timywimy.model.common.util.DateTimeZone;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.RepositoryException;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public abstract class AbstractEventTaskEntityRepository<T extends AbstractOwnedEntity> extends
         AbstractOwnedEntityRepository<T> implements EventTaskEntityRepository<T> {
@@ -22,9 +22,9 @@ public abstract class AbstractEventTaskEntityRepository<T extends AbstractOwnedE
     }
 
 
-    protected <D extends DateTimeZoneEntity> Collection<D> getBetween(Collection<D> dateTimeZoneList, DateTimeZone start, DateTimeZone end) {
+    protected <D extends DateTimeZoneEntity> List<D> getBetween(List<D> dateTimeZoneList, DateTimeZone start, DateTimeZone end) {
         assertBetween(start, end);
-        Collection<D> result = new ArrayList<>();
+        List<D> result = new ArrayList<>();
         for (D dateTimeZoneEntity : dateTimeZoneList) {
             if (start.isBefore(dateTimeZoneEntity.getDateTimeZone()) && end.isAfter(dateTimeZoneEntity.getDateTimeZone())) {
                 result.add(dateTimeZoneEntity);

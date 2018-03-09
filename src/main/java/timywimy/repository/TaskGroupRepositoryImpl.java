@@ -4,21 +4,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.tasks.Task;
 import timywimy.model.bo.tasks.TaskGroup;
-import timywimy.model.common.DateTimeZone;
 import timywimy.model.security.User;
-import timywimy.repository.common.AbstractEventTaskEntityRepository;
 import timywimy.repository.common.AbstractOwnedEntityRepository;
-import timywimy.repository.common.OwnedEntityRepository;
 import timywimy.util.RequestUtil;
-import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
@@ -28,6 +21,12 @@ public class TaskGroupRepositoryImpl extends AbstractOwnedEntityRepository<TaskG
     public TaskGroup get(UUID id) {
         assertGet(id);
         return get(TaskGroup.class, id);
+    }
+
+    @Override
+    public TaskGroup get(UUID id, Set<String> properties) {
+        assertGet(id);
+        return get(TaskGroup.class, id, properties);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class TaskGroupRepositoryImpl extends AbstractOwnedEntityRepository<TaskG
     }
 
     @Override
-    public Collection<TaskGroup> getAllByOwner(User owner) {
+    public List<TaskGroup> getAllByOwner(User owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
         return owner.getTaskGroups();
     }

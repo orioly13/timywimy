@@ -1,11 +1,11 @@
 package timywimy.model.common;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
 
 
 public interface DurableEntity extends BaseEntity {
 
-    LocalDateTime getDuration();
+    Duration getDuration();
 
-    void setDuration(LocalDateTime duration);
+    void setDuration(Duration duration);
 }

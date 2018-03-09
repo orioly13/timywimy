@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
-import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractOwnedEntityRepository;
 import timywimy.util.RequestUtil;
@@ -12,10 +11,7 @@ import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
@@ -25,6 +21,12 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     public Schedule get(UUID id) {
         assertGet(id);
         return get(Schedule.class, id);
+    }
+
+    @Override
+    public Schedule get(UUID id, Set<String> properties) {
+        assertGet(id);
+        return get(Schedule.class, id, properties);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     }
 
     @Override
-    public Collection<Schedule> getAllByOwner(User owner) {
+    public List<Schedule> getAllByOwner(User owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
         return owner.getSchedules();
     }

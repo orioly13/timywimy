@@ -50,7 +50,7 @@ CREATE TABLE bo_schedules (
   --described
   description VARCHAR(255),
   --durable
-  duration    TIMESTAMP WITHOUT TIME ZONE,
+  duration    VARCHAR(12),
   --other fields
   cron        VARCHAR(20)
 );
@@ -76,7 +76,7 @@ CREATE TABLE bo_events (
   --described
   description VARCHAR(255),
   --durable
-  duration    TIMESTAMP WITHOUT TIME ZONE,
+  duration    VARCHAR(12),
   --datetimezone
   date        DATE,
   time        TIME,
@@ -169,6 +169,8 @@ CREATE TABLE bo_tasks (
   version     INTEGER NOT NULL DEFAULT 0 CONSTRAINT bo_tasks_version CHECK (version >= 0),
   --owned
   owner_id    UUID    NOT NULL CONSTRAINT bo_tasks_fk_owner_sec_users_id REFERENCES sec_users (id),
+  --named
+  name        VARCHAR(50),
   --described
   description VARCHAR(255),
   --datetimezone
