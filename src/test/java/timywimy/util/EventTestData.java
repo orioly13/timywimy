@@ -13,6 +13,7 @@ public class EventTestData {
     private static final Event EVENT_NEW;
     private static final Event EVENT_EXISTING;
     private static final Event EVENT_EXISTING_WITH_EXTENSIONS;
+    private static final Event EVENT_EXISTING_WITH_TASK;
 
     static {
         EVENT_NEW = new Event();
@@ -30,6 +31,11 @@ public class EventTestData {
         EVENT_EXISTING_WITH_EXTENSIONS.setId(EVENT_2);
         EVENT_EXISTING_WITH_EXTENSIONS.setName("event_2");
         EVENT_EXISTING_WITH_EXTENSIONS.setOwner(UserTestData.getExistingUser());
+
+        EVENT_EXISTING_WITH_TASK = new Event();
+        EVENT_EXISTING_WITH_TASK.setId(EVENT_3);
+        EVENT_EXISTING_WITH_TASK.setName("event_3");
+        EVENT_EXISTING_WITH_TASK.setOwner(UserTestData.getExistingUser());
     }
 
     public static Event getEventNew() {
@@ -60,6 +66,14 @@ public class EventTestData {
         res.setId(EVENT_EXISTING_WITH_EXTENSIONS.getId());
         res.setName(EVENT_EXISTING_WITH_EXTENSIONS.getName());
         res.setOwner(EVENT_EXISTING_WITH_EXTENSIONS.getOwner());
+        return res;
+    }
+
+    public static Event getEventExistingWithTask() {
+        Event res = new Event();
+        res.setId(EVENT_EXISTING_WITH_TASK.getId());
+        res.setName(EVENT_EXISTING_WITH_TASK.getName());
+        res.setOwner(EVENT_EXISTING_WITH_TASK.getOwner());
         return res;
     }
 //

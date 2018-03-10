@@ -1,6 +1,9 @@
 package timywimy.unit.repository;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
@@ -16,6 +19,7 @@ import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.extensions.CounterExtension;
 import timywimy.model.bo.events.extensions.TickBoxExtension;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
+import timywimy.model.bo.tasks.Task;
 import timywimy.repository.EventRepository;
 import timywimy.util.EventTestData;
 import timywimy.util.UserTestData;
@@ -144,7 +148,7 @@ public class EventRepositoryTest {
         extensionsToDelete.add(event1.getExtensions().get(0));
         List<AbstractEventExtension> abstractEventExtensions =
                 repository.deleteExtensions(event.getId(), extensionsToDelete, UserTestData.USER_ID);
-        Assert.assertEquals(1,abstractEventExtensions.size());
+        Assert.assertEquals(1, abstractEventExtensions.size());
     }
 
     @Test
@@ -185,7 +189,7 @@ public class EventRepositoryTest {
         //does not work because i remove stuff using ID
         repository.delete(eventExistingWithExtensions);
         Event event = repository.get(eventExistingWithExtensions.getId());
-        Assert.assertEquals(null,event);
+        Assert.assertEquals(null, event);
     }
 
     @Test
@@ -200,6 +204,65 @@ public class EventRepositoryTest {
 
         List<AbstractEventExtension> extensions = repository.get(eventExistingWithExtensions.getId(), parameters).getExtensions();
         Assert.assertEquals(1, extensions.size());
+    }
+
+    //
+    @Test
+    public void addNewTasks() throws Exception {
+//        repository.get
+        Event event = EventTestData.getEventExisting();
+        Set<String> parameters = new HashSet<>();
+        parameters.add("tasks");
+
+        Task task1 = new Task();
+        task1.setName("task1");
+        task1.setOwner(UserTestData.getExistingUser());
+        task1.setDescription("task1_desc");
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task1);
+        List<Task> tasks1 = repository.addTasks(event.getId(), tasks, UserTestData.USER_ID);
+        Assert.assertEquals(1, tasks1.size());
+//        Event event2 = repository.get(event.getId(), parameters);
+    }
+
+    @Test
+    public void deleteTasks() throws Exception {
+//        repository.get
+        Event event = EventTestData.getEventExistingWithTask();
+        Set<String> parameters = new HashSet<>();
+        parameters.add("tasks");
+
+        Event event1 = repository.get(event.getId(), parameters);
+        Assert.assertEquals(1, event1.getTasks().size());
+
+        List<Task> extensionsToDelete = new ArrayList<>();
+        extensionsToDelete.add(event1.getTasks().get(0));
+        List<Task> tasks = repository.deleteTasks(event.getId(), extensionsToDelete, UserTestData.USER_ID);
+        Assert.assertEquals(0, tasks.size());
+    }
+
+    @Test
+    public void updateTasks() throws Exception {
+//        repository.get
+        Event event = EventTestData.getEventExistingWithTask();
+        Set<String> parameters = new HashSet<>();
+        parameters.add("tasks");
+
+        Event event1 = repository.get(event.getId(), parameters);
+        Assert.assertEquals(1, event1.getTasks().size());
+
+        List<Task> tasks = new ArrayList<>();
+//        AbstractEventExtension extension = ;
+        event1.getTasks().get(0).setCompleted(true);
+
+        tasks.addAll(event1.getTasks());
+        List<Task> tasks1 = repository.updateTasks(event.getId(), tasks, UserTestData.USER_ID);
+//        Event event2 = repository.get(event.getId(), parameters);
+        Assert.assertEquals(tasks1.size(), 1);
+
+        for (Task task : tasks1) {
+            Assert.assertEquals(true, task.isCompleted());
+        }
     }
 
 }

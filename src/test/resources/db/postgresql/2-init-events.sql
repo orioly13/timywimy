@@ -21,6 +21,7 @@ VALUES
   ('103d9a65-0fbe-4ede-9336-7ad0187a1349', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
    '19f725c6-1996-11e8-accf-0ed5f89f718b', 'event_4', NULL, '2018-03-07', NULL, NULL, NULL);
 
+--extensions
 INSERT INTO bo_event_ext_counters (id, created_ts, created_by, event_id, event_order, name, counter)
 VALUES
   ('88ad9289-0cad-4d3a-8ce4-2e2c49376734', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
@@ -30,3 +31,10 @@ INSERT INTO bo_event_ext_tickboxes (id, created_ts, created_by, event_id, event_
 VALUES
   ('402eab09-8da2-4428-bc1e-3a26a46b8148', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
    '62226b5a-3ab6-496b-94bf-93351aaf6508', 1, 'tick-tock', FALSE);
+
+--task
+INSERT INTO bo_tasks (id, created_ts, created_by, owner_id, event_id, name, description, priority)
+VALUES
+  ('b1dc4d9e-0e95-4dfc-b3f9-26face204d89', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
+   '19f725c6-1996-11e8-accf-0ed5f89f718b',
+   '08d60cfd-aa80-473a-b1a4-015f2a28300c', 'task_T', 'task_desc', 2);

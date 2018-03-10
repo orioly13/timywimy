@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
+import timywimy.model.bo.tasks.Task;
+import timywimy.model.common.BaseEntity;
 import timywimy.model.common.util.DateTimeZone;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractEventTaskEntityRepository;
@@ -19,12 +21,12 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event> implements EventRepository {
 
-    private static final Set<String> extensions;
-
-    static {
-        extensions = new HashSet<>();
-        extensions.add("extensions");
-    }
+//    private static final Set<String> extensions;
+//    private static final Set<String> tasks;
+//
+//    static {
+//
+//    }
 
     @Override
     public Event get(UUID id) {
@@ -86,42 +88,73 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
         return getBetween(allByOwner, start, end);
     }
 
-    @Override
-    @Transactional
-    public List<AbstractEventExtension> addExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId) {
-        RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
-        RequestUtil.validateEmptyField(RepositoryException.class, eventExtensions, "extensions");
-        Event event = get(eventId);
-        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
-        for (AbstractEventExtension toAdd : eventExtensions) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toAdd, "extension");
+    private <E extends BaseEntity> void persistEntity(UUID userId, E toAdd) {
+        toAdd.setCreatedBy(userId);
+        toAdd.setId(null);
+        entityManager.persist(toAdd);
+    }
 
-            toAdd.setCreatedBy(userId);
-            toAdd.setEvent(event);
-            toAdd.setId(null);
-            entityManager.persist(toAdd);
+    private <E extends BaseEntity> boolean isFoundToDelete(E toDelete, List<E> children) {
+        boolean foundToDelete = false;
+        Iterator<E> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            E child = iterator.next();
+            if (toDelete.getId().equals(child.getId())) {
+                foundToDelete = true;
+                entityManager.remove(child);
+                iterator.remove();
+                break;
+            }
         }
-        return get(eventId, extensions).getExtensions();
+        return foundToDelete;
+    }
+
+    private <E extends BaseEntity> boolean isFoundToUpdate(UUID userId, E toUpdate, E child) {
+        boolean foundToUpdate = false;
+        if (toUpdate.getId().equals(child.getId())) {
+            foundToUpdate = true;
+            toUpdate.setUpdatedBy(userId);
+        }
+        return foundToUpdate;
     }
 
     @Override
     @Transactional
-    public List<AbstractEventExtension> updateExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId) {
+    public List<AbstractEventExtension> addExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
-        RequestUtil.validateEmptyField(RepositoryException.class, eventExtensions, "extensions");
+        RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
+        Event event = get(eventId);
+        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
+        List<AbstractEventExtension> eventExtensions = event.getExtensions();
+        for (AbstractEventExtension toAdd : extensions) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toAdd, "extension");
+
+            toAdd.setEvent(event);
+            persistEntity(userId, toAdd);
+            eventExtensions.add(toAdd);
+        }
+        Set<String> extensionParameter = new HashSet<>();
+        extensionParameter.add("extensions");
+        return get(eventId, extensionParameter).getExtensions();
+    }
+
+    @Override
+    @Transactional
+    public List<AbstractEventExtension> updateExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
+        RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
         Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
 
-        for (AbstractEventExtension toUpdate : eventExtensions) {
+        for (AbstractEventExtension toUpdate : extensions) {
             RequestUtil.validateEmptyField(RepositoryException.class, toUpdate, "extension");
             RequestUtil.validateEmptyField(RepositoryException.class, toUpdate.getId(), "extension id");
 
             boolean foundToUpdate = false;
             //without transaction proxy can't be initialized
             for (AbstractEventExtension extension : event.getExtensions()) {
-                if (toUpdate.getId().equals(extension.getId())) {
-                    foundToUpdate = true;
-                    toUpdate.setUpdatedBy(userId);
+                foundToUpdate = isFoundToUpdate(userId, toUpdate, extension);
+                if (foundToUpdate) {
                     toUpdate.setEvent(event);
                     entityManager.merge(toUpdate);
                     break;
@@ -133,39 +166,105 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
                         "Trying to update extensions that don't exist in event");
             }
         }
-
-        return get(eventId, extensions).getExtensions();
+        Set<String> extensionParameter = new HashSet<>();
+        extensionParameter.add("extensions");
+        return get(eventId, extensionParameter).getExtensions();
     }
 
     @Override
     @Transactional
-    public List<AbstractEventExtension> deleteExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId) {
+    public List<AbstractEventExtension> deleteExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
-        RequestUtil.validateEmptyField(RepositoryException.class, eventExtensions, "extensions");
+        RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
         Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
 
-        for (AbstractEventExtension toDelete : eventExtensions) {
+        for (AbstractEventExtension toDelete : extensions) {
             RequestUtil.validateEmptyField(RepositoryException.class, toDelete, "extension");
             RequestUtil.validateEmptyField(RepositoryException.class, toDelete.getId(), "extension id");
 
-            boolean foundToDelete = false;
-            Iterator<AbstractEventExtension> iterator = event.getExtensions().iterator();
-            while (iterator.hasNext()){
-                AbstractEventExtension extension = iterator.next();
-                if (toDelete.getId().equals(extension.getId())) {
-                    foundToDelete = true;
-                    entityManager.remove(extension);
-                    iterator.remove();
-                    break;
-                }
-            }
-
-            if (!foundToDelete) {
+            if (!isFoundToDelete(toDelete, event.getExtensions())) {
                 throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
                         "Trying to delete extensions that don't exist in event");
             }
         }
-        return get(eventId, extensions).getExtensions();
+        Set<String> extensionParameter = new HashSet<>();
+        extensionParameter.add("extensions");
+        return get(eventId, extensionParameter).getExtensions();
+    }
+
+    @Override
+    public List<Task> addTasks(UUID eventId, List<Task> tasks, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
+        RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
+        Event event = get(eventId);
+        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
+        List<Task> eventTasks = event.getTasks();
+        for (Task toAdd : tasks) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toAdd, "task");
+
+            toAdd.setEvent(event);
+            persistEntity(userId, toAdd);
+            eventTasks.add(toAdd);
+
+        }
+        Set<String> taskParameter = new HashSet<>();
+        taskParameter.add("tasks");
+        return get(eventId, taskParameter).getTasks();
+    }
+
+
+    @Override
+    public List<Task> updateTasks(UUID eventId, List<Task> tasks, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
+        RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
+        Event event = get(eventId);
+        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
+
+        for (Task toUpdate : tasks) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate, "task");
+            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate.getId(), "task id");
+
+            boolean foundToUpdate = false;
+            //without transaction proxy can't be initialized
+            for (Task task : event.getTasks()) {
+                foundToUpdate = isFoundToUpdate(userId, toUpdate, task);
+                if (foundToUpdate) {
+                    toUpdate.setEvent(event);
+                    entityManager.merge(toUpdate);
+                    break;
+                }
+            }
+
+            if (!foundToUpdate) {
+                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                        "Trying to update tasks that don't exist in event");
+            }
+        }
+
+        Set<String> taskParameter = new HashSet<>();
+        taskParameter.add("tasks");
+        return get(eventId, taskParameter).getTasks();
+    }
+
+    @Override
+    public List<Task> deleteTasks(UUID eventId, List<Task> tasks, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
+        RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
+        Event event = get(eventId);
+        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
+
+        for (Task toDelete : tasks) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toDelete, "task");
+            RequestUtil.validateEmptyField(RepositoryException.class, toDelete.getId(), "task id");
+
+            if (!isFoundToDelete(toDelete, event.getTasks())) {
+                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                        "Trying to delete extensions that don't exist in event");
+            }
+        }
+        Set<String> taskParameter = new HashSet<>();
+        taskParameter.add("tasks");
+        return get(eventId, taskParameter).getTasks();
     }
 }
