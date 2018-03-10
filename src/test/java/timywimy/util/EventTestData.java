@@ -12,6 +12,7 @@ public class EventTestData {
 
     private static final Event EVENT_NEW;
     private static final Event EVENT_EXISTING;
+    private static final Event EVENT_EXISTING_WITH_EXTENSIONS;
 
     static {
         EVENT_NEW = new Event();
@@ -24,6 +25,11 @@ public class EventTestData {
         EVENT_EXISTING.setName("event_1");
         EVENT_EXISTING.setOwner(UserTestData.getExistingUser());
 //        EXISTING_USER.setEmail("user@user.com");
+
+        EVENT_EXISTING_WITH_EXTENSIONS = new Event();
+        EVENT_EXISTING_WITH_EXTENSIONS.setId(EVENT_2);
+        EVENT_EXISTING_WITH_EXTENSIONS.setName("event_2");
+        EVENT_EXISTING_WITH_EXTENSIONS.setOwner(UserTestData.getExistingUser());
     }
 
     public static Event getEventNew() {
@@ -46,6 +52,14 @@ public class EventTestData {
         res.setId(EVENT_EXISTING.getId());
         res.setName(EVENT_EXISTING.getName());
         res.setOwner(EVENT_EXISTING.getOwner());
+        return res;
+    }
+
+    public static Event getEventExistingWithExtensions() {
+        Event res = new Event();
+        res.setId(EVENT_EXISTING_WITH_EXTENSIONS.getId());
+        res.setName(EVENT_EXISTING_WITH_EXTENSIONS.getName());
+        res.setOwner(EVENT_EXISTING_WITH_EXTENSIONS.getOwner());
         return res;
     }
 //

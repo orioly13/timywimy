@@ -35,14 +35,19 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
         assertSave(entity, userId);
         assertOwner(entity);
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
-        return save(Task.class, entity, userId);
+        return super.save(entity, userId);
     }
 
     @Override
     @Transactional
-    public boolean delete(UUID id, UUID userId) {
-        assertDelete(id, userId);
-        return delete(Task.class, id, userId);
+    public boolean delete(UUID id) {
+        assertDelete(id);
+        return delete(Task.class, id);
+    }
+
+    @Override
+    public boolean delete(Task entity) {
+        return false;
     }
 
     @Override

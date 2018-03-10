@@ -13,13 +13,18 @@ import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
 public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event> implements EventRepository {
+
+    private static final Set<String> extensions;
+
+    static {
+        extensions = new HashSet<>();
+        extensions.add("extensions");
+    }
 
     @Override
     public Event get(UUID id) {
@@ -39,14 +44,22 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
         assertSave(entity, userId);
         assertOwner(entity);
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
-        return save(Event.class, entity, userId);
+        return super.save(entity, userId);
     }
 
     @Override
     @Transactional
-    public boolean delete(UUID id, UUID userId) {
-        assertDelete(id, userId);
-        return delete(Event.class, id, userId);
+    public boolean delete(UUID id) {
+        assertDelete(id);
+        return delete(Event.class, id);
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(Event event) {
+        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
+        assertDelete(event.getId());
+        return delete(Event.class, event);
     }
 
     @Override
@@ -88,7 +101,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             toAdd.setId(null);
             entityManager.persist(toAdd);
         }
-        return event.getExtensions();
+        return get(eventId, extensions).getExtensions();
     }
 
     @Override
@@ -120,8 +133,8 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
                         "Trying to update extensions that don't exist in event");
             }
         }
-//        entityManager.flush(); //(flush with transactional(readonly) does not work)
-        return event.getExtensions();
+
+        return get(eventId, extensions).getExtensions();
     }
 
     @Override
@@ -137,10 +150,13 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             RequestUtil.validateEmptyField(RepositoryException.class, toDelete.getId(), "extension id");
 
             boolean foundToDelete = false;
-            for (AbstractEventExtension extension : event.getExtensions()) {
+            Iterator<AbstractEventExtension> iterator = event.getExtensions().iterator();
+            while (iterator.hasNext()){
+                AbstractEventExtension extension = iterator.next();
                 if (toDelete.getId().equals(extension.getId())) {
                     foundToDelete = true;
                     entityManager.remove(extension);
+                    iterator.remove();
                     break;
                 }
             }
@@ -150,6 +166,6 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
                         "Trying to delete extensions that don't exist in event");
             }
         }
-        return event.getExtensions();
+        return get(eventId, extensions).getExtensions();
     }
 }

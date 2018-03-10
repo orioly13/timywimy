@@ -45,15 +45,20 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
         if (byEmail != null && !byEmail.getId().equals(entity.getId())) {
             throw new RepositoryException(ErrorCode.USER_ALREADY_REGISTERED);
         }
-        return save(User.class, entity, userId);
+        return super.save(entity, userId);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ConstraintViolationException.class})
-    public boolean delete(UUID id, UUID userId) {
-        assertDelete(id, userId);
+    public boolean delete(UUID id) {
+        assertDelete(id);
 
-        return delete(User.class, id, userId);
+        return delete(User.class, id);
+    }
+
+    @Override
+    public boolean delete(User entity) {
+        return false;
     }
 
     @Override

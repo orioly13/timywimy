@@ -16,12 +16,14 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
 
     @Column(name = "cron", columnDefinition = "varchar(20)")
     private String cron;
-    @Column(name = "duration", columnDefinition = "varchar(20)")
+    @Column(name = "duration", columnDefinition = "varchar(12)")
     @Convert(converter = DurationConverter.class)
     private Duration duration;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",
+            orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OrderBy("dateTimeZone ASC")
     private Collection<Event> instances;
 
     public String getCron() {

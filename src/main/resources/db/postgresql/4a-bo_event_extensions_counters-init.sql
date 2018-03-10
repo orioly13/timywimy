@@ -13,7 +13,7 @@ CREATE TABLE bo_event_ext_counters (
   --named
   name        VARCHAR(50),
   --ordered
-  event_order INTEGER NOT NULL CONSTRAINT bo_event_ext_counters_event_order_positive CHECK (event_order >= 0),
+  event_order INTEGER  CONSTRAINT bo_event_ext_counters_event_order_positive CHECK (event_order >= 0),
   --other
   counter     INTEGER NOT NULL DEFAULT 0
 );

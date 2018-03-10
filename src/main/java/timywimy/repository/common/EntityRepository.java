@@ -14,7 +14,9 @@ public interface EntityRepository<T extends BaseEntity> {
 
     T save(T entity, UUID userId);
 
-    boolean delete(UUID id, UUID userId);
+    boolean delete(UUID id);
+
+    boolean delete(T entity);
 
     List<T> getAll();
 }

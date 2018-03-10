@@ -1,6 +1,5 @@
 package timywimy.repository.common;
 
-import org.hibernate.Criteria;
 import org.springframework.util.Assert;
 import timywimy.model.common.BaseEntity;
 import timywimy.util.PairFieldName;
@@ -12,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -42,13 +40,13 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());
     }
 
-    protected T get(Class<T> entityClass, UUID entityId,Set<String> fetchParameters) {
+    protected T get(Class<T> entityClass, UUID entityId, Set<String> fetchParameters) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
 
         CriteriaQuery<T> criteria = builder.createQuery(entityClass).distinct(true);
         Root<T> queryRoot = criteria.from(entityClass);
-        for(String parameter:fetchParameters){
-            queryRoot.fetch(parameter,JoinType.LEFT);
+        for (String parameter : fetchParameters) {
+            queryRoot.fetch(parameter, JoinType.LEFT);
         }
         criteria.select(queryRoot).where(getIdExpression(queryRoot, entityId));
 
@@ -60,8 +58,7 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
                 new PairFieldName<>(entity, "entity"), new PairFieldName<>(userId, "user"));
     }
 
-    protected T save(Class<T> entityClass, T entity, UUID userId) {
-        Assert.notNull(entityClass, "entity class should be provided to construct query");
+    public T save(T entity, UUID userId) {
         if (entity.isNew()) {
             entity.setCreatedBy(userId);
             entityManager.persist(entity);
@@ -72,12 +69,11 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         }
     }
 
-    protected void assertDelete(UUID entityId, UUID userId) {
-        RequestUtil.validateEmptyFields(RepositoryException.class,
-                new PairFieldName<>(entityId, "entity id"), new PairFieldName<>(userId, "user id"));
+    protected void assertDelete(UUID entityId) {
+        RequestUtil.validateEmptyField(RepositoryException.class,entityId, "entity id");
     }
 
-    protected boolean delete(Class<T> entityClass, UUID entityId, UUID userId) {
+    protected boolean delete(Class<T> entityClass, UUID entityId) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
 
         CriteriaDelete<T> criteria = builder.createCriteriaDelete(entityClass);
@@ -85,6 +81,19 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         criteria.where(getIdExpression(queryRoot, entityId));
 
         return entityManager.createQuery(criteria).executeUpdate() != 0;
+    }
+
+    public boolean delete(Class<T> entityClass,T entity) {
+        Assert.notNull(entityClass, "entity class should be provided to construct query");
+        RequestUtil.validateEmptyField(RepositoryException.class, entity, "entity");
+        RequestUtil.validateEmptyField(RepositoryException.class, entity.getId(), "entity id");
+        T foundEntity = entityManager.find(entityClass, entity.getId());
+        if(foundEntity!=null) {
+            entityManager.remove(foundEntity);
+        }else{
+            throw new RepositoryException(ErrorCode.ENTITY_NOT_FOUND);
+        }
+        return true;
     }
 
     protected List<T> getAll(Class<T> entityClass) {

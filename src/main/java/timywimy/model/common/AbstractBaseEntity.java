@@ -4,12 +4,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @MappedSuperclass
-public abstract class AbstractBaseEntity implements BaseEntity {
-
+public abstract class AbstractBaseEntity implements BaseEntity, Serializable{
+    static final long serialVersionUID = -687991492884005033L;
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Id

@@ -22,6 +22,7 @@ import timywimy.util.UserTestData;
 import timywimy.util.exception.RepositoryException;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -203,11 +204,11 @@ public class UserRepositoryTest {
     @Test
     public void deleteValid() throws Exception {
         //exists
-        boolean existed = repository.delete(UserTestData.USER_ID, UserTestData.ROOT_ID);
+        boolean existed = repository.delete(UserTestData.USER_ID);
         Assert.assertEquals(existed, true);
         Assert.assertNull(repository.get(UserTestData.USER_ID));
         //not exists
-        boolean notExisted = repository.delete(UserTestData.NO_EXISTENT_USER_ID, UserTestData.ROOT_ID);
+        boolean notExisted = repository.delete(UserTestData.NO_EXISTENT_USER_ID);
         Assert.assertEquals(notExisted, false);
         Assert.assertNull(repository.get(UserTestData.NO_EXISTENT_USER_ID));
 //        //deleted
@@ -220,15 +221,15 @@ public class UserRepositoryTest {
     public void deleteInvalidNoEntityId() throws Exception {
         thrown.expect(RepositoryException.class);
         thrown.expectMessage("entity id should be provided");
-        repository.delete(null, UserTestData.ROOT_ID);
+        repository.delete((UUID)null);
     }
 
-    @Test
-    public void deleteInvalidNoUser() throws Exception {
-        thrown.expect(RepositoryException.class);
-        thrown.expectMessage("user id should be provided");
-        repository.delete(UserTestData.USER_ID, null);
-    }
+//    @Test
+//    public void deleteInvalidNoUser() throws Exception {
+//        thrown.expect(RepositoryException.class);
+//        thrown.expectMessage("user id should be provided");
+//        repository.delete(UserTestData.USER_ID);
+//    }
 
     @Test
     public void getAllValid() throws Exception {

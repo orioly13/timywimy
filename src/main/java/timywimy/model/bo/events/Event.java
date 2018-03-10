@@ -21,13 +21,14 @@ public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, 
 
     @Embedded
     private DateTimeZone dateTimeZone;
-    @Column(name = "duration", columnDefinition = "varchar(20)")
+    @Column(name = "duration", columnDefinition = "varchar(12)")
     @Convert(converter = DurationConverter.class)
     private Duration duration;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
             targetEntity = AbstractEventExtension.class,
-            orphanRemoval = true, cascade = {CascadeType.REMOVE,CascadeType.REFRESH})
+            orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @OrderBy("order ASC")
     private List<AbstractEventExtension> extensions;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
             targetEntity = Task.class)

@@ -35,14 +35,19 @@ public class TaskGroupRepositoryImpl extends AbstractOwnedEntityRepository<TaskG
         assertSave(entity, userId);
         assertOwner(entity);
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
-        return save(TaskGroup.class, entity, userId);
+        return super.save(entity, userId);
     }
 
     @Override
     @Transactional
-    public boolean delete(UUID id, UUID userId) {
-        assertDelete(id, userId);
-        return delete(TaskGroup.class, id, userId);
+    public boolean delete(UUID id) {
+        assertDelete(id);
+        return delete(TaskGroup.class, id);
+    }
+
+    @Override
+    public boolean delete(TaskGroup entity) {
+        return false;
     }
 
     @Override

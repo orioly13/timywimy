@@ -62,7 +62,7 @@ public abstract class AbstractEntityWithRightsService<T, E extends BaseEntity> e
         User userBySession = getUserBySession(userSession);
         assertUserRole(userBySession.getRole());
 
-        return repository.delete(entityId, userBySession.getId());
+        return repository.delete(entityId);
     }
 
     public List<E> getAllEntities(UUID userSession) {

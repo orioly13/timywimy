@@ -35,14 +35,19 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
         assertSave(entity, userId);
         assertOwner(entity);
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
-        return save(Schedule.class, entity, userId);
+        return super.save(entity, userId);
     }
 
     @Override
     @Transactional
-    public boolean delete(UUID id, UUID userId) {
-        assertDelete(id, userId);
-        return delete(Schedule.class, id, userId);
+    public boolean delete(UUID id) {
+        assertDelete(id);
+        return delete(Schedule.class, id);
+    }
+
+    @Override
+    public boolean delete(Schedule entity) {
+        return false;
     }
 
     @Override
