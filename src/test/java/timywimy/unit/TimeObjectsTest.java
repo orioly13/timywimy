@@ -9,6 +9,8 @@ import timywimy.model.common.converters.ZoneIdConverter;
 import timywimy.model.common.util.DateTimeZone;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -18,7 +20,8 @@ public class TimeObjectsTest {
     public void dateTimeZone() {
         //now
 //        System.out.println("now");
-        DateTimeZone dtz0 = DateTimeZone.now();
+        DateTimeZone dtz0 = new DateTimeZone(LocalDate.of(2018, 3, 10),
+                LocalTime.MIDNIGHT.plusHours(12), ZoneId.of("Europe/Helsinki"));
 //        System.out.println(dtz0.toString());
         //now copy
         DateTimeZone dtz1 = new DateTimeZone(dtz0.getDate(), dtz0.getTime(), dtz0.getZone());
@@ -44,8 +47,8 @@ public class TimeObjectsTest {
         Assert.assertTrue(dtz0.compareTo(dtz2) < 0);
         Assert.assertTrue(dtz0.isAfter(dtz3));
         Assert.assertTrue(dtz0.compareTo(dtz3) > 0);
-        Assert.assertTrue(dtz0.isBefore(dtz4));
-        Assert.assertTrue(dtz0.compareTo(dtz4) < 0);
+        Assert.assertTrue(dtz0.isAfter(dtz4));
+        Assert.assertTrue(dtz0.compareTo(dtz4) > 0);
 
     }
 

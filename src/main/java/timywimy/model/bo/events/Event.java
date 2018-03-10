@@ -28,6 +28,7 @@ public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
             targetEntity = AbstractEventExtension.class,
             orphanRemoval = true, cascade = CascadeType.PERSIST)
+    //todo undertand WHY orphanRemoval NEEDS Cascade.PERSIST
     @OrderBy("order ASC")
     private List<AbstractEventExtension> extensions;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
