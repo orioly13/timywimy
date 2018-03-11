@@ -38,6 +38,9 @@ public abstract class AbstractEntityWithRightsService<T, E extends BaseEntity> e
                 new PairFieldName<>(entityId, "entity id"),
                 new PairFieldName<>(userSession, "session"));
         User userBySession = getUserBySession(userSession);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
 
         return repository.get(entityId);
@@ -49,6 +52,9 @@ public abstract class AbstractEntityWithRightsService<T, E extends BaseEntity> e
                 new PairFieldName<>(userSession, "session"));
 
         User userBySession = getUserBySession(userSession);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
 
         return repository.save(entity, userBySession.getId());
@@ -60,6 +66,9 @@ public abstract class AbstractEntityWithRightsService<T, E extends BaseEntity> e
                 new PairFieldName<>(userSession, "session"));
 
         User userBySession = getUserBySession(userSession);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
 
         return repository.delete(entityId);
@@ -69,6 +78,9 @@ public abstract class AbstractEntityWithRightsService<T, E extends BaseEntity> e
         RequestUtil.validateEmptyField(ServiceException.class, userSession, "user session must not be null");
 
         User userBySession = getUserBySession(userSession);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
 
         return repository.getAll();

@@ -167,6 +167,9 @@ public class RestServiceImpl implements RestService {
     public timywimy.model.security.User getUserBySession(UUID sessionId) {
         RequestUtil.validateEmptyField(ServiceException.class, sessionId, "session");
         UserSession entry = sessions.get(sessionId);
+        if (entry == null) {
+            return null;
+        }
         if (entry.getExpiryDate().isBefore(ZonedDateTime.now())) {
             sessions.remove(sessionId);
             return null;

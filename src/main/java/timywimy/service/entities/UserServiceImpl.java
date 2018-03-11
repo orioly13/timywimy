@@ -61,6 +61,9 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
                 new PairFieldName<>(email, "email"),
                 new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
         timywimy.model.security.User entity = ((UserRepository) repository).getByEmail(email);
         return convertEntityToDTO(entity);
@@ -72,6 +75,9 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
                 new PairFieldName<>(idToBan, "id to ban"),
                 new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
 
         timywimy.model.security.User user = repository.get(idToBan);
@@ -90,6 +96,9 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
                 new PairFieldName<>(bannedId, "banned id"),
                 new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
         assertUserRole(userBySession.getRole());
 
         timywimy.model.security.User user = repository.get(bannedId);
