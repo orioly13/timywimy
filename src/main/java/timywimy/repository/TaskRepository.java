@@ -8,9 +8,7 @@ import java.util.UUID;
 
 public interface TaskRepository extends EventTaskEntityRepository<Task> {
 
-    List<Task> addTasks(UUID taskId, List<Task> children, UUID userId);
+    List<Task> linkChildren(UUID taskId, List<Task> children, UUID userId);
 
-    List<Task> updateTasks(UUID taskId, List<Task> children, UUID userId);
-
-    List<Task> deleteTasks(UUID taskId, List<Task> children, UUID userId);
+    List<Task> unlinkChildren(UUID taskId, List<Task> children, UUID userId);
 }

@@ -218,7 +218,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
             if (!foundToUnlink) {
                 throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
-                        "Trying to delete tasks that don't exist in event");
+                        "Trying to unlink tasks that don't exist in event");
             }
         }
         entityManager.flush();

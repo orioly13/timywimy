@@ -119,12 +119,10 @@ public class TaskRepositoryTest {
         Task task = TaskTestData.getTaskExisting();
 
         Task task1 = new Task();
-        task1.setName("task1");
-        task1.setOwner(UserTestData.getExistingUser());
-        task1.setDescription("task1_desc");
+        task1.setId(TaskTestData.TASK_3);
         List<Task> tasks = new ArrayList<>();
         tasks.add(task1);
-        List<Task> tasks1 = repository.addTasks(task.getId(), tasks, UserTestData.USER_ID);
+        List<Task> tasks1 = repository.linkChildren(task.getId(), tasks, UserTestData.USER_ID);
         Assert.assertEquals(1, tasks1.size());
 //        Task Task2 = repository.get(Task.getId(), parameters);
     }
@@ -141,32 +139,7 @@ public class TaskRepositoryTest {
 
         List<Task> extensionsToDelete = new ArrayList<>();
         extensionsToDelete.add(task1.getChildren().get(0));
-        List<Task> tasks = repository.deleteTasks(task.getId(), extensionsToDelete, UserTestData.USER_ID);
+        List<Task> tasks = repository.unlinkChildren(task.getId(), extensionsToDelete, UserTestData.USER_ID);
         Assert.assertEquals(0, tasks.size());
     }
-
-    @Test
-    public void updateTasks() throws Exception {
-//        repository.get
-        Task task = TaskTestData.getTaskExistingWithTasks();
-        Set<String> parameters = new HashSet<>();
-        parameters.add("children");
-
-        Task task1 = repository.get(task.getId(), parameters);
-        Assert.assertEquals(1, task1.getChildren().size());
-
-        List<Task> tasks = new ArrayList<>();
-//        AbstractTaskExtension extension = ;
-        task1.getChildren().get(0).setCompleted(true);
-
-        tasks.addAll(task1.getChildren());
-        List<Task> tasks1 = repository.updateTasks(task.getId(), tasks, UserTestData.USER_ID);
-//        Task Task2 = repository.get(Task.getId(), parameters);
-        Assert.assertEquals(tasks1.size(), 1);
-
-        for (Task child1 : tasks1) {
-            Assert.assertEquals(true, child1.isCompleted());
-        }
-    }
-
 }

@@ -12,6 +12,7 @@ import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -95,74 +96,58 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
 
     @Override
     @Transactional
-    public List<Task> addTasks(UUID taskId, List<Task> children, UUID userId) {
+    public List<Task> linkChildren(UUID taskId, List<Task> children, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, taskId, "parent task");
         RequestUtil.validateEmptyField(RepositoryException.class, children, "children tasks");
         Task task = get(taskId);
         RequestUtil.validateEmptyField(RepositoryException.class, task, "parent task");
         List<Task> taskChildren = task.getChildren();
-        for (Task toAdd : children) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toAdd, "task");
+        for (Task toLink : children) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toLink, "task");
+            RequestUtil.validateEmptyField(RepositoryException.class, toLink, "task id");
+            Task toLinkLoaded = entityManager.find(Task.class, toLink.getId());
+            RequestUtil.validateEmptyField(RepositoryException.class, toLinkLoaded, "task");
 
-            toAdd.setParent(task);
-            persistEntity(userId, toAdd);
-            taskChildren.add(toAdd);
+            toLinkLoaded.setParent(task);
+            toLinkLoaded.setUpdatedBy(userId);
+            entityManager.merge(toLinkLoaded);
+            taskChildren.add(toLinkLoaded);
 
         }
-
+        entityManager.flush();
         return get(taskId, constructParametersSet("children")).getChildren();
     }
 
     @Override
     @Transactional
-    public List<Task> updateTasks(UUID taskId, List<Task> children, UUID userId) {
+    public List<Task> unlinkChildren(UUID taskId, List<Task> children, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, taskId, "parent task");
         RequestUtil.validateEmptyField(RepositoryException.class, children, "children tasks");
         Task task = get(taskId);
         RequestUtil.validateEmptyField(RepositoryException.class, task, "parent task");
 
-        for (Task toUpdate : children) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate, "child task");
-            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate.getId(), "child task id");
+        for (Task toUnlink : children) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toUnlink, "child task");
+            RequestUtil.validateEmptyField(RepositoryException.class, toUnlink.getId(), "child task id");
 
-            boolean foundToUpdate = false;
-            //without transaction proxy can't be initialized
-            for (Task child : task.getChildren()) {
-                foundToUpdate = isFoundToUpdate(userId, toUpdate, child);
-                if (foundToUpdate) {
-                    toUpdate.setParent(child);
-                    entityManager.merge(toUpdate);
+            boolean foundToUnlink = false;
+            Iterator<Task> iterator = task.getChildren().iterator();
+            while (iterator.hasNext()) {
+                Task child = iterator.next();
+                if (toUnlink.getId().equals(child.getId())) {
+                    foundToUnlink = true;
+                    child.setParent(null);
+                    entityManager.merge(child);
+                    iterator.remove();
                     break;
                 }
             }
-
-            if (!foundToUpdate) {
+            if (!foundToUnlink) {
                 throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
-                        "Trying to update tasks that don't exist in parent task");
+                        "Trying to unlink tasks that don't exist in task");
             }
         }
-
-        return get(taskId, constructParametersSet("children")).getChildren();
-    }
-
-    @Override
-    @Transactional
-    public List<Task> deleteTasks(UUID taskId, List<Task> children, UUID userId) {
-        RequestUtil.validateEmptyField(RepositoryException.class, taskId, "parent task");
-        RequestUtil.validateEmptyField(RepositoryException.class, children, "children tasks");
-        Task task = get(taskId);
-        RequestUtil.validateEmptyField(RepositoryException.class, task, "parent task");
-
-        for (Task toDelete : children) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toDelete, "child task");
-            RequestUtil.validateEmptyField(RepositoryException.class, toDelete.getId(), "child task id");
-
-            if (!isFoundToDelete(toDelete, task.getChildren())) {
-                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
-                        "Trying to delete tasks that don't exist in parent task");
-            }
-        }
-
+        entityManager.flush();
         return get(taskId, constructParametersSet("children")).getChildren();
     }
 }
