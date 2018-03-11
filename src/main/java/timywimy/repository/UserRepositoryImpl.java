@@ -52,13 +52,16 @@ public class UserRepositoryImpl extends AbstractEntityRepository implements User
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {ConstraintViolationException.class})
     public boolean delete(UUID id) {
         assertDelete(id);
-
+        //todo delete ALL owned stuff
         return deleteBaseEntity(User.class, id);
     }
 
     @Override
     public boolean delete(User entity) {
-        return false;
+        RequestUtil.validateEmptyField(RepositoryException.class, entity, "user");
+        assertDelete(entity.getId());
+        //todo delete ALL owned stuff
+        return deleteBaseEntity(User.class, entity);
     }
 
     @Override

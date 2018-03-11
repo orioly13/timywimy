@@ -14,6 +14,7 @@ import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -169,73 +170,58 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     }
 
     @Override
-    public List<Task> addTasks(UUID eventId, List<Task> tasks, UUID userId) {
+    @Transactional
+    public List<Task> linkTasks(UUID eventId, List<Task> tasks, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
         timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
         List<Task> eventTasks = event.getTasks();
-        for (Task toAdd : tasks) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toAdd, "task");
+        for (Task toLink : tasks) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toLink, "task");
+            RequestUtil.validateEmptyField(RepositoryException.class, toLink, "task id");
+            Task toLinkLoaded = entityManager.find(Task.class, toLink.getId());
+            RequestUtil.validateEmptyField(RepositoryException.class, toLinkLoaded, "task");
 
-            toAdd.setEvent(event);
-            persistEntity(userId, toAdd);
-            eventTasks.add(toAdd);
+            toLinkLoaded.setEvent(event);
+            toLinkLoaded.setUpdatedBy(userId);
+            entityManager.merge(toLinkLoaded);
+            eventTasks.add(toLinkLoaded);
 
         }
-
+        entityManager.flush();
         return get(eventId, constructParametersSet("tasks")).getTasks();
     }
 
-
     @Override
-    public List<Task> updateTasks(UUID eventId, List<Task> tasks, UUID userId) {
+    @Transactional
+    public List<Task> unlinkTasks(UUID eventId, List<Task> tasks, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
         timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
+        for (Task toUnlink : tasks) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toUnlink, "task");
+            RequestUtil.validateEmptyField(RepositoryException.class, toUnlink.getId(), "task id");
 
-        for (Task toUpdate : tasks) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate, "task");
-            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate.getId(), "task id");
-
-            boolean foundToUpdate = false;
-            //without transaction proxy can't be initialized
-            for (Task task : event.getTasks()) {
-                foundToUpdate = isFoundToUpdate(userId, toUpdate, task);
-                if (foundToUpdate) {
-                    toUpdate.setEvent(event);
-                    entityManager.merge(toUpdate);
+            boolean foundToUnlink = false;
+            Iterator<Task> iterator = event.getTasks().iterator();
+            while (iterator.hasNext()) {
+                Task eventTask = iterator.next();
+                if (toUnlink.getId().equals(eventTask.getId())) {
+                    foundToUnlink = true;
+                    eventTask.setEvent(null);
+                    entityManager.merge(eventTask);
+                    iterator.remove();
                     break;
                 }
             }
-
-            if (!foundToUpdate) {
-                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
-                        "Trying to update tasks that don't exist in event");
-            }
-        }
-
-        return get(eventId, constructParametersSet("tasks")).getTasks();
-    }
-
-    @Override
-    public List<Task> deleteTasks(UUID eventId, List<Task> tasks, UUID userId) {
-        RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
-        RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
-        timywimy.model.bo.events.Event event = get(eventId);
-        RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
-
-        for (Task toDelete : tasks) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toDelete, "task");
-            RequestUtil.validateEmptyField(RepositoryException.class, toDelete.getId(), "task id");
-
-            if (!isFoundToDelete(toDelete, event.getTasks())) {
+            if (!foundToUnlink) {
                 throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
                         "Trying to delete tasks that don't exist in event");
             }
         }
-
+        entityManager.flush();
         return get(eventId, constructParametersSet("tasks")).getTasks();
     }
 }

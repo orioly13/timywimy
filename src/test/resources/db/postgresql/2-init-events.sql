@@ -38,3 +38,8 @@ VALUES
   ('b1dc4d9e-0e95-4dfc-b3f9-26face204d89', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
    '19f725c6-1996-11e8-accf-0ed5f89f718b',
    '08d60cfd-aa80-473a-b1a4-015f2a28300c', 'event_task', 'task_desc', 2);
+INSERT INTO bo_tasks (id, created_ts, created_by, owner_id, name, description, priority)
+VALUES
+  ('ea08c491-c7a3-4209-a5fd-f14fc521a508', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
+   '19f725c6-1996-11e8-accf-0ed5f89f718b',
+   'task_3', 'task_3_desc', -2);

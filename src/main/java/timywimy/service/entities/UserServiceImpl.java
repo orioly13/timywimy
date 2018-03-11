@@ -31,7 +31,9 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
 
     @Override
     public User get(UUID entityId, UUID userSession) {
-        timywimy.model.security.User entity = getEntity(entityId, userSession);
+        RequestUtil.validateEmptyField(ServiceException.class, entityId, "entity id");
+        assertUserRole(getUserBySession(userSession).getRole());
+        timywimy.model.security.User entity = repository.get(entityId);
         return convertEntityToDTO(entity);
     }
 
@@ -60,11 +62,7 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
         RequestUtil.validateEmptyFields(ServiceException.class,
                 new PairFieldName<>(email, "email"),
                 new PairFieldName<>(session, "session"));
-        timywimy.model.security.User userBySession = getUserBySession(session);
-        if (userBySession == null) {
-            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
-        }
-        assertUserRole(userBySession.getRole());
+        assertUserRole(getUserBySession(session).getRole());
         timywimy.model.security.User entity = ((UserRepository) repository).getByEmail(email);
         return convertEntityToDTO(entity);
     }
@@ -75,9 +73,6 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
                 new PairFieldName<>(idToBan, "id to ban"),
                 new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
-        if (userBySession == null) {
-            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
-        }
         assertUserRole(userBySession.getRole());
 
         timywimy.model.security.User user = repository.get(idToBan);
@@ -96,9 +91,6 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
                 new PairFieldName<>(bannedId, "banned id"),
                 new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
-        if (userBySession == null) {
-            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
-        }
         assertUserRole(userBySession.getRole());
 
         timywimy.model.security.User user = repository.get(bannedId);

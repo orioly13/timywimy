@@ -23,6 +23,7 @@ import timywimy.model.bo.tasks.Task;
 import timywimy.repository.EventRepository;
 import timywimy.repository.TaskRepository;
 import timywimy.util.EventTestData;
+import timywimy.util.TaskTestData;
 import timywimy.util.UserTestData;
 import timywimy.util.exception.RepositoryException;
 
@@ -236,12 +237,11 @@ public class EventRepositoryTest {
 //        parameters.add("tasks");
 
         Task task1 = new Task();
-        task1.setName("task1");
-        task1.setOwner(UserTestData.getExistingUser());
-        task1.setDescription("task1_desc");
+        task1.setId(TaskTestData.TASK_3);
+
         List<Task> tasks = new ArrayList<>();
         tasks.add(task1);
-        List<Task> tasks1 = repository.addTasks(event.getId(), tasks, UserTestData.USER_ID);
+        List<Task> tasks1 = repository.linkTasks(event.getId(), tasks, UserTestData.USER_ID);
         Assert.assertEquals(1, tasks1.size());
 //        Event event2 = repository.get(event.getId(), parameters);
     }
@@ -256,34 +256,34 @@ public class EventRepositoryTest {
         Event event1 = repository.get(event.getId(), parameters);
         Assert.assertEquals(1, event1.getTasks().size());
 
-        List<Task> extensionsToDelete = new ArrayList<>();
-        extensionsToDelete.add(event1.getTasks().get(0));
-        List<Task> tasks = repository.deleteTasks(event.getId(), extensionsToDelete, UserTestData.USER_ID);
+        List<Task> tasksToUnlink = new ArrayList<>();
+        tasksToUnlink.add(event1.getTasks().get(0));
+        List<Task> tasks = repository.unlinkTasks(event.getId(), tasksToUnlink, UserTestData.USER_ID);
         Assert.assertEquals(0, tasks.size());
     }
 
-    @Test
-    public void updateTasks() throws Exception {
-//        repository.get
-        Event event = EventTestData.getEventExistingWithTask();
-        Set<String> parameters = new HashSet<>();
-        parameters.add("tasks");
-
-        Event event1 = repository.get(event.getId(), parameters);
-        Assert.assertEquals(1, event1.getTasks().size());
-
-        List<Task> tasks = new ArrayList<>();
-//        AbstractEventExtension extension = ;
-        event1.getTasks().get(0).setCompleted(true);
-
-        tasks.addAll(event1.getTasks());
-        List<Task> tasks1 = repository.updateTasks(event.getId(), tasks, UserTestData.USER_ID);
-//        Event event2 = repository.get(event.getId(), parameters);
-        Assert.assertEquals(tasks1.size(), 1);
-
-        for (Task task : tasks1) {
-            Assert.assertEquals(true, task.isCompleted());
-        }
-    }
+//    @Test
+//    public void updateTasks() throws Exception {
+////        repository.get
+//        Event event = EventTestData.getEventExistingWithTask();
+//        Set<String> parameters = new HashSet<>();
+//        parameters.add("tasks");
+//
+//        Event event1 = repository.get(event.getId(), parameters);
+//        Assert.assertEquals(1, event1.getTasks().size());
+//
+//        List<Task> tasks = new ArrayList<>();
+////        AbstractEventExtension extension = ;
+//        event1.getTasks().get(0).setCompleted(true);
+//
+//        tasks.addAll(event1.getTasks());
+//        List<Task> tasks1 = repository.updateTasks(event.getId(), tasks, UserTestData.USER_ID);
+////        Event event2 = repository.get(event.getId(), parameters);
+//        Assert.assertEquals(tasks1.size(), 1);
+//
+//        for (Task task : tasks1) {
+//            Assert.assertEquals(true, task.isCompleted());
+//        }
+//    }
 
 }

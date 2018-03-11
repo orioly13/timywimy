@@ -15,9 +15,7 @@ public interface EventRepository extends EventTaskEntityRepository<timywimy.mode
 
     List<AbstractEventExtension> deleteExtensions(UUID eventId, List<AbstractEventExtension> eventExtensions, UUID userId);
 
-    List<Task> addTasks(UUID eventId, List<Task> tasks, UUID userId);
+    List<Task> linkTasks(UUID eventId, List<Task> tasks, UUID userId);
 
-    List<Task> updateTasks(UUID eventId, List<Task> tasks, UUID userId);
-
-    List<Task> deleteTasks(UUID eventId, List<Task> tasks, UUID userId);
+    List<Task> unlinkTasks(UUID eventId, List<Task> tasks, UUID userId);
 }

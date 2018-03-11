@@ -7,6 +7,7 @@ import timywimy.model.security.User;
 import timywimy.repository.common.EntityRepository;
 import timywimy.service.RestService;
 import timywimy.util.RequestUtil;
+import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
 
 import java.util.UUID;
@@ -26,7 +27,11 @@ public abstract class AbstractEntityService<T, E extends BaseEntity> implements 
 
     protected User getUserBySession(UUID session) {
         RequestUtil.validateEmptyField(ServiceException.class, session, "session");
-        return restService.getUserBySession(session);
+        User userBySession = restService.getUserBySession(session);
+        if (userBySession == null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);
+        }
+        return userBySession;
     }
 
 }
