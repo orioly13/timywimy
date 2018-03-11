@@ -37,4 +37,4 @@ INSERT INTO bo_tasks (id, created_ts, created_by, owner_id, event_id, name, desc
 VALUES
   ('b1dc4d9e-0e95-4dfc-b3f9-26face204d89', now(), '19f725c6-1996-11e8-accf-0ed5f89f718b',
    '19f725c6-1996-11e8-accf-0ed5f89f718b',
-   '08d60cfd-aa80-473a-b1a4-015f2a28300c', 'task_T', 'task_desc', 2);
+   '08d60cfd-aa80-473a-b1a4-015f2a28300c', 'event_task', 'task_desc', 2);

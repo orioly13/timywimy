@@ -21,6 +21,7 @@ import timywimy.model.bo.events.extensions.TickBoxExtension;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
 import timywimy.model.bo.tasks.Task;
 import timywimy.repository.EventRepository;
+import timywimy.repository.TaskRepository;
 import timywimy.util.EventTestData;
 import timywimy.util.UserTestData;
 import timywimy.util.exception.RepositoryException;
@@ -45,6 +46,8 @@ public class EventRepositoryTest {
     private static final Logger log = LoggerFactory.getLogger("result");
     @Autowired
     private EventRepository repository;
+    @Autowired
+    private TaskRepository repositoryTasks;
 
     private static StringBuilder results = new StringBuilder();
 
@@ -109,6 +112,24 @@ public class EventRepositoryTest {
         Event event = EventTestData.getEventExisting();
         event.setOwner(null);
         repository.save(event, UserTestData.USER_ID);
+    }
+
+    @Test
+    public void deleteWithTasks() throws Exception {
+        Event event = EventTestData.getEventExistingWithTask();
+        Set<String> parameters = new HashSet<>();
+        parameters.add("tasks");
+
+        Event event1 = repository.get(event.getId(), parameters);
+        Assert.assertEquals(1, event1.getTasks().size());
+        Task task = event1.getTasks().get(0);
+
+        repository.delete(event1.getId());
+        Set<String> parameters1 = new HashSet<>();
+        parameters.add("event");
+        Task task1 = repositoryTasks.get(task.getId(), parameters1);
+        Assert.assertNotNull(task1);
+        Assert.assertNull(task1.getEvent());
     }
 
     //
@@ -211,8 +232,8 @@ public class EventRepositoryTest {
     public void addNewTasks() throws Exception {
 //        repository.get
         Event event = EventTestData.getEventExisting();
-        Set<String> parameters = new HashSet<>();
-        parameters.add("tasks");
+//        Set<String> parameters = new HashSet<>();
+//        parameters.add("tasks");
 
         Task task1 = new Task();
         task1.setName("task1");

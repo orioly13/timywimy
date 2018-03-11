@@ -11,11 +11,9 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-public abstract class AbstractEntityRepository<T extends BaseEntity> implements EntityRepository<T> {
+public abstract class AbstractEntityRepository {
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -30,21 +28,21 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         RequestUtil.validateEmptyField(RepositoryException.class, entityId, "entityId");
     }
 
-    protected T get(Class<T> entityClass, UUID entityId) {
+    protected <E extends BaseEntity> E getBaseEntity(Class<E> entityClass, UUID entityId) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
 
-        CriteriaQuery<T> criteria = builder.createQuery(entityClass);
-        Root<T> queryRoot = criteria.from(entityClass);
+        CriteriaQuery<E> criteria = builder.createQuery(entityClass);
+        Root<E> queryRoot = criteria.from(entityClass);
         criteria.select(queryRoot).where(getIdExpression(queryRoot, entityId));
 
         return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());
     }
 
-    protected T get(Class<T> entityClass, UUID entityId, Set<String> fetchParameters) {
+    protected <E extends BaseEntity> E getBaseEntity(Class<E> entityClass, UUID entityId, Set<String> fetchParameters) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
 
-        CriteriaQuery<T> criteria = builder.createQuery(entityClass).distinct(true);
-        Root<T> queryRoot = criteria.from(entityClass);
+        CriteriaQuery<E> criteria = builder.createQuery(entityClass).distinct(true);
+        Root<E> queryRoot = criteria.from(entityClass);
         for (String parameter : fetchParameters) {
             queryRoot.fetch(parameter, JoinType.LEFT);
         }
@@ -53,12 +51,12 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         return getSingleFromResultList(entityManager.createQuery(criteria).getResultList());
     }
 
-    protected void assertSave(T entity, UUID userId) {
+    protected <E extends BaseEntity> void assertSave(E entity, UUID userId) {
         RequestUtil.validateEmptyFields(RepositoryException.class,
                 new PairFieldName<>(entity, "entity"), new PairFieldName<>(userId, "user"));
     }
 
-    public T save(T entity, UUID userId) {
+    protected <E extends BaseEntity> E saveBaseEntity(E entity, UUID userId) {
         if (entity.isNew()) {
             entity.setCreatedBy(userId);
             entityManager.persist(entity);
@@ -70,43 +68,43 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
     }
 
     protected void assertDelete(UUID entityId) {
-        RequestUtil.validateEmptyField(RepositoryException.class,entityId, "entity id");
+        RequestUtil.validateEmptyField(RepositoryException.class, entityId, "entity id");
     }
 
-    protected boolean delete(Class<T> entityClass, UUID entityId) {
+    protected <E extends BaseEntity> boolean deleteBaseEntity(Class<E> entityClass, UUID entityId) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
 
-        CriteriaDelete<T> criteria = builder.createCriteriaDelete(entityClass);
-        Root<T> queryRoot = criteria.from(entityClass);
+        CriteriaDelete<E> criteria = builder.createCriteriaDelete(entityClass);
+        Root<E> queryRoot = criteria.from(entityClass);
         criteria.where(getIdExpression(queryRoot, entityId));
 
         return entityManager.createQuery(criteria).executeUpdate() != 0;
     }
 
-    public boolean delete(Class<T> entityClass,T entity) {
+    protected <E extends BaseEntity> boolean deleteBaseEntity(Class<E> entityClass, E entity) {
         Assert.notNull(entityClass, "entity class should be provided to construct query");
         RequestUtil.validateEmptyField(RepositoryException.class, entity, "entity");
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getId(), "entity id");
-        T foundEntity = entityManager.find(entityClass, entity.getId());
-        if(foundEntity!=null) {
+        E foundEntity = entityManager.find(entityClass, entity.getId());
+        if (foundEntity != null) {
             entityManager.remove(foundEntity);
-        }else{
+        } else {
             throw new RepositoryException(ErrorCode.ENTITY_NOT_FOUND);
         }
         return true;
     }
 
-    protected List<T> getAll(Class<T> entityClass) {
+    protected <E extends BaseEntity> List<E> getAllBaseEntities(Class<E> entityClass) {
         Assert.notNull(entityClass, "entity class should be provided to construct get query");
 
-        CriteriaQuery<T> criteria = builder.createQuery(entityClass);
-        Root<T> queryRoot = criteria.from(entityClass);
+        CriteriaQuery<E> criteria = builder.createQuery(entityClass);
+        Root<E> queryRoot = criteria.from(entityClass);
         criteria.select(queryRoot);
 
         return entityManager.createQuery(criteria).getResultList();
     }
 
-    protected T getSingleFromResultList(List<T> resultList) {
+    protected <E extends BaseEntity> E getSingleFromResultList(List<E> resultList) {
         if (resultList.size() == 0) {
             return null;
         } else if (resultList.size() == 1) {
@@ -116,17 +114,44 @@ public abstract class AbstractEntityRepository<T extends BaseEntity> implements 
         }
     }
 
-    protected Expression<Boolean> getIdExpression(Root<T> queryRoot, UUID entityId) {
+    protected <E extends BaseEntity> Expression<Boolean> getIdExpression(Root<E> queryRoot, UUID entityId) {
         return builder.equal(queryRoot.get("id"), entityId);
     }
 
-//    protected Expression<Boolean> getDeletedTsExpression(Root<T> queryRoot, Expression<Boolean> expression) {
-//        if (expression == null) {
-//            return builder.isNull(queryRoot.get("deletedTs"));
-//        } else {
-//            return builder.and(
-//                    expression,
-//                    builder.isNull(queryRoot.get("deletedTs")));
-//        }
-//    }
+    //
+    protected <E extends BaseEntity> void persistEntity(UUID userId, E toAdd) {
+        toAdd.setCreatedBy(userId);
+        toAdd.setId(null);
+        entityManager.persist(toAdd);
+    }
+
+    protected <E extends BaseEntity> boolean isFoundToDelete(E toDelete, List<E> children) {
+        boolean foundToDelete = false;
+        Iterator<E> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            E child = iterator.next();
+            if (toDelete.getId().equals(child.getId())) {
+                foundToDelete = true;
+                entityManager.remove(child);
+                iterator.remove();
+                break;
+            }
+        }
+        return foundToDelete;
+    }
+
+    protected <E extends BaseEntity> boolean isFoundToUpdate(UUID userId, E toUpdate, E child) {
+        boolean foundToUpdate = false;
+        if (toUpdate.getId().equals(child.getId())) {
+            foundToUpdate = true;
+            toUpdate.setUpdatedBy(userId);
+        }
+        return foundToUpdate;
+    }
+
+    protected Set<String> constructParametersSet(String... parameters) {
+        Set<String> res = new HashSet<>();
+        Collections.addAll(res, parameters);
+        return res;
+    }
 }

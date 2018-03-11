@@ -1,6 +1,5 @@
 package timywimy.model.security;
 
-import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
 import timywimy.model.bo.tasks.Task;
 import timywimy.model.bo.tasks.TaskGroup;
@@ -27,7 +26,7 @@ public class User extends AbstractNamedEntity {
     private boolean active;
     @Column(name = "banned", columnDefinition = "boolean", nullable = false)
     private boolean banned;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "banned_by")
     private User bannedBy;
     @Column(name = "banned_till", columnDefinition = "timestamp with time zone")
@@ -37,7 +36,7 @@ public class User extends AbstractNamedEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Schedule> schedules;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
-    private List<Event> events;
+    private List<timywimy.model.bo.events.Event> events;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     private List<TaskGroup> taskGroups;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
@@ -124,12 +123,12 @@ public class User extends AbstractNamedEntity {
     }
 
 
-    public List<Event> getEvents() {
+    public List<timywimy.model.bo.events.Event> getEvents() {
         return events;
     }
 
 
-    public void setEvents(List<Event> events) {
+    public void setEvents(List<timywimy.model.bo.events.Event> events) {
         this.events = events;
     }
 

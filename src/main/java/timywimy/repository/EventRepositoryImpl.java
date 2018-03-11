@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
 import timywimy.model.bo.tasks.Task;
-import timywimy.model.common.BaseEntity;
 import timywimy.model.common.util.DateTimeZone;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractEventTaskEntityRepository;
@@ -15,53 +14,62 @@ import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Repository
 @Transactional(readOnly = true)
 public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event> implements EventRepository {
 
-//    private static final Set<String> extensions;
-//    private static final Set<String> tasks;
-//
-//    static {
-//
-//    }
-
     @Override
     public Event get(UUID id) {
         assertGet(id);
-        return get(Event.class, id);
+        return getBaseEntity(timywimy.model.bo.events.Event.class, id);
     }
 
     @Override
     public Event get(UUID id, Set<String> properties) {
         assertGet(id);
-        return get(Event.class, id, properties);
+        return getBaseEntity(timywimy.model.bo.events.Event.class, id, properties);
     }
 
     @Override
     @Transactional
-    public Event save(Event entity, UUID userId) {
+    public Event save(timywimy.model.bo.events.Event entity, UUID userId) {
         assertSave(entity, userId);
         assertOwner(entity);
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
-        return super.save(entity, userId);
+        return saveBaseEntity(entity, userId);
+    }
+
+    private void unlinkTasks(timywimy.model.bo.events.Event event) {
+        List<Task> tasks = event.getTasks();
+        if (tasks.size() > 0) {
+            for (Task task : tasks) {
+                task.setEvent(null);
+                entityManager.merge(task);
+            }
+            entityManager.flush();
+        }
     }
 
     @Override
     @Transactional
     public boolean delete(UUID id) {
         assertDelete(id);
-        return delete(Event.class, id);
+        unlinkTasks(get(id, constructParametersSet("tasks")));
+        return deleteBaseEntity(timywimy.model.bo.events.Event.class, id);
     }
+
 
     @Override
     @Transactional
     public boolean delete(Event event) {
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
         assertDelete(event.getId());
-        return delete(Event.class, event);
+        unlinkTasks(get(event.getId(), constructParametersSet("tasks")));
+        return deleteBaseEntity(timywimy.model.bo.events.Event.class, event);
     }
 
     @Override
@@ -88,42 +96,12 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
         return getBetween(allByOwner, start, end);
     }
 
-    private <E extends BaseEntity> void persistEntity(UUID userId, E toAdd) {
-        toAdd.setCreatedBy(userId);
-        toAdd.setId(null);
-        entityManager.persist(toAdd);
-    }
-
-    private <E extends BaseEntity> boolean isFoundToDelete(E toDelete, List<E> children) {
-        boolean foundToDelete = false;
-        Iterator<E> iterator = children.iterator();
-        while (iterator.hasNext()) {
-            E child = iterator.next();
-            if (toDelete.getId().equals(child.getId())) {
-                foundToDelete = true;
-                entityManager.remove(child);
-                iterator.remove();
-                break;
-            }
-        }
-        return foundToDelete;
-    }
-
-    private <E extends BaseEntity> boolean isFoundToUpdate(UUID userId, E toUpdate, E child) {
-        boolean foundToUpdate = false;
-        if (toUpdate.getId().equals(child.getId())) {
-            foundToUpdate = true;
-            toUpdate.setUpdatedBy(userId);
-        }
-        return foundToUpdate;
-    }
-
     @Override
     @Transactional
     public List<AbstractEventExtension> addExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
-        Event event = get(eventId);
+        timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
         List<AbstractEventExtension> eventExtensions = event.getExtensions();
         for (AbstractEventExtension toAdd : extensions) {
@@ -133,9 +111,8 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             persistEntity(userId, toAdd);
             eventExtensions.add(toAdd);
         }
-        Set<String> extensionParameter = new HashSet<>();
-        extensionParameter.add("extensions");
-        return get(eventId, extensionParameter).getExtensions();
+
+        return get(eventId, constructParametersSet("extensions")).getExtensions();
     }
 
     @Override
@@ -143,7 +120,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     public List<AbstractEventExtension> updateExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
-        Event event = get(eventId);
+        timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
 
         for (AbstractEventExtension toUpdate : extensions) {
@@ -166,9 +143,8 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
                         "Trying to update extensions that don't exist in event");
             }
         }
-        Set<String> extensionParameter = new HashSet<>();
-        extensionParameter.add("extensions");
-        return get(eventId, extensionParameter).getExtensions();
+
+        return get(eventId, constructParametersSet("extensions")).getExtensions();
     }
 
     @Override
@@ -176,7 +152,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     public List<AbstractEventExtension> deleteExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
-        Event event = get(eventId);
+        timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
 
         for (AbstractEventExtension toDelete : extensions) {
@@ -188,16 +164,15 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
                         "Trying to delete extensions that don't exist in event");
             }
         }
-        Set<String> extensionParameter = new HashSet<>();
-        extensionParameter.add("extensions");
-        return get(eventId, extensionParameter).getExtensions();
+
+        return get(eventId, constructParametersSet("extensions")).getExtensions();
     }
 
     @Override
     public List<Task> addTasks(UUID eventId, List<Task> tasks, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
-        Event event = get(eventId);
+        timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
         List<Task> eventTasks = event.getTasks();
         for (Task toAdd : tasks) {
@@ -208,9 +183,8 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             eventTasks.add(toAdd);
 
         }
-        Set<String> taskParameter = new HashSet<>();
-        taskParameter.add("tasks");
-        return get(eventId, taskParameter).getTasks();
+
+        return get(eventId, constructParametersSet("tasks")).getTasks();
     }
 
 
@@ -218,7 +192,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     public List<Task> updateTasks(UUID eventId, List<Task> tasks, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
-        Event event = get(eventId);
+        timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
 
         for (Task toUpdate : tasks) {
@@ -242,16 +216,14 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
         }
 
-        Set<String> taskParameter = new HashSet<>();
-        taskParameter.add("tasks");
-        return get(eventId, taskParameter).getTasks();
+        return get(eventId, constructParametersSet("tasks")).getTasks();
     }
 
     @Override
     public List<Task> deleteTasks(UUID eventId, List<Task> tasks, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, tasks, "tasks");
-        Event event = get(eventId);
+        timywimy.model.bo.events.Event event = get(eventId);
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
 
         for (Task toDelete : tasks) {
@@ -260,11 +232,10 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
 
             if (!isFoundToDelete(toDelete, event.getTasks())) {
                 throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
-                        "Trying to delete extensions that don't exist in event");
+                        "Trying to delete tasks that don't exist in event");
             }
         }
-        Set<String> taskParameter = new HashSet<>();
-        taskParameter.add("tasks");
-        return get(eventId, taskParameter).getTasks();
+
+        return get(eventId, constructParametersSet("tasks")).getTasks();
     }
 }

@@ -33,6 +33,7 @@ public class Event extends AbstractDefaultEntity implements DateTimeZoneEntity, 
     private List<AbstractEventExtension> extensions;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "event",
             targetEntity = Task.class)
+    @OrderBy("dateTimeZone ASC")
     private List<Task> tasks;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")

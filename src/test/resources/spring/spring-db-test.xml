@@ -12,7 +12,6 @@
     <bean class="timywimy.repository.UserRepositoryImpl" id="userRepository"/>
     <bean class="timywimy.repository.EventRepositoryImpl" id="eventRepository"/>
     <bean class="timywimy.repository.ScheduleRepositoryImpl" id="scheduleRepository"/>
-    <bean class="timywimy.repository.TaskGroupRepositoryImpl" id="taskGroupRepository"/>
     <bean class="timywimy.repository.TaskRepositoryImpl" id="taskRepository"/>
 
     <!--db properties-->

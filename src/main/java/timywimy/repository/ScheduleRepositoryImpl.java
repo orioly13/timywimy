@@ -4,29 +4,34 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
+import timywimy.model.bo.tasks.Task;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractOwnedEntityRepository;
 import timywimy.util.RequestUtil;
+import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.RepositoryException;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Repository
 @Transactional(readOnly = true)
 public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedule> implements ScheduleRepository {
 
+
     @Override
     public Schedule get(UUID id) {
         assertGet(id);
-        return get(Schedule.class, id);
+        return getBaseEntity(Schedule.class, id);
     }
 
     @Override
     public Schedule get(UUID id, Set<String> properties) {
         assertGet(id);
-        return get(Schedule.class, id, properties);
+        return getBaseEntity(Schedule.class, id, properties);
     }
 
     @Override
@@ -35,19 +40,39 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
         assertSave(entity, userId);
         assertOwner(entity);
         RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
-        return super.save(entity, userId);
+        return saveBaseEntity(entity, userId);
+    }
+
+    private void deleteInstances(Schedule schedule) {
+        List<Event> events = schedule.getInstances();
+        if (events.size() > 0) {
+            for (Event event : events) {
+                List<Task> tasks = event.getTasks();
+                for (Task task : tasks) {
+                    task.setEvent(null);
+                    entityManager.merge(task);
+                }
+                entityManager.remove(event);
+            }
+            entityManager.flush();
+        }
     }
 
     @Override
     @Transactional
     public boolean delete(UUID id) {
         assertDelete(id);
-        return delete(Schedule.class, id);
+        deleteInstances(get(id, constructParametersSet("instances")));
+        return deleteBaseEntity(Schedule.class, id);
     }
 
     @Override
-    public boolean delete(Schedule entity) {
-        return false;
+    @Transactional
+    public boolean delete(Schedule schedule) {
+        RequestUtil.validateEmptyField(RepositoryException.class, schedule, "schedule");
+        assertDelete(schedule.getId());
+        deleteInstances(get(schedule.getId(), constructParametersSet("instances")));
+        return deleteBaseEntity(Schedule.class, schedule);
     }
 
     @Override
@@ -68,32 +93,75 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     }
 
     @Override
-    public Collection<Event> addScheduleInstances(UUID scheduleId, Collection<Event> instances, UUID userId) {
-        //todo validate cron before adding
-        RequestUtil.validateEmptyField(RepositoryException.class, scheduleId, "event");
+    @Transactional
+    public List<Event> addInstances(UUID scheduleId, List<Event> instances, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, scheduleId, "schedule");
+        RequestUtil.validateEmptyField(RepositoryException.class, instances, "instances");
         Schedule schedule = get(scheduleId);
-        schedule.getInstances().addAll(instances);
-        return save(schedule, userId).getInstances();
+        RequestUtil.validateEmptyField(RepositoryException.class, schedule, "schedule");
+        List<Event> scheduleInstances = schedule.getInstances();
+        for (Event toAdd : instances) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toAdd, "schedule instance");
+
+            toAdd.setSchedule(schedule);
+            persistEntity(userId, toAdd);
+            scheduleInstances.add(toAdd);
+
+        }
+
+        return get(scheduleId, constructParametersSet("instances")).getInstances();
     }
 
     @Override
-    public Collection<Event> removeScheduleInstances(UUID scheduleId, Collection<Event> instances, UUID userId) {
-        RequestUtil.validateEmptyField(RepositoryException.class, scheduleId, "event");
+    @Transactional
+    public List<Event> updateInstances(UUID scheduleId, List<Event> instances, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, scheduleId, "schedule");
+        RequestUtil.validateEmptyField(RepositoryException.class, instances, "instances");
         Schedule schedule = get(scheduleId);
-        Collection<Event> result = new ArrayList<>();
-        for (Event event : schedule.getInstances()) {
-            boolean foundToRemove = false;
-            for (Event toRemove : instances) {
-                if (event.getId().equals(toRemove.getId())) {
-                    foundToRemove = true;
+        RequestUtil.validateEmptyField(RepositoryException.class, schedule, "schedule");
+
+        for (Event toUpdate : instances) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate, "shed event");
+            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate.getId(), "shed event id");
+
+            boolean foundToUpdate = false;
+            //without transaction proxy can't be initialized
+            for (Event instance : schedule.getInstances()) {
+                foundToUpdate = isFoundToUpdate(userId, toUpdate, instance);
+                if (foundToUpdate) {
+                    toUpdate.setSchedule(schedule);
+                    entityManager.merge(toUpdate);
                     break;
                 }
             }
-            if (!foundToRemove) {
-                result.add(event);
+
+            if (!foundToUpdate) {
+                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                        "Trying to update instances that don't exist in schedule");
             }
         }
-        schedule.setInstances(result);
-        return save(schedule, userId).getInstances();
+
+        return get(scheduleId, constructParametersSet("instances")).getInstances();
+    }
+
+    @Override
+    @Transactional
+    public List<Event> deleteInstances(UUID scheduleId, List<Event> instances, UUID userId) {
+        RequestUtil.validateEmptyField(RepositoryException.class, scheduleId, "schedule");
+        RequestUtil.validateEmptyField(RepositoryException.class, instances, "instances");
+        Schedule schedule = get(scheduleId);
+        RequestUtil.validateEmptyField(RepositoryException.class, schedule, "schedule");
+
+        for (Event toDelete : instances) {
+            RequestUtil.validateEmptyField(RepositoryException.class, toDelete, "shed event");
+            RequestUtil.validateEmptyField(RepositoryException.class, toDelete.getId(), "shed event id");
+
+            if (!isFoundToDelete(toDelete, schedule.getInstances())) {
+                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                        "Trying to delete instances that don't exist in schedule");
+            }
+        }
+
+        return get(scheduleId, constructParametersSet("instances")).getInstances();
     }
 }

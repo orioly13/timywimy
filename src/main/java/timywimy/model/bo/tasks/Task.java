@@ -9,6 +9,7 @@ import timywimy.model.common.DateTimeZoneEntity;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "bo_tasks",
@@ -20,7 +21,8 @@ public class Task extends AbstractDefaultEntity implements DateTimeZoneEntity {
     @JoinColumn(name = "parent_id")
     private Task parent;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private Collection<Task> children;
+    @OrderBy("dateTimeZone ASC")
+    private List<Task> children;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
@@ -45,11 +47,11 @@ public class Task extends AbstractDefaultEntity implements DateTimeZoneEntity {
         this.parent = parent;
     }
 
-    public Collection<Task> getChildren() {
+    public List<Task> getChildren() {
         return children;
     }
 
-    public void setChildren(Collection<Task> children) {
+    public void setChildren(List<Task> children) {
         this.children = children;
     }
 

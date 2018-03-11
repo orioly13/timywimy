@@ -4,7 +4,7 @@ import timywimy.model.common.AbstractOwnedEntity;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.RepositoryException;
 
-public abstract class AbstractOwnedEntityRepository<T extends AbstractOwnedEntity> extends AbstractEntityRepository<T>{
+public abstract class AbstractOwnedEntityRepository<T extends AbstractOwnedEntity> extends AbstractEntityRepository{
 
     protected void assertOwner(AbstractOwnedEntity entity) {
         RequestUtil.validateEmptyField(RepositoryException.class, entity, "entity");

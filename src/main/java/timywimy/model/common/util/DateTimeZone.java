@@ -21,10 +21,10 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
     @Convert(converter = ZoneIdConverter.class)
     private ZoneId zone;
 
+    private static final ZonedDateTime MAX = Instant.ofEpochMilli(Long.MAX_VALUE/2).atZone(ZoneOffset.UTC);
+
     @Transient
     private boolean initialized;
-//    @Transient
-//    private LocalDateTime localDateTime;
     @Transient
     private ZonedDateTime zonedDateTime;
 
@@ -65,13 +65,7 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
         this.zone = zone;
         initialized = false;
     }
-//
-//    public LocalDateTime getLocalDateTime() {
-//        if (!initialized) {
-//            init();
-//        }
-//        return localDateTime;
-//    }
+
     //returns in UTC if no zone
     public ZonedDateTime getZonedDateTime() {
         if (!initialized) {
@@ -80,30 +74,16 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
         return zonedDateTime;
     }
 
-    //initialize dates
-    public void initIfNeeded() {
+    public void init() {
         if (!initialized) {
-            init();
+            initOffsetDateTime();
+            initialized = true;
         }
     }
 
-    private void init() {
-//        initLocalDateTime();
-        initOffsetDateTime();
-        initialized = true;
-    }
-//
-//    private void initLocalDateTime() {
-//        if (date == null) {
-//            localDateTime = null;
-//        } else {
-//            localDateTime = LocalDateTime.of(date, time == null ? LocalTime.MIDNIGHT : time);
-//        }
-//    }
-
     private void initOffsetDateTime() {
         if (date == null) {
-            zonedDateTime = null;
+            zonedDateTime = MAX;
         } else {
             zonedDateTime = ZonedDateTime.of(date,
                     time == null ? LocalTime.MIDNIGHT : time,
@@ -137,49 +117,31 @@ public class DateTimeZone implements Comparable<DateTimeZone> {
     }
 
     @Override
-    public int compareTo(DateTimeZone o) {
-        if (o == null) {
+    public int compareTo(DateTimeZone that) {
+        if (that == null) {
             throw new NullPointerException();
         }
-        if (!this.initialized) {
-            this.init();
-        }
-        if (!o.initialized) {
-            o.init();
-        }
-        if (this.equals(o)) {
-            return 0;
-        } else if (this.isBefore(o)) {
-            return -1;
-        } else {
-            return 1;
-        }
+        this.init();
+        that.init();
+        return this.zonedDateTime.compareTo(that.zonedDateTime);
     }
 
     public boolean isAfter(DateTimeZone that) {
         if (that == null) {
             throw new NullPointerException();
         }
-        if (!this.initialized) {
-            this.init();
-        }
-        if (!that.initialized) {
-            that.init();
-        }
-        return zonedDateTime.isAfter(that.zonedDateTime);
+        this.init();
+        that.init();
+        return this.zonedDateTime.isAfter(that.zonedDateTime);
     }
 
     public boolean isBefore(DateTimeZone that) {
         if (that == null) {
             throw new NullPointerException();
         }
-        if (!this.initialized) {
-            this.init();
-        }
-        if (!that.initialized) {
-            that.init();
-        }
-        return zonedDateTime.isBefore(that.zonedDateTime);
+        this.init();
+        that.init();
+        return this.zonedDateTime.isBefore(that.zonedDateTime);
     }
 
     public static DateTimeZone now() {

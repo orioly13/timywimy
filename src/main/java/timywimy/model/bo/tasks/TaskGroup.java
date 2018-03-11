@@ -4,6 +4,7 @@ import timywimy.model.common.AbstractDefaultEntity;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "bo_task_groups",
@@ -14,9 +15,9 @@ public class TaskGroup extends AbstractDefaultEntity {
     @JoinColumn(name = "parent_id")
     private TaskGroup parent;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
-    private Collection<TaskGroup> children;
+    private List<TaskGroup> children;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "group")
-    private Collection<Task> tasks;
+    private List<Task> tasks;
 
 
     public TaskGroup getParent() {
@@ -27,20 +28,20 @@ public class TaskGroup extends AbstractDefaultEntity {
         this.parent = parent;
     }
 
-    public Collection<TaskGroup> getChildren() {
+    public List<TaskGroup> getChildren() {
         return children;
     }
 
 
-    public void setChildren(Collection<TaskGroup> children) {
+    public void setChildren(List<TaskGroup> children) {
         this.children = children;
     }
 
-    public Collection<Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
-    public void setTasks(Collection<Task> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 }

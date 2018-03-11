@@ -6,7 +6,7 @@ import timywimy.model.common.converters.DurationConverter;
 
 import javax.persistence.*;
 import java.time.Duration;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "bo_schedules",
@@ -21,10 +21,9 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
     private Duration duration;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule",
-            orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     @OrderBy("dateTimeZone ASC")
-    private Collection<Event> instances;
+    private List<Event> instances;
 
     public String getCron() {
         return cron;
@@ -34,11 +33,11 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
         this.cron = cron;
     }
 
-    public Collection<Event> getInstances() {
+    public List<Event> getInstances() {
         return instances;
     }
 
-    public void setInstances(Collection<Event> instances) {
+    public void setInstances(List<Event> instances) {
         this.instances = instances;
     }
 

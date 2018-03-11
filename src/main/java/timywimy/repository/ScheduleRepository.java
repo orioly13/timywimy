@@ -4,12 +4,14 @@ import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
 import timywimy.repository.common.OwnedEntityRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public interface ScheduleRepository extends OwnedEntityRepository<Schedule> {
 
-    Collection<Event> addScheduleInstances(UUID scheduleId, Collection<Event> instances, UUID userId);
+    List<Event> addInstances(UUID scheduleId, List<Event> instances, UUID userId);
 
-    Collection<Event> removeScheduleInstances(UUID scheduleId, Collection<Event> instances, UUID userId);
+    List<Event> updateInstances(UUID scheduleId, List<Event> instances, UUID userId);
+
+    List<Event> deleteInstances(UUID scheduleId, List<Event> instances, UUID userId);
 }

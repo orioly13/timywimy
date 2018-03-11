@@ -19,18 +19,18 @@ import java.util.UUID;
 
 @Repository
 @Transactional(readOnly = true)
-public class UserRepositoryImpl extends AbstractEntityRepository<User> implements UserRepository {
+public class UserRepositoryImpl extends AbstractEntityRepository implements UserRepository {
 
     @Override
     public User get(UUID id) {
         assertGet(id);
-        return get(User.class, id);
+        return getBaseEntity(User.class, id);
     }
 
     @Override
     public User get(UUID id, Set<String> properties) {
         assertGet(id);
-        return get(User.class, id, properties);
+        return getBaseEntity(User.class, id, properties);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
         if (byEmail != null && !byEmail.getId().equals(entity.getId())) {
             throw new RepositoryException(ErrorCode.USER_ALREADY_REGISTERED);
         }
-        return super.save(entity, userId);
+        return saveBaseEntity(entity, userId);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserRepositoryImpl extends AbstractEntityRepository<User> implement
     public boolean delete(UUID id) {
         assertDelete(id);
 
-        return delete(User.class, id);
+        return deleteBaseEntity(User.class, id);
     }
 
     @Override

@@ -117,18 +117,6 @@ public class UserRepositoryTest {
     //save
     @Test
     public void saveValid() throws Exception {
-//        User newUser = UserTestData.getNewUser();
-        //update not existent user (results in creating new instance)
-//        newUser.setId(UserTestData.NO_EXISTENT_USER_ID);
-//        User notExisted = repository.save(newUser, UserTestData.ROOT_ID);
-//        Assert.assertNull(notExisted);
-//        Assert.assertNull(repository.get(UserTestData.NO_EXISTENT_USER_ID));
-        //update deleted user
-//        newUser.setId(UserTestData.INACTIVE_USER_ID);
-//        User deletedUser = repository.save(newUser, UserTestData.ROOT_ID);
-//        Assert.assertNull(deletedUser);
-//        Assert.assertNull(repository.get(UserTestData.INACTIVE_USER_ID));
-
         //create user
         User createdUser = repository.save(UserTestData.getNewUser(), UserTestData.ROOT_ID);
         Assert.assertNotNull(createdUser);
