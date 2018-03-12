@@ -87,9 +87,15 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     }
 
     @Override
-    public List<Schedule> getAllByOwner(User owner) {
+    public List<Schedule> getAllByOwner(UUID owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
-        return owner.getSchedules();
+        CriteriaQuery<Schedule> criteria = builder.createQuery(Schedule.class);
+        Root<Schedule> userRoot = criteria.from(Schedule.class);
+        criteria.select(userRoot).
+                where(builder.equal(userRoot.get("owner.id"), owner)).
+                orderBy(builder.asc(userRoot.get("dateTimeZone")));
+
+        return entityManager.createQuery(criteria).getResultList();
     }
 
     @Override

@@ -1,31 +1,30 @@
 package timywimy.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import timywimy.model.bo.events.Event;
+import timywimy.model.bo.tasks.converters.Priority;
+import timywimy.web.dto.common.DateTimeZone;
 
-import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
-@JsonPropertyOrder(value = {"id", "email", "name", "password", "old_password", "token", "banned", "banned_till"})
+@JsonPropertyOrder(value = {"id", "name", "description", "deadline", "parent", "children", "event", "priority", "completed"})
 public class Task {
-    //todo expand with events and shit
+
     private UUID id;
-    private String email;
-    private String password;
     private String name;
-    private String token;
-    @JsonProperty("old_password")
-    private String oldPassword;
-    private Boolean banned;
-    @JsonProperty("banned_till")
-    private ZonedDateTime bannedTill;
+    private String description;
+
+    private DateTimeZone deadline;
+
+    private Task parent;
+    private List<Task> children;
+    private Event event;
+
+    private Priority priority;
+    private boolean completed;
 
     public Task() {
-    }
-
-    public Task(String email, String name) {
-        this.email = email;
-        this.name = name;
     }
 
     public UUID getId() {
@@ -36,22 +35,6 @@ public class Task {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getName() {
         return name;
     }
@@ -60,35 +43,59 @@ public class Task {
         this.name = name;
     }
 
-    public String getToken() {
-        return token;
+    public String getDescription() {
+        return description;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getOldPassword() {
-        return oldPassword;
+    public DateTimeZone getDeadline() {
+        return deadline;
     }
 
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
+    public void setDeadline(DateTimeZone deadline) {
+        this.deadline = deadline;
     }
 
-    public Boolean isBanned() {
-        return banned;
+    public Task getParent() {
+        return parent;
     }
 
-    public void setBanned(Boolean banned) {
-        this.banned = banned;
+    public void setParent(Task parent) {
+        this.parent = parent;
     }
 
-    public ZonedDateTime getBannedTill() {
-        return bannedTill;
+    public List<Task> getChildren() {
+        return children;
     }
 
-    public void setBannedTill(ZonedDateTime bannedTill) {
-        this.bannedTill = bannedTill;
+    public void setChildren(List<Task> children) {
+        this.children = children;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

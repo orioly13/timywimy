@@ -85,13 +85,19 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     }
 
     @Override
-    public List<Event> getAllByOwner(User owner) {
+    public List<Event> getAllByOwner(UUID owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
-        return owner.getEvents();
+        CriteriaQuery<Event> criteria = builder.createQuery(Event.class);
+        Root<Event> userRoot = criteria.from(Event.class);
+        criteria.select(userRoot).
+                where(builder.equal(userRoot.get("owner.id"), owner)).
+                orderBy(builder.asc(userRoot.get("dateTimeZone")));
+
+        return entityManager.createQuery(criteria).getResultList();
     }
 
     @Override
-    public List<Event> getByOwnerBetween(User owner, DateTimeZone start, DateTimeZone end) {
+    public List<Event> getByOwnerBetween(UUID owner, DateTimeZone start, DateTimeZone end) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
         List<Event> allByOwner = getAllByOwner(owner);
         return getBetween(allByOwner, start, end);

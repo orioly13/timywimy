@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
 import timywimy.service.RestService;
+import timywimy.service.converters.Converter;
 import timywimy.util.PairFieldName;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
@@ -34,7 +35,7 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
         RequestUtil.validateEmptyField(ServiceException.class, entityId, "entity id");
         assertUserRole(getUserBySession(userSession).getRole());
         timywimy.model.security.User entity = repository.get(entityId);
-        return convertEntityToDTO(entity);
+        return Converter.userEntityToUserDTO(entity);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
         List<timywimy.model.security.User> allEntities = getAllEntities(userSession);
         List<User> result = new ArrayList<>(allEntities.size());
         for (timywimy.model.security.User entity : allEntities) {
-            result.add(convertEntityToDTO(entity));
+            result.add(Converter.userEntityToUserDTO(entity));
         }
         return result;
     }
@@ -64,7 +65,7 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
                 new PairFieldName<>(session, "session"));
         assertUserRole(getUserBySession(session).getRole());
         timywimy.model.security.User entity = ((UserRepository) repository).getByEmail(email);
-        return convertEntityToDTO(entity);
+        return Converter.userEntityToUserDTO(entity);
     }
 
     @Override
@@ -101,18 +102,6 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
         user.setBannedBy(userBySession);
         user.setBannedTill(null);
         return repository.save(user, userBySession.getId()) != null;
-    }
-
-    private User convertEntityToDTO(timywimy.model.security.User user) {
-        if (user == null)
-            return null;
-        User res = new User();
-        res.setId(user.getId());
-        res.setEmail(user.getEmail());
-        res.setName(user.getName());
-        res.setBanned(user.isBanned());
-        res.setBannedTill(user.getBannedTill());
-        return res;
     }
 
 }

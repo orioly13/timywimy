@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
+import timywimy.service.converters.Converter;
 import timywimy.service.dto.UserSession;
 import timywimy.util.PairFieldName;
 import timywimy.util.RequestUtil;
@@ -81,7 +82,8 @@ public class RestServiceImpl implements RestService {
         if (userRepository.getByEmail(lowerCaseEmail) != null) {
             throw new ServiceException(ErrorCode.USER_ALREADY_REGISTERED, String.format("email:%s", user.getEmail()));
         }
-        timywimy.model.security.User savedUser = userRepository.save(createFromUserDTO(user), apiUser.getId());
+        user.setRole(Role.USER);
+        timywimy.model.security.User savedUser = userRepository.save(Converter.userDTOtoUserEntity(user), apiUser.getId());
         if (savedUser == null) {
             throw new ServiceException(ErrorCode.REGISTER_FAILED_TO_PERSIST);
         }
@@ -175,15 +177,5 @@ public class RestServiceImpl implements RestService {
             return null;
         }
         return entry.getUser();
-    }
-
-    private timywimy.model.security.User createFromUserDTO(User dto) {
-        timywimy.model.security.User user = new timywimy.model.security.User();
-        //to lowercase to prevent changes
-        user.setEmail(dto.getEmail().toLowerCase());
-        user.setPassword(dto.getPassword());
-        user.setName(dto.getName());
-        user.setRole(Role.USER);
-        return user;
     }
 }

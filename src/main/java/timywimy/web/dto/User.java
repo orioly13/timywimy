@@ -2,6 +2,7 @@ package timywimy.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import timywimy.model.security.converters.Role;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -12,6 +13,7 @@ public class User {
     private UUID id;
     private String email;
     private String password;
+    private Role role;
     private String name;
     private String token;
     @JsonProperty("old_password")
@@ -90,5 +92,13 @@ public class User {
 
     public void setBannedTill(ZonedDateTime bannedTill) {
         this.bannedTill = bannedTill;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
