@@ -1,7 +1,7 @@
 package timywimy.service;
 
-import timywimy.web.dto.Session;
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.Session;
+import timywimy.web.dto.security.User;
 
 import java.util.UUID;
 

@@ -151,8 +151,8 @@ public class EventRepositoryTest {
         AbstractEventExtension extension2 = new TickBoxExtension();
         List<AbstractEventExtension> tickers = new ArrayList<>();
         tickers.add(extension2);
-        List<AbstractEventExtension> abstractEventExtensions = repository.addExtensions(event.getId(), tickers, UserTestData.USER_ID);
-        Assert.assertEquals(2, abstractEventExtensions.size());
+        Event event2 = repository.addExtensions(event.getId(), tickers, UserTestData.USER_ID);
+        Assert.assertEquals(2, event2.getExtensions().size());
 //        Event event2 = repository.get(event.getId(), parameters);
     }
 
@@ -168,9 +168,9 @@ public class EventRepositoryTest {
 
         List<AbstractEventExtension> extensionsToDelete = new ArrayList<>();
         extensionsToDelete.add(event1.getExtensions().get(0));
-        List<AbstractEventExtension> abstractEventExtensions =
+        Event event2 =
                 repository.deleteExtensions(event.getId(), extensionsToDelete, UserTestData.USER_ID);
-        Assert.assertEquals(1, abstractEventExtensions.size());
+        Assert.assertEquals(1, event2.getExtensions().size());
     }
 
     @Test
@@ -189,11 +189,11 @@ public class EventRepositoryTest {
         ((TickBoxExtension) event1.getExtensions().get(1)).setActive(true);
 
         extensionsToUpdate.addAll(event1.getExtensions());
-        List<AbstractEventExtension> abstractEventExtensions = repository.updateExtensions(event.getId(), extensionsToUpdate, UserTestData.USER_ID);
+       Event event2  = repository.updateExtensions(event.getId(), extensionsToUpdate, UserTestData.USER_ID);
 //        Event event2 = repository.get(event.getId(), parameters);
-        Assert.assertEquals(abstractEventExtensions.size(), 2);
+        Assert.assertEquals(event2.getExtensions().size(), 2);
 
-        for (AbstractEventExtension extension : abstractEventExtensions) {
+        for (AbstractEventExtension extension : event2.getExtensions()) {
             if (extension instanceof CounterExtension) {
                 Assert.assertEquals(15, ((CounterExtension) extension).getCounter());
             } else if (extension instanceof TickBoxExtension) {

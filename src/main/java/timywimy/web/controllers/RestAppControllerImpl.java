@@ -7,8 +7,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import timywimy.service.RestService;
 import timywimy.web.dto.Info;
-import timywimy.web.dto.Session;
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.Session;
+import timywimy.web.dto.security.User;
 import timywimy.web.dto.common.Response;
 
 import java.util.UUID;

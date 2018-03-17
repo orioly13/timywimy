@@ -173,22 +173,22 @@ public class ScheduleRepositoryTest {
         Assert.assertEquals(0, events.size());
     }
 
-    @Test
-    public void updateInstances() throws Exception {
-        Schedule schedule = ScheduleTestData.getScheduleExistingWithEvents();
-        Set<String> parameters = new HashSet<>();
-        parameters.add("instances");
+//    @Test
+//    public void updateInstances() throws Exception {
+//        Schedule schedule = ScheduleTestData.getScheduleExistingWithEvents();
+//        Set<String> parameters = new HashSet<>();
+//        parameters.add("instances");
+////
+//        Schedule schedule1 = repository.get(schedule.getId(), parameters);
+//        Assert.assertEquals(1, schedule1.getInstances().size());
 //
-        Schedule schedule1 = repository.get(schedule.getId(), parameters);
-        Assert.assertEquals(1, schedule1.getInstances().size());
-
-        schedule1.getInstances().get(0).setName("CHANGED EVENT");
-        List<Event> eventsToUpdate = new ArrayList<>();
-        eventsToUpdate.add(schedule1.getInstances().get(0));
-        List<Event> events = repository.updateInstances(schedule1.getId(), eventsToUpdate, UserTestData.USER_ID);
-        Assert.assertEquals(1, events.size());
-        Assert.assertEquals("CHANGED EVENT", events.get(0).getName());
-//        }
-    }
+//        schedule1.getInstances().get(0).setName("CHANGED EVENT");
+//        List<Event> eventsToUpdate = new ArrayList<>();
+//        eventsToUpdate.add(schedule1.getInstances().get(0));
+//        List<Event> events = repository.updateInstances(schedule1.getId(), eventsToUpdate, UserTestData.USER_ID);
+//        Assert.assertEquals(1, events.size());
+//        Assert.assertEquals("CHANGED EVENT", events.get(0).getName());
+////        }
+//    }
 
 }

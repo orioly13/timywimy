@@ -17,17 +17,15 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import timywimy.util.RequestUtil;
 import timywimy.util.UserTestData;
 import timywimy.web.controllers.RestAppController;
-import timywimy.web.dto.Session;
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.Session;
+import timywimy.web.dto.security.User;
 import timywimy.web.dto.common.Response;
 
-import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
 @ContextConfiguration({

@@ -37,8 +37,8 @@ public class UserTestData {
         return res;
     }
 
-    public static timywimy.web.dto.User getNewUserDTO() {
-        timywimy.web.dto.User res = new timywimy.web.dto.User();
+    public static timywimy.web.dto.security.User getNewUserDTO() {
+        timywimy.web.dto.security.User res = new timywimy.web.dto.security.User();
         res.setName(NEW_USER.getName());
         res.setPassword(NEW_USER.getPassword());
         res.setEmail(NEW_USER.getEmail());
@@ -54,8 +54,8 @@ public class UserTestData {
         return res;
     }
 
-    public static timywimy.web.dto.User getExistingUserDTO() {
-        timywimy.web.dto.User res = new timywimy.web.dto.User();
+    public static timywimy.web.dto.security.User getExistingUserDTO() {
+        timywimy.web.dto.security.User res = new timywimy.web.dto.security.User();
         res.setName(EXISTING_USER.getName());
         res.setPassword(EXISTING_USER.getPassword());
         res.setEmail(EXISTING_USER.getEmail());

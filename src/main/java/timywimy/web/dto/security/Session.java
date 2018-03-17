@@ -1,4 +1,4 @@
-package timywimy.web.dto;
+package timywimy.web.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

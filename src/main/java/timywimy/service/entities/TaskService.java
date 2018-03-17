@@ -2,7 +2,7 @@ package timywimy.service.entities;
 
 
 import timywimy.model.common.util.DateTimeZone;
-import timywimy.web.dto.Task;
+import timywimy.web.dto.tasks.Task;
 
 import java.util.List;
 import java.util.UUID;

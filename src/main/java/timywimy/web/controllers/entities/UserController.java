@@ -1,7 +1,7 @@
 package timywimy.web.controllers.entities;
 
 
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.User;
 import timywimy.web.dto.common.Response;
 
 import java.time.ZonedDateTime;

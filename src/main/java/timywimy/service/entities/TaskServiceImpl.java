@@ -10,7 +10,7 @@ import timywimy.service.converters.Converter;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
-import timywimy.web.dto.Task;
+import timywimy.web.dto.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;

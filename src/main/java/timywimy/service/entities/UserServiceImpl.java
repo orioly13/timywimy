@@ -5,11 +5,10 @@ import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
 import timywimy.service.RestService;
 import timywimy.service.converters.Converter;
-import timywimy.util.PairFieldName;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.User;
 
 import javax.annotation.PostConstruct;
 import java.time.ZonedDateTime;
@@ -32,8 +31,8 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
 
     @Override
     public User get(UUID entityId, UUID userSession) {
-        RequestUtil.validateEmptyField(ServiceException.class, entityId, "entity id");
         assertUserRole(getUserBySession(userSession).getRole());
+        RequestUtil.validateEmptyField(ServiceException.class, entityId, "entity id");
         timywimy.model.security.User entity = repository.get(entityId);
         return Converter.userEntityToUserDTO(entity);
     }
@@ -60,20 +59,17 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
 
     @Override
     public User getByEmail(String email, UUID session) {
-        RequestUtil.validateEmptyFields(ServiceException.class,
-                new PairFieldName<>(email, "email"),
-                new PairFieldName<>(session, "session"));
         assertUserRole(getUserBySession(session).getRole());
+        RequestUtil.validateEmptyField(ServiceException.class, email, "email");
         timywimy.model.security.User entity = ((UserRepository) repository).getByEmail(email);
         return Converter.userEntityToUserDTO(entity);
     }
 
     @Override
     public boolean ban(UUID idToBan, UUID session, ZonedDateTime bannedTill) {
-        RequestUtil.validateEmptyFields(ServiceException.class,
-                new PairFieldName<>(idToBan, "id to ban"),
-                new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
+        RequestUtil.validateEmptyField(ServiceException.class, idToBan, "id to ban");
+
         assertUserRole(userBySession.getRole());
 
         timywimy.model.security.User user = repository.get(idToBan);
@@ -88,10 +84,9 @@ public class UserServiceImpl extends AbstractEntityWithRightsService<User, timyw
 
     @Override
     public boolean unBan(UUID bannedId, UUID session) {
-        RequestUtil.validateEmptyFields(ServiceException.class,
-                new PairFieldName<>(bannedId, "banned id"),
-                new PairFieldName<>(session, "session"));
         timywimy.model.security.User userBySession = getUserBySession(session);
+        RequestUtil.validateEmptyField(ServiceException.class, bannedId, "banned id");
+
         assertUserRole(userBySession.getRole());
 
         timywimy.model.security.User user = repository.get(bannedId);

@@ -118,37 +118,6 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
         return get(scheduleId, constructParametersSet("instances")).getInstances();
     }
 
-    @Override
-    @Transactional
-    public List<Event> updateInstances(UUID scheduleId, List<Event> instances, UUID userId) {
-        RequestUtil.validateEmptyField(RepositoryException.class, scheduleId, "schedule");
-        RequestUtil.validateEmptyField(RepositoryException.class, instances, "instances");
-        Schedule schedule = get(scheduleId);
-        RequestUtil.validateEmptyField(RepositoryException.class, schedule, "schedule");
-
-        for (Event toUpdate : instances) {
-            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate, "shed event");
-            RequestUtil.validateEmptyField(RepositoryException.class, toUpdate.getId(), "shed event id");
-
-            boolean foundToUpdate = false;
-            //without transaction proxy can't be initialized
-            for (Event instance : schedule.getInstances()) {
-                foundToUpdate = isFoundToUpdate(userId, toUpdate, instance);
-                if (foundToUpdate) {
-                    toUpdate.setSchedule(schedule);
-                    entityManager.merge(toUpdate);
-                    break;
-                }
-            }
-
-            if (!foundToUpdate) {
-                throw new RepositoryException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
-                        "Trying to update instances that don't exist in schedule");
-            }
-        }
-
-        return get(scheduleId, constructParametersSet("instances")).getInstances();
-    }
 
     @Override
     @Transactional

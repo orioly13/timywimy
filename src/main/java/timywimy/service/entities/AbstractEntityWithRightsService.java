@@ -32,8 +32,6 @@ public abstract class AbstractEntityWithRightsService<T, E extends BaseEntity> e
     }
 
     public List<E> getAllEntities(UUID userSession) {
-        RequestUtil.validateEmptyField(ServiceException.class, userSession, "user session must not be null");
-
         assertUserRole(getUserBySession(userSession).getRole());
 
         return repository.getAll();

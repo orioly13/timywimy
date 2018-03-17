@@ -1,7 +1,7 @@
 package timywimy.service.entities;
 
 
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.User;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;

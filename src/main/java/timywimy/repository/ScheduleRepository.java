@@ -11,7 +11,7 @@ public interface ScheduleRepository extends OwnedEntityRepository<Schedule> {
 
     List<Event> addInstances(UUID scheduleId, List<Event> instances, UUID userId);
 
-    List<Event> updateInstances(UUID scheduleId, List<Event> instances, UUID userId);
+//    List<Event> updateInstances(UUID scheduleId, List<Event> instances, UUID userId);
 
     List<Event> deleteInstances(UUID scheduleId, List<Event> instances, UUID userId);
 }

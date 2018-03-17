@@ -1,5 +1,6 @@
-package timywimy.web.dto;
+package timywimy.web.dto.tasks;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.tasks.converters.Priority;
@@ -8,13 +9,14 @@ import timywimy.web.dto.common.DateTimeZone;
 import java.util.List;
 import java.util.UUID;
 
-@JsonPropertyOrder(value = {"id", "name", "description", "deadline", "parent", "children", "event", "priority", "completed"})
+@JsonPropertyOrder(value = {"id", "name", "description", "deadline_ts", "parent", "children", "event", "priority", "completed"})
 public class Task {
 
     private UUID id;
     private String name;
     private String description;
 
+    @JsonProperty("deadline_ts")
     private DateTimeZone deadline;
 
     private Task parent;
@@ -22,7 +24,7 @@ public class Task {
     private Event event;
 
     private Priority priority;
-    private boolean completed;
+    private Boolean completed;
 
     public Task() {
     }
@@ -91,11 +93,11 @@ public class Task {
         this.priority = priority;
     }
 
-    public boolean isCompleted() {
+    public Boolean isCompleted() {
         return completed;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 }

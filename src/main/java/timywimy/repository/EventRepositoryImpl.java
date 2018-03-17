@@ -105,7 +105,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
 
     @Override
     @Transactional
-    public List<AbstractEventExtension> addExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
+    public Event addExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
         timywimy.model.bo.events.Event event = get(eventId);
@@ -119,12 +119,12 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             eventExtensions.add(toAdd);
         }
 
-        return get(eventId, constructParametersSet("extensions")).getExtensions();
+        return get(eventId, constructParametersSet("extensions"));
     }
 
     @Override
     @Transactional
-    public List<AbstractEventExtension> updateExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
+    public Event updateExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
         timywimy.model.bo.events.Event event = get(eventId);
@@ -151,12 +151,12 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
         }
 
-        return get(eventId, constructParametersSet("extensions")).getExtensions();
+        return get(eventId, constructParametersSet("extensions"));
     }
 
     @Override
     @Transactional
-    public List<AbstractEventExtension> deleteExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
+    public Event deleteExtensions(UUID eventId, List<AbstractEventExtension> extensions, UUID userId) {
         RequestUtil.validateEmptyField(RepositoryException.class, eventId, "event");
         RequestUtil.validateEmptyField(RepositoryException.class, extensions, "extensions");
         timywimy.model.bo.events.Event event = get(eventId);
@@ -172,7 +172,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
         }
 
-        return get(eventId, constructParametersSet("extensions")).getExtensions();
+        return get(eventId, constructParametersSet("extensions"));
     }
 
     @Override

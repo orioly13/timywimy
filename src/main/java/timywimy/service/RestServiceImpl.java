@@ -13,8 +13,8 @@ import timywimy.util.RequestUtil;
 import timywimy.util.StringUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
-import timywimy.web.dto.Session;
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.Session;
+import timywimy.web.dto.security.User;
 
 import javax.annotation.PostConstruct;
 import java.time.ZonedDateTime;
@@ -124,8 +124,6 @@ public class RestServiceImpl implements RestService {
 
     @Override
     public User updateProfile(UUID sessionId, User user) {
-        RequestUtil.validateEmptyField(ServiceException.class, sessionId, "session");
-        //find session
         timywimy.model.security.User userBySession = getUserBySession(sessionId);
         if (userBySession == null) {
             throw new ServiceException(ErrorCode.REQUEST_VALIDATION_SESSION_REQUIRED);

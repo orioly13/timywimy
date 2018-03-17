@@ -17,8 +17,8 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import timywimy.service.RestService;
 import timywimy.util.UserTestData;
-import timywimy.web.dto.Session;
-import timywimy.web.dto.User;
+import timywimy.web.dto.security.Session;
+import timywimy.web.dto.security.User;
 
 import java.util.concurrent.TimeUnit;
 
