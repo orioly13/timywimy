@@ -78,7 +78,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
         CriteriaQuery<Event> criteria = builder.createQuery(Event.class);
         Root<Event> userRoot = criteria.from(Event.class);
         criteria.select(userRoot).
-                orderBy(builder.asc(userRoot.get("owner.id")),
+                orderBy(builder.asc(userRoot.get("owner")),
                         builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();

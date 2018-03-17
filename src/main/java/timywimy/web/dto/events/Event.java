@@ -2,11 +2,13 @@ package timywimy.web.dto.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import timywimy.web.dto.common.DateTimeZone;
 import timywimy.web.dto.events.extensions.EventExtension;
 import timywimy.web.dto.tasks.Task;
-import timywimy.web.util.converters.DateTimeZoneSerializer;
+import timywimy.web.util.converters.DurationDeserializer;
+import timywimy.web.util.converters.DurationSerializer;
 
 import java.time.Duration;
 import java.util.List;
@@ -19,9 +21,10 @@ public class Event {
     private String name;
     private String description;
 
-    @JsonProperty("event_ts")
-    @JsonSerialize(using = DateTimeZoneSerializer.class)
+    @JsonProperty("event_dtz")
     private DateTimeZone dateTimeZone;
+    @JsonSerialize(using = DurationSerializer.class)
+    @JsonDeserialize(using = DurationDeserializer.class)
     private Duration duration;
     @JsonProperty("extensions")
     private List<EventExtension> eventExtensions;

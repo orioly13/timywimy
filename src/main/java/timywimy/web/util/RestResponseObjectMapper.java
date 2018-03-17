@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.stereotype.Component;
-import timywimy.web.dto.common.DateTimeZone;
-import timywimy.web.util.converters.DateTimeZoneSerializer;
-import timywimy.web.util.converters.ZonedDateTimeSerializer;
+import timywimy.web.util.converters.*;
 
-import java.time.ZonedDateTime;
+import java.time.*;
 
 @Component
 public class RestResponseObjectMapper extends ObjectMapper {
@@ -18,8 +16,22 @@ public class RestResponseObjectMapper extends ObjectMapper {
         setSerializationInclusion(JsonInclude.Include.NON_NULL);
         //custom serializers
         SimpleModule module = new SimpleModule();
+
         module.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer());
-        module.addSerializer(DateTimeZone.class, new DateTimeZoneSerializer());
+        module.addDeserializer(ZonedDateTime.class, new ZonedDateTimeDeserializer());
+
+        module.addSerializer(LocalDate.class, new LocalDateSerializer());
+        module.addDeserializer(LocalDate.class, new LocalDateDeserializer());
+
+        module.addSerializer(LocalTime.class, new LocalTimeSerializer());
+        module.addDeserializer(LocalTime.class, new LocalTimeDeserializer());
+
+        module.addSerializer(ZoneId.class, new ZoneIdSerializer());
+        module.addDeserializer(ZoneId.class, new ZoneIdDeserializer());
+
+        module.addSerializer(Duration.class, new DurationSerializer());
+        module.addDeserializer(Duration.class, new DurationDeserializer());
+
         registerModule(module);
     }
 }

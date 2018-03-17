@@ -6,20 +6,20 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import timywimy.util.TimeFormatUtil;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
+import java.time.ZoneId;
 
-public class ZonedDateTimeSerializer extends StdSerializer<ZonedDateTime> {
+public class ZoneIdSerializer extends StdSerializer<ZoneId> {
 
-    public ZonedDateTimeSerializer() {
+    public ZoneIdSerializer() {
         this(null);
     }
 
-    public ZonedDateTimeSerializer(Class<ZonedDateTime> t) {
+    public ZoneIdSerializer(Class<ZoneId> t) {
         super(t);
     }
 
     @Override
-    public void serialize(ZonedDateTime value, JsonGenerator jgen,
+    public void serialize(ZoneId value, JsonGenerator jgen,
                           SerializerProvider provider) throws IOException {
         jgen.writeString(TimeFormatUtil.toString(value));
     }

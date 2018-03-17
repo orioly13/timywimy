@@ -23,6 +23,10 @@ public class TimeFormatUtil {
         return zoneId == null ? null : zoneId.getDisplayName(TextStyle.NARROW, Locale.ENGLISH);
     }
 
+    public static ZoneId parseZoneId(String str) {
+        return StringUtil.isEmpty(str) ? null : ZoneId.of(str);
+    }
+
     public static String toString(LocalDate date) {
         return date == null ? null : date.format(DATE_FORMATTER);
     }
