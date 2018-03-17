@@ -2,7 +2,10 @@ package timywimy.util;
 
 import timywimy.util.exception.*;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class RequestUtil {
 
@@ -42,6 +45,12 @@ public class RequestUtil {
         } else {
             throw new RestException(code, message);
         }
+    }
+
+    public static Set<String> parametersSet(String... parameters) {
+        Set<String> res = new HashSet<>();
+        Collections.addAll(res, parameters);
+        return res;
     }
 }
 

@@ -59,7 +59,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     @Transactional
     public boolean delete(UUID id) {
         assertDelete(id);
-        unlinkTasks(get(id, constructParametersSet("tasks")));
+        unlinkTasks(get(id, RequestUtil.parametersSet("tasks")));
         return deleteBaseEntity(timywimy.model.bo.events.Event.class, id);
     }
 
@@ -69,7 +69,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     public boolean delete(Event event) {
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
         assertDelete(event.getId());
-        unlinkTasks(get(event.getId(), constructParametersSet("tasks")));
+        unlinkTasks(get(event.getId(), RequestUtil.parametersSet("tasks")));
         return deleteBaseEntity(timywimy.model.bo.events.Event.class, event);
     }
 
@@ -119,7 +119,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             eventExtensions.add(toAdd);
         }
 
-        return get(eventId, constructParametersSet("extensions"));
+        return get(eventId, RequestUtil.parametersSet("extensions"));
     }
 
     @Override
@@ -151,7 +151,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
         }
 
-        return get(eventId, constructParametersSet("extensions"));
+        return get(eventId, RequestUtil.parametersSet("extensions"));
     }
 
     @Override
@@ -172,7 +172,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
         }
 
-        return get(eventId, constructParametersSet("extensions"));
+        return get(eventId, RequestUtil.parametersSet("extensions"));
     }
 
     @Override
@@ -196,7 +196,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
 
         }
         entityManager.flush();
-        return get(eventId, constructParametersSet("tasks")).getTasks();
+        return get(eventId, RequestUtil.parametersSet("tasks")).getTasks();
     }
 
     @Override
@@ -228,6 +228,6 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
             }
         }
         entityManager.flush();
-        return get(eventId, constructParametersSet("tasks")).getTasks();
+        return get(eventId, RequestUtil.parametersSet("tasks")).getTasks();
     }
 }

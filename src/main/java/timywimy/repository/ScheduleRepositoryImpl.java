@@ -62,7 +62,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     @Transactional
     public boolean delete(UUID id) {
         assertDelete(id);
-        deleteInstances(get(id, constructParametersSet("instances")));
+        deleteInstances(get(id, RequestUtil.parametersSet("instances")));
         return deleteBaseEntity(Schedule.class, id);
     }
 
@@ -71,7 +71,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     public boolean delete(Schedule schedule) {
         RequestUtil.validateEmptyField(RepositoryException.class, schedule, "schedule");
         assertDelete(schedule.getId());
-        deleteInstances(get(schedule.getId(), constructParametersSet("instances")));
+        deleteInstances(get(schedule.getId(), RequestUtil.parametersSet("instances")));
         return deleteBaseEntity(Schedule.class, schedule);
     }
 
@@ -115,7 +115,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
 
         }
 
-        return get(scheduleId, constructParametersSet("instances")).getInstances();
+        return get(scheduleId, RequestUtil.parametersSet("instances")).getInstances();
     }
 
 
@@ -137,6 +137,6 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
             }
         }
 
-        return get(scheduleId, constructParametersSet("instances")).getInstances();
+        return get(scheduleId, RequestUtil.parametersSet("instances")).getInstances();
     }
 }

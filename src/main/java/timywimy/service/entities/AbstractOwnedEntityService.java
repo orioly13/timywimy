@@ -13,10 +13,9 @@ public abstract class AbstractOwnedEntityService<T, E extends AbstractOwnedEntit
         super(restService, repository);
     }
 
-    protected void assertOwner(E entity, User user) {
-        if (!entity.getOwner().equals(user)) {
+    protected<K extends AbstractOwnedEntity> void assertOwner(K entity, User user) {
+        if (!entity.getOwner().getId().equals(user.getId())) {
             throw new ServiceException(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS);
         }
     }
-
 }

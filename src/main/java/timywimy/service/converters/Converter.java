@@ -145,12 +145,12 @@ public class Converter {
     }
 
     public static DateTimeZone dateTimeZoneEntityToDTO(timywimy.model.common.util.DateTimeZone dateTimeZone) {
-        return new DateTimeZone(
+        return dateTimeZone == null ? null : new DateTimeZone(
                 dateTimeZone.getDate(), dateTimeZone.getTime(), dateTimeZone.getZone());
     }
 
     public static timywimy.model.common.util.DateTimeZone dateTimeZoneDTOToEntity(DateTimeZone dateTimeZone) {
-        return new timywimy.model.common.util.DateTimeZone(
+        return dateTimeZone == null ? null : new timywimy.model.common.util.DateTimeZone(
                 dateTimeZone.getDate(), dateTimeZone.getTime(), dateTimeZone.getZone());
     }
 

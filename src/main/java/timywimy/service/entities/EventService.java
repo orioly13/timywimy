@@ -13,9 +13,9 @@ public interface EventService extends EntityService<Event, timywimy.model.bo.eve
 
     List<Event> getBetween(UUID session, DateTimeZone start, DateTimeZone finish);
 
-    List<Task> linkSubTasks(UUID event, UUID session, List<Task> tasks);
+    List<Task> linkTasks(UUID event, UUID session, List<Task> tasks);
 
-    List<Task> unlinkSubTasks(UUID event, UUID session, List<Task> tasks);
+    List<Task> unlinkTasks(UUID event, UUID session, List<Task> tasks);
 
     Event addExtensions(UUID event, UUID session, List<EventExtension> extensions);
 

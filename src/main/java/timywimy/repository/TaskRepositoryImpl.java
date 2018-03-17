@@ -120,7 +120,7 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
 
         }
         entityManager.flush();
-        return get(taskId, constructParametersSet("children")).getChildren();
+        return get(taskId, RequestUtil.parametersSet("children")).getChildren();
     }
 
     @Override
@@ -153,6 +153,6 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
             }
         }
         entityManager.flush();
-        return get(taskId, constructParametersSet("children")).getChildren();
+        return get(taskId, RequestUtil.parametersSet("children")).getChildren();
     }
 }

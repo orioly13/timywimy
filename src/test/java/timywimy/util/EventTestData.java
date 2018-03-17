@@ -1,6 +1,7 @@
 package timywimy.util;
 
 import timywimy.model.bo.events.Event;
+import timywimy.service.converters.Converter;
 
 import java.util.UUID;
 
@@ -42,6 +43,13 @@ public class EventTestData {
         Event res = new Event();
         res.setName(EVENT_NEW.getName());
         res.setOwner(EVENT_NEW.getOwner());
+        return res;
+    }
+
+    public static timywimy.web.dto.events.Event getEventNewDTO() {
+        timywimy.web.dto.events.Event res = new timywimy.web.dto.events.Event();
+        res.setName(EVENT_NEW.getName());
+        res.setDescription(EVENT_NEW.getDescription());
         return res;
     }
 

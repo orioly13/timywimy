@@ -19,7 +19,9 @@ import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.extensions.EventExtension;
 import timywimy.web.dto.tasks.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy.model.bo.events.Event>
@@ -39,8 +41,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         User userBySession = getUserBySession(userSession);
         RequestUtil.validateEmptyField(ServiceException.class, entityId, "entityId");
 
-
-        timywimy.model.bo.events.Event event = repository.get(entityId);
+        timywimy.model.bo.events.Event event = repository.get(entityId, RequestUtil.parametersSet("owner"));
         if (event == null) {
             return null;
         }
@@ -49,36 +50,48 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         return Converter.eventEntityToEventDTO(event);
     }
 
+    private timywimy.model.bo.events.Event assertEventOwner(UUID eventId, User user) {
+        RequestUtil.validateEmptyField(ServiceException.class, eventId, "event");
+        timywimy.model.bo.events.Event event = repository.get(eventId, RequestUtil.parametersSet("owner"));
+        if (event == null) {
+            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "event not found");
+        }
+        assertOwner(event, user);
+        return event;
+    }
+
     @Override
     public Event save(Event dto, UUID userSession) {
         User userBySession = getUserBySession(userSession);
-        RequestUtil.validateEmptyField(ServiceException.class, dto, "task");
-        //todo check if event has schedule (should be consistent with schedule cron)
-        timywimy.model.bo.events.Event event = repository.get(dto.getId());
-        if (event == null) {
-            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "task not found");
+        RequestUtil.validateEmptyField(ServiceException.class, dto, "event");
+        timywimy.model.bo.events.Event event = dto.getId() == null ? null : repository.get(dto.getId(),
+                RequestUtil.parametersSet("schedule", "owner"));
+        if (dto.getId() != null && event == null) {
+            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "event not found");
         }
-        assertOwner(event, userBySession);
+        if (event != null) {
+            assertOwner(event, userBySession);
+        }
 
+        event = new timywimy.model.bo.events.Event();
+        if (event.getSchedule() != null) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                    "event fields can't be updated if it's an instance of schedule");
+        }
         event.setName(dto.getName());
         event.setDescription(dto.getDescription());
         event.setDuration(dto.getDuration());
         event.setDateTimeZone(Converter.dateTimeZoneDTOToEntity(dto.getDateTimeZone()));
+        event.setOwner(userBySession);
 
-
-        return Converter.eventEntityToEventDTO(repository.save(event, userSession));
+        return Converter.eventEntityToEventDTO(repository.save(event, userBySession.getId()));
     }
 
     @Override
     public boolean delete(UUID entityId, UUID userSession) {
         User userBySession = getUserBySession(userSession);
-        RequestUtil.validateEmptyField(ServiceException.class, entityId, "entityId");
 
-        timywimy.model.bo.events.Event event = repository.get(entityId);
-        if (event == null) {
-            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "task not found");
-        }
-        assertOwner(event, userBySession);
+        timywimy.model.bo.events.Event event = assertEventOwner(entityId, userBySession);
 
         return repository.delete(event);
     }
@@ -100,13 +113,11 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public List<Event> getBetween(UUID session, DateTimeZone start, DateTimeZone finish) {
         User userBySession = getUserBySession(session);
-        RequestUtil.validateEmptyField(ServiceException.class, session, "session");
         RequestUtil.validateEmptyField(ServiceException.class, start, "start");
         RequestUtil.validateEmptyField(ServiceException.class, finish, "finish");
         if (start.isAfter(finish)) {
             throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "start is after end");
         }
-
 
         List<timywimy.model.bo.events.Event> byOwnerBetween = ((EventRepository) repository).
                 getByOwnerBetween(userBySession.getId(), start, finish);
@@ -119,9 +130,9 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     }
 
     @Override
-    public List<Task> linkSubTasks(UUID event, UUID session, List<Task> tasks) {
+    public List<Task> linkTasks(UUID event, UUID session, List<Task> tasks) {
         User userBySession = getUserBySession(session);
-        RequestUtil.validateEmptyField(ServiceException.class, event, "event");
+        assertEventOwner(event, userBySession);
         for (Task child : tasks) {
             RequestUtil.validateEmptyField(ServiceException.class, child, "event task");
             RequestUtil.validateEmptyField(ServiceException.class, child.getId(), "event task id");
@@ -133,6 +144,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
             if (loadedChild == null) {
                 throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "one of tasks not found");
             }
+            assertOwner(loadedChild, userBySession);
             tasksToLink.add(loadedChild);
         }
 
@@ -148,16 +160,16 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     }
 
     @Override
-    public List<Task> unlinkSubTasks(UUID event, UUID session, List<Task> tasks) {
+    public List<Task> unlinkTasks(UUID event, UUID session, List<Task> tasks) {
         User userBySession = getUserBySession(session);
-        RequestUtil.validateEmptyField(ServiceException.class, event, "event");
+        assertEventOwner(event, userBySession);
         for (Task task : tasks) {
             RequestUtil.validateEmptyField(ServiceException.class, task, "event task");
             RequestUtil.validateEmptyField(ServiceException.class, task.getId(), "event task id");
         }
-        Set<String> parameters = new HashSet<>();
-        parameters.add("tasks");
-        List<timywimy.model.bo.tasks.Task> eventTasks = repository.get(event, parameters).getTasks();
+
+        List<timywimy.model.bo.tasks.Task> eventTasks = repository.get(event,
+                RequestUtil.parametersSet("tasks")).getTasks();
         List<timywimy.model.bo.tasks.Task> tasksToUnlink = new ArrayList<>();
         for (Task task : tasks) {
             boolean foundToUnlink = false;
@@ -187,7 +199,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public Event addExtensions(UUID event, UUID session, List<EventExtension> extensions) {
         User userBySession = getUserBySession(session);
-        RequestUtil.validateEmptyField(ServiceException.class, event, "event");
+        assertEventOwner(event, userBySession);
         for (EventExtension extension : extensions) {
             RequestUtil.validateEmptyField(ServiceException.class, extension, "extension");
             if (extension.getId() != null) {
@@ -210,16 +222,15 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public Event updateExtensions(UUID event, UUID session, List<EventExtension> extensions) {
         User userBySession = getUserBySession(session);
-        RequestUtil.validateEmptyField(ServiceException.class, event, "event");
+        assertEventOwner(event, userBySession);
         for (EventExtension extension : extensions) {
             RequestUtil.validateEmptyField(ServiceException.class, extension, "extension");
             RequestUtil.validateEmptyField(ServiceException.class, extension.getId(), "extension id");
 
         }
 
-        Set<String> parameters = new HashSet<>();
-        parameters.add("extensions");
-        List<AbstractEventExtension> eventExtensions = repository.get(event, parameters).getExtensions();
+        List<AbstractEventExtension> eventExtensions = repository.get(event,
+                RequestUtil.parametersSet("extensions")).getExtensions();
         List<AbstractEventExtension> extensionsToUpdate = new ArrayList<>();
         for (EventExtension extension : extensions) {
             boolean foundToUpdate = false;
@@ -262,16 +273,14 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public Event removeExtensions(UUID event, UUID session, List<EventExtension> extensions) {
         User userBySession = getUserBySession(session);
-        RequestUtil.validateEmptyField(ServiceException.class, event, "event");
+        assertEventOwner(event, userBySession);
         for (EventExtension extension : extensions) {
             RequestUtil.validateEmptyField(ServiceException.class, extension, "extension");
             RequestUtil.validateEmptyField(ServiceException.class, extension.getId(), "extension id");
-
         }
 
-        Set<String> parameters = new HashSet<>();
-        parameters.add("extensions");
-        List<AbstractEventExtension> eventExtensions = repository.get(event, parameters).getExtensions();
+        List<AbstractEventExtension> eventExtensions = repository.get(event,
+                RequestUtil.parametersSet("extensions")).getExtensions();
         List<AbstractEventExtension> extensionsToRemove = new ArrayList<>();
         for (EventExtension extension : extensions) {
             boolean foundToUnlink = false;

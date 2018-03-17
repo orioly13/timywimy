@@ -148,10 +148,4 @@ public abstract class AbstractEntityRepository {
         }
         return foundToUpdate;
     }
-
-    protected Set<String> constructParametersSet(String... parameters) {
-        Set<String> res = new HashSet<>();
-        Collections.addAll(res, parameters);
-        return res;
-    }
 }
