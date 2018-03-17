@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import timywimy.service.entities.EventService;
-import timywimy.web.dto.common.DateTimeZone;
+import timywimy.util.TimeFormatUtil;
 import timywimy.web.dto.common.Response;
 import timywimy.web.dto.events.Event;
 
@@ -69,8 +69,10 @@ public class EventControllerImpl extends AbstractEntityController<Event, timywim
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/between")
     public Response<List<Event>> getBetween(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                             @RequestHeader(name = "X-Auth-Session") UUID session,
-                                            @RequestParam("dateTimeZone") DateTimeZone start,
-                                            @RequestParam("dateTimeZone") DateTimeZone finish) {
-        return new Response<>(requestId, service.getAll(session));
+                                            @RequestParam("start") String start,
+                                            @RequestParam("fin") String finish) {
+
+        return new Response<>(requestId, ((EventService) service).getBetween(session,
+                TimeFormatUtil.parseZonedDateTime(start), TimeFormatUtil.parseZonedDateTime(finish)));
     }
 }

@@ -26,6 +26,9 @@ public abstract class AbstractEventTaskEntityRepository<T extends AbstractOwnedE
         assertBetween(start, end);
         List<D> result = new ArrayList<>();
         for (D dateTimeZoneEntity : dateTimeZoneList) {
+            if (dateTimeZoneEntity.getDateTimeZone() == null) {
+                continue;
+            }
             if (start.isBefore(dateTimeZoneEntity.getDateTimeZone()) && end.isAfter(dateTimeZoneEntity.getDateTimeZone())) {
                 result.add(dateTimeZoneEntity);
             }

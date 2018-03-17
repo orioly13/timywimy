@@ -12,6 +12,8 @@ import timywimy.web.dto.events.extensions.TickBoxExtension;
 import timywimy.web.dto.security.User;
 import timywimy.web.dto.tasks.Task;
 
+import java.time.ZonedDateTime;
+
 public class Converter {
     private Converter() {
     }
@@ -152,6 +154,15 @@ public class Converter {
     public static timywimy.model.common.util.DateTimeZone dateTimeZoneDTOToEntity(DateTimeZone dateTimeZone) {
         return dateTimeZone == null ? null : new timywimy.model.common.util.DateTimeZone(
                 dateTimeZone.getDate(), dateTimeZone.getTime(), dateTimeZone.getZone());
+    }
+
+
+    public static timywimy.model.common.util.DateTimeZone zonedDateTimeToDTZ(ZonedDateTime zonedDateTime) {
+        if (zonedDateTime == null) {
+            return null;
+        }
+        return new timywimy.model.common.util.DateTimeZone(zonedDateTime.toLocalDate(),
+                zonedDateTime.toLocalTime(), zonedDateTime.getZone());
     }
 
 }
