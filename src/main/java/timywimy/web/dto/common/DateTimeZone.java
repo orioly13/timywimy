@@ -18,6 +18,7 @@ public class DateTimeZone {
         this.time = time;
         this.zone = zone;
     }
+
     public LocalDate getDate() {
         return date;
     }

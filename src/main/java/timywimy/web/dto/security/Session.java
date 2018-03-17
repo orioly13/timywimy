@@ -2,6 +2,8 @@ package timywimy.web.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import timywimy.web.util.converters.ZonedDateTimeSerializer;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -11,6 +13,7 @@ public class Session {
 
     private UUID session;
     @JsonProperty("expiry_ts")
+    @JsonSerialize(using = ZonedDateTimeSerializer.class)
     private ZonedDateTime expiryTs;
     private User user;
 

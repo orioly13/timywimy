@@ -1,7 +1,8 @@
 package timywimy.service.entities;
 
 
-import timywimy.model.common.util.DateTimeZone;
+
+import timywimy.web.dto.common.DateTimeZone;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.extensions.EventExtension;
 import timywimy.web.dto.tasks.Task;

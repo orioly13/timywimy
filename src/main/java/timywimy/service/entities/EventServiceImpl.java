@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 import timywimy.model.bo.events.extensions.CounterExtension;
 import timywimy.model.bo.events.extensions.TickBoxExtension;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
-import timywimy.model.common.util.DateTimeZone;
 import timywimy.model.security.User;
 import timywimy.repository.EventRepository;
 import timywimy.repository.TaskRepository;
@@ -15,6 +14,7 @@ import timywimy.service.converters.Converter;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
+import timywimy.web.dto.common.DateTimeZone;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.extensions.EventExtension;
 import timywimy.web.dto.tasks.Task;
@@ -115,12 +115,14 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         User userBySession = getUserBySession(session);
         RequestUtil.validateEmptyField(ServiceException.class, start, "start");
         RequestUtil.validateEmptyField(ServiceException.class, finish, "finish");
-        if (start.isAfter(finish)) {
+        timywimy.model.common.util.DateTimeZone entityStart = Converter.dateTimeZoneDTOToEntity(start);
+        timywimy.model.common.util.DateTimeZone entityFinish = Converter.dateTimeZoneDTOToEntity(start);
+        if (entityStart.isAfter(entityFinish)) {
             throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "start is after end");
         }
 
         List<timywimy.model.bo.events.Event> byOwnerBetween = ((EventRepository) repository).
-                getByOwnerBetween(userBySession.getId(), start, finish);
+                getByOwnerBetween(userBySession.getId(), entityStart, entityFinish);
 
         List<Event> res = new ArrayList<>();
         for (timywimy.model.bo.events.Event event : byOwnerBetween) {

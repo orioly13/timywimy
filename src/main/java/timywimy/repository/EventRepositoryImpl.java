@@ -87,11 +87,15 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
     @Override
     public List<Event> getAllByOwner(UUID owner) {
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
+
+        User ownerEntity = new User();
+        ownerEntity.setId(owner);
+
         CriteriaQuery<Event> criteria = builder.createQuery(Event.class);
         Root<Event> userRoot = criteria.from(Event.class);
         criteria.select(userRoot).
-                where(builder.equal(userRoot.get("owner.id"), owner)).
-                orderBy(builder.asc(userRoot.get("dateTimeZone")));
+                where(builder.equal(userRoot.get("owner"), ownerEntity))
+                .orderBy(builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();
     }
