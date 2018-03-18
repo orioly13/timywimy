@@ -13,14 +13,14 @@ import javax.persistence.Table;
         @Index(name = "bo_event_ext_tickboxes_idx_event_order", columnList = "event_id,event_order")})
 public class TickBoxExtension extends AbstractEventExtension {
 
-    @Column(name = "active", columnDefinition = "boolean", nullable = false)
-    private boolean active;
+    @Column(name = "active", columnDefinition = "boolean")
+    private Boolean active;
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 }

@@ -24,7 +24,7 @@ CREATE TABLE bo_tasks (
   parent_id   UUID CONSTRAINT bo_tasks_fk_parent_id_bo_tasks_id REFERENCES bo_tasks (id),
   group_id    UUID CONSTRAINT bo_tasks_fk_group_id_bo_task_groups_id REFERENCES bo_task_groups (id),
   priority    NUMERIC(1, 0),
-  completed   BOOLEAN NOT NULL DEFAULT FALSE
+  completed   BOOLEAN DEFAULT FALSE
 );
 CREATE INDEX bo_tasks_idx_date_time_zone
   ON bo_tasks (owner_id, date, time, zone);

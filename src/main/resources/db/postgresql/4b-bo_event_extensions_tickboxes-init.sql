@@ -15,7 +15,7 @@ CREATE TABLE bo_event_ext_tickboxes (
   --ordered
   event_order INTEGER CONSTRAINT bo_event_ext_tickboxes_event_order_positive CHECK (event_order >= 0),
   --other
-  active      BOOLEAN NOT NULL DEFAULT FALSE
+  active      BOOLEAN DEFAULT FALSE
 );
 CREATE INDEX bo_event_ext_tickboxes_idx_event_order
   ON bo_event_ext_tickboxes (event_id, event_order);

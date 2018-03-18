@@ -1,5 +1,6 @@
 package timywimy.service.converters;
 
+import org.hibernate.Hibernate;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
@@ -13,6 +14,8 @@ import timywimy.web.dto.security.User;
 import timywimy.web.dto.tasks.Task;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Converter {
     private Converter() {
@@ -46,7 +49,7 @@ public class Converter {
         return entity;
     }
 
-    public static Task taskEntityToTaskDTO(timywimy.model.bo.tasks.Task entity) {
+    public static Task taskEntityToTaskDTO(timywimy.model.bo.tasks.Task entity, boolean initLazyFields) {
         if (entity == null)
             return null;
         Task dto = new Task();
@@ -56,11 +59,25 @@ public class Converter {
         dto.setPriority(entity.getPriority());
         dto.setCompleted(entity.isCompleted());
         dto.setDeadline(dateTimeZoneEntityToDTO(entity.getDateTimeZone()));
-        //todo parent,children, event
+        if (initLazyFields) {
+            if (Hibernate.isInitialized(entity.getParent()) && entity.getParent() != null) {
+                dto.setParent(taskEntityToTaskDTO(entity.getParent(), false));
+            }
+            if (Hibernate.isInitialized(entity.getChildren()) && entity.getChildren() != null) {
+                List<Task> taskList = new ArrayList<>();
+                for (timywimy.model.bo.tasks.Task task : entity.getChildren()) {
+                    taskList.add(taskEntityToTaskDTO(task, false));
+                }
+                dto.setChildren(taskList);
+            }
+            if (Hibernate.isInitialized(entity.getEvent()) && entity.getEvent() != null) {
+                dto.setEvent(eventEntityToEventDTO(entity.getEvent(), false));
+            }
+        }
         return dto;
     }
 
-    public static Event eventEntityToEventDTO(timywimy.model.bo.events.Event entity) {
+    public static Event eventEntityToEventDTO(timywimy.model.bo.events.Event entity, boolean initLazyFields) {
         if (entity == null)
             return null;
         Event dto = new Event();
@@ -69,7 +86,25 @@ public class Converter {
         dto.setDescription(entity.getDescription());
         dto.setDuration(entity.getDuration());
         dto.setDateTimeZone(dateTimeZoneEntityToDTO(entity.getDateTimeZone()));
-        //todo schedule,tasks,extensions
+        if (initLazyFields) {
+            if (Hibernate.isInitialized(entity.getSchedule()) && entity.getSchedule() != null) {
+                dto.setSchedule(scheduleEntityToScheduleDTO(entity.getSchedule(), false));
+            }
+            if (Hibernate.isInitialized(entity.getTasks()) && entity.getTasks() != null) {
+                List<Task> taskList = new ArrayList<>();
+                for (timywimy.model.bo.tasks.Task task : entity.getTasks()) {
+                    taskList.add(taskEntityToTaskDTO(task, false));
+                }
+                dto.setTasks(taskList);
+            }
+            if (Hibernate.isInitialized(entity.getExtensions()) && entity.getExtensions() != null) {
+                List<EventExtension> eventExtensions = new ArrayList<>();
+                for (AbstractEventExtension extension : entity.getExtensions()) {
+                    eventExtensions.add(extensionEntityToExtensionDTO(extension, false));
+                }
+                dto.setEventExtensions(eventExtensions);
+            }
+        }
         return dto;
     }
 
@@ -82,7 +117,7 @@ public class Converter {
         entity.setDescription(dto.getDescription());
         entity.setDuration(dto.getDuration());
         entity.setDateTimeZone(dateTimeZoneDTOToEntity(dto.getDateTimeZone()));
-        //todo schedule,tasks,extensions
+        //no need for other fields, should be added separately
         return entity;
     }
 
@@ -110,7 +145,7 @@ public class Converter {
         return entity;
     }
 
-    public static EventExtension extensionEntityToExtensionDTO(AbstractEventExtension extension) {
+    public static EventExtension extensionEntityToExtensionDTO(AbstractEventExtension extension, boolean initLazyFields) {
         if (extension == null)
             return null;
         EventExtension dto;
@@ -129,10 +164,11 @@ public class Converter {
         } else {
             throw new ServiceException(ErrorCode.INTERNAL_SERVICE, "unable to convert entity to dto");
         }
+        dto.setId(extension.getId());
         return dto;
     }
 
-    public static Schedule scheduleEntityToScheduleDTO(timywimy.model.bo.events.Schedule schedule) {
+    public static Schedule scheduleEntityToScheduleDTO(timywimy.model.bo.events.Schedule schedule, boolean initLazyFields) {
         if (schedule == null)
             return null;
         Schedule dto = new Schedule();
@@ -141,7 +177,15 @@ public class Converter {
         dto.setName(schedule.getName());
         dto.setDescription(schedule.getDescription());
         dto.setDuration(schedule.getDuration());
-        //todo instances
+        if (initLazyFields) {
+            if (Hibernate.isInitialized(schedule.getInstances()) && schedule.getInstances() != null) {
+                List<Event> events = new ArrayList<>();
+                for (timywimy.model.bo.events.Event event : schedule.getInstances()) {
+                    events.add(eventEntityToEventDTO(event, false));
+                }
+                dto.setInstances(events);
+            }
+        }
 
         return dto;
     }

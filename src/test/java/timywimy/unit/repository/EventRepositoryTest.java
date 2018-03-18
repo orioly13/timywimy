@@ -189,13 +189,13 @@ public class EventRepositoryTest {
         ((TickBoxExtension) event1.getExtensions().get(1)).setActive(true);
 
         extensionsToUpdate.addAll(event1.getExtensions());
-       Event event2  = repository.updateExtensions(event.getId(), extensionsToUpdate, UserTestData.USER_ID);
+        Event event2 = repository.updateExtensions(event.getId(), extensionsToUpdate, UserTestData.USER_ID);
 //        Event event2 = repository.get(event.getId(), parameters);
         Assert.assertEquals(event2.getExtensions().size(), 2);
 
         for (AbstractEventExtension extension : event2.getExtensions()) {
             if (extension instanceof CounterExtension) {
-                Assert.assertEquals(15, ((CounterExtension) extension).getCounter());
+                Assert.assertEquals((Integer) 15, ((CounterExtension) extension).getCounter());
             } else if (extension instanceof TickBoxExtension) {
                 Assert.assertEquals(true, ((TickBoxExtension) extension).isActive());
             } else {

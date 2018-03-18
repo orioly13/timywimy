@@ -41,39 +41,31 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         User userBySession = getUserBySession(userSession);
         RequestUtil.validateEmptyField(ServiceException.class, entityId, "entityId");
 
-        timywimy.model.bo.events.Event event = repository.get(entityId, RequestUtil.parametersSet("owner"));
+        timywimy.model.bo.events.Event event = repository.get(entityId,
+                RequestUtil.parametersSet("owner", "schedule", "extensions"));
         if (event == null) {
             return null;
         }
         assertOwner(event, userBySession);
 
-        return Converter.eventEntityToEventDTO(event);
-    }
-
-    private timywimy.model.bo.events.Event assertEventOwner(UUID eventId, User user) {
-        RequestUtil.validateEmptyField(ServiceException.class, eventId, "event");
-        timywimy.model.bo.events.Event event = repository.get(eventId, RequestUtil.parametersSet("owner"));
-        if (event == null) {
-            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "event not found");
-        }
-        assertOwner(event, user);
-        return event;
+        return Converter.eventEntityToEventDTO(event,true);
     }
 
     @Override
     public Event save(Event dto, UUID userSession) {
         User userBySession = getUserBySession(userSession);
         RequestUtil.validateEmptyField(ServiceException.class, dto, "event");
-        timywimy.model.bo.events.Event event = dto.getId() == null ? null : repository.get(dto.getId(),
-                RequestUtil.parametersSet("schedule", "owner"));
+        timywimy.model.bo.events.Event event = dto.getId() == null ? null :
+                repository.get(dto.getId(), RequestUtil.parametersSet("owner", "schedule", "extensions"));
         if (dto.getId() != null && event == null) {
             throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "event not found");
         }
         if (event != null) {
             assertOwner(event, userBySession);
+        } else {
+            event = new timywimy.model.bo.events.Event();
         }
 
-        event = new timywimy.model.bo.events.Event();
         if (event.getSchedule() != null) {
             throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
                     "event fields can't be updated if it's an instance of schedule");
@@ -84,14 +76,13 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         event.setDateTimeZone(Converter.dateTimeZoneDTOToEntity(dto.getDateTimeZone()));
         event.setOwner(userBySession);
 
-        return Converter.eventEntityToEventDTO(repository.save(event, userBySession.getId()));
+        return Converter.eventEntityToEventDTO(repository.save(event, userBySession.getId()),true);
     }
 
     @Override
     public boolean delete(UUID entityId, UUID userSession) {
         User userBySession = getUserBySession(userSession);
-
-        timywimy.model.bo.events.Event event = assertEventOwner(entityId, userBySession);
+        timywimy.model.bo.events.Event event = assertOwner(entityId, userBySession);
 
         return repository.delete(event);
     }
@@ -100,12 +91,12 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     public List<Event> getAll(UUID userSession) {
         User userBySession = getUserBySession(userSession);
 
-        List<timywimy.model.bo.events.Event> allByOwner = ((EventRepository) repository).
-                getAllByOwner(userBySession.getId());
+        List<timywimy.model.bo.events.Event> allByOwner =
+                ((EventRepository) repository).getAllByOwner(userBySession.getId());
 
         List<Event> result = new ArrayList<>();
         for (timywimy.model.bo.events.Event ownedEvent : allByOwner) {
-            result.add(Converter.eventEntityToEventDTO(ownedEvent));
+            result.add(Converter.eventEntityToEventDTO(ownedEvent,true));
         }
         return result;
     }
@@ -121,12 +112,12 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
             throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "start is after end");
         }
 
-        List<timywimy.model.bo.events.Event> byOwnerBetween = ((EventRepository) repository).
-                getByOwnerBetween(userBySession.getId(), entityStart, entityFinish);
+        List<timywimy.model.bo.events.Event> byOwnerBetween =
+                ((EventRepository) repository).getByOwnerBetween(userBySession.getId(), entityStart, entityFinish);
 
         List<Event> res = new ArrayList<>();
         for (timywimy.model.bo.events.Event event : byOwnerBetween) {
-            res.add(Converter.eventEntityToEventDTO(event));
+            res.add(Converter.eventEntityToEventDTO(event,true));
         }
         return res;
     }
@@ -134,7 +125,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public List<Task> linkTasks(UUID event, UUID session, List<Task> tasks) {
         User userBySession = getUserBySession(session);
-        assertEventOwner(event, userBySession);
+        assertOwner(event, userBySession);
         for (Task child : tasks) {
             RequestUtil.validateEmptyField(ServiceException.class, child, "event task");
             RequestUtil.validateEmptyField(ServiceException.class, child.getId(), "event task id");
@@ -155,7 +146,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
 
         List<Task> res = new ArrayList<>();
         for (timywimy.model.bo.tasks.Task task : eventTasks) {
-            res.add(Converter.taskEntityToTaskDTO(task));
+            res.add(Converter.taskEntityToTaskDTO(task,true));
         }
 
         return res;
@@ -164,7 +155,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public List<Task> unlinkTasks(UUID event, UUID session, List<Task> tasks) {
         User userBySession = getUserBySession(session);
-        assertEventOwner(event, userBySession);
+        assertOwner(event, userBySession);
         for (Task task : tasks) {
             RequestUtil.validateEmptyField(ServiceException.class, task, "event task");
             RequestUtil.validateEmptyField(ServiceException.class, task.getId(), "event task id");
@@ -192,7 +183,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
 
         List<Task> res = new ArrayList<>();
         for (timywimy.model.bo.tasks.Task task : resultTasks) {
-            res.add(Converter.taskEntityToTaskDTO(task));
+            res.add(Converter.taskEntityToTaskDTO(task,true));
         }
 
         return res;
@@ -201,7 +192,7 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
     @Override
     public Event addExtensions(UUID event, UUID session, List<EventExtension> extensions) {
         User userBySession = getUserBySession(session);
-        assertEventOwner(event, userBySession);
+        assertOwner(event, userBySession);
         for (EventExtension extension : extensions) {
             RequestUtil.validateEmptyField(ServiceException.class, extension, "extension");
             if (extension.getId() != null) {
@@ -218,21 +209,20 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
                 addExtensions(event, extensionsToAdd, userBySession.getId());
 
 
-        return Converter.eventEntityToEventDTO(eventWithExtensions);
+        return Converter.eventEntityToEventDTO(eventWithExtensions,true);
     }
 
     @Override
     public Event updateExtensions(UUID event, UUID session, List<EventExtension> extensions) {
         User userBySession = getUserBySession(session);
-        assertEventOwner(event, userBySession);
+        assertOwner(event, userBySession);
         for (EventExtension extension : extensions) {
             RequestUtil.validateEmptyField(ServiceException.class, extension, "extension");
             RequestUtil.validateEmptyField(ServiceException.class, extension.getId(), "extension id");
-
         }
 
-        List<AbstractEventExtension> eventExtensions = repository.get(event,
-                RequestUtil.parametersSet("extensions")).getExtensions();
+        List<AbstractEventExtension> eventExtensions =
+                repository.get(event, RequestUtil.parametersSet("extensions")).getExtensions();
         List<AbstractEventExtension> extensionsToUpdate = new ArrayList<>();
         for (EventExtension extension : extensions) {
             boolean foundToUpdate = false;
@@ -269,20 +259,20 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         timywimy.model.bo.events.Event resultEvent = ((EventRepository) repository).
                 updateExtensions(event, extensionsToUpdate, userBySession.getId());
 
-        return Converter.eventEntityToEventDTO(resultEvent);
+        return Converter.eventEntityToEventDTO(resultEvent,true);
     }
 
     @Override
-    public Event removeExtensions(UUID event, UUID session, List<EventExtension> extensions) {
+    public Event deleteExtensions(UUID event, UUID session, List<EventExtension> extensions) {
         User userBySession = getUserBySession(session);
-        assertEventOwner(event, userBySession);
+        assertOwner(event, userBySession);
         for (EventExtension extension : extensions) {
             RequestUtil.validateEmptyField(ServiceException.class, extension, "extension");
             RequestUtil.validateEmptyField(ServiceException.class, extension.getId(), "extension id");
         }
 
-        List<AbstractEventExtension> eventExtensions = repository.get(event,
-                RequestUtil.parametersSet("extensions")).getExtensions();
+        List<AbstractEventExtension> eventExtensions =
+                repository.get(event, RequestUtil.parametersSet("extensions")).getExtensions();
         List<AbstractEventExtension> extensionsToRemove = new ArrayList<>();
         for (EventExtension extension : extensions) {
             boolean foundToUnlink = false;
@@ -301,6 +291,6 @@ public class EventServiceImpl extends AbstractOwnedEntityService<Event, timywimy
         timywimy.model.bo.events.Event resultEvent = ((EventRepository) repository).
                 deleteExtensions(event, extensionsToRemove, userBySession.getId());
 
-        return Converter.eventEntityToEventDTO(resultEvent);
+        return Converter.eventEntityToEventDTO(resultEvent,true);
     }
 }

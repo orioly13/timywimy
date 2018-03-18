@@ -2,7 +2,7 @@ package timywimy.model.common;
 
 public interface OrderedEntity extends BaseEntity {
 
-    int getOrder();
+    Integer getOrder();
 
-    void setOrder(int order);
+    void setOrder(Integer order);
 }

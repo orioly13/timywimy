@@ -16,7 +16,7 @@ public abstract class AbstractEventExtension extends AbstractBaseEntity implemen
     @JoinColumn(name = "event_id")
     private Event event;
     @Column(name = "event_order", columnDefinition = "integer")
-    private int order;
+    private Integer order;
 
     @Column(name = "name", columnDefinition = "varchar(50)")
     private String name;
@@ -31,12 +31,12 @@ public abstract class AbstractEventExtension extends AbstractBaseEntity implemen
     }
 
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
 
-    public void setOrder(int order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 

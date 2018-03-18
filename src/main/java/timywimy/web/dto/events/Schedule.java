@@ -1,7 +1,6 @@
 package timywimy.web.dto.events;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import timywimy.model.bo.events.Event;
 
 import java.time.Duration;
 import java.util.List;

@@ -1,9 +1,12 @@
 package timywimy.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
+import timywimy.model.bo.events.extensions.common.AbstractEventExtension;
 import timywimy.model.bo.tasks.Task;
 import timywimy.model.security.User;
 import timywimy.repository.common.AbstractOwnedEntityRepository;
@@ -22,6 +25,14 @@ import java.util.UUID;
 public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedule> implements ScheduleRepository {
 
 
+    private final EventRepository eventRepository;
+
+    @Autowired
+    public ScheduleRepositoryImpl(EventRepository eventRepository) {
+        Assert.notNull(eventRepository, "eventRepository should be provided");
+        this.eventRepository = eventRepository;
+    }
+
     @Override
     public Schedule get(UUID id) {
         assertGet(id);
@@ -39,7 +50,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
     public Schedule save(Schedule entity, UUID userId) {
         assertSave(entity, userId);
         assertOwner(entity);
-        RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "user name");
+        RequestUtil.validateEmptyField(RepositoryException.class, entity.getName(), "schedule name");
         return saveBaseEntity(entity, userId);
     }
 
@@ -47,12 +58,17 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
         List<Event> events = schedule.getInstances();
         if (events.size() > 0) {
             for (Event event : events) {
-                List<Task> tasks = event.getTasks();
-                for (Task task : tasks) {
-                    task.setEvent(null);
-                    entityManager.merge(task);
-                }
-                entityManager.remove(event);
+//                List<Task> tasks = event.getTasks();
+//                for (Task task : tasks) {
+//                    task.setEvent(null);
+//                    entityManager.merge(task);
+//                }
+//                List<AbstractEventExtension> extensions = event.getExtensions();
+//                for (AbstractEventExtension extension : extensions) {
+//                    entityManager.remove(extension);
+//                }
+//                entityManager.remove(event);
+                eventRepository.delete(event);
             }
             entityManager.flush();
         }
@@ -80,7 +96,7 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
         CriteriaQuery<Schedule> criteria = builder.createQuery(Schedule.class);
         Root<Schedule> userRoot = criteria.from(Schedule.class);
         criteria.select(userRoot).
-                orderBy(builder.asc(userRoot.get("owner.id")),
+                orderBy(builder.asc(userRoot.get("owner")),
                         builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();
@@ -91,9 +107,9 @@ public class ScheduleRepositoryImpl extends AbstractOwnedEntityRepository<Schedu
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
         CriteriaQuery<Schedule> criteria = builder.createQuery(Schedule.class);
         Root<Schedule> userRoot = criteria.from(Schedule.class);
-        criteria.select(userRoot).
-                where(builder.equal(userRoot.get("owner.id"), owner)).
-                orderBy(builder.asc(userRoot.get("dateTimeZone")));
+        User user = new User();
+        user.setId(owner);
+        criteria.select(userRoot).where(builder.equal(userRoot.get("owner"), user));
 
         return entityManager.createQuery(criteria).getResultList();
     }

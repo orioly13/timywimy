@@ -11,7 +11,7 @@ public interface UserController extends EntityController<User> {
 
     Response<User> getByEmail(Integer requestId, String email, UUID session);
 
-    Response<Boolean> ban(Integer requestId, UUID idToBan, UUID bannedBy, ZonedDateTime bannedTill);
+    Response<Boolean> ban(Integer requestId, UUID idToBan, UUID bannedBy, String bannedTill);
 
     Response<Boolean> unBan(Integer requestId, UUID bannedId, UUID unbannedBy);
 

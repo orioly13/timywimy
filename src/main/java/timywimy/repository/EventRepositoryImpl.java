@@ -55,11 +55,22 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
         }
     }
 
+    private void deleteExtensions(timywimy.model.bo.events.Event event) {
+        List<AbstractEventExtension> extensions = event.getExtensions();
+        if (extensions.size() > 0) {
+            for (AbstractEventExtension extension : extensions) {
+                entityManager.remove(extension);
+            }
+            entityManager.flush();
+        }
+    }
+
     @Override
     @Transactional
     public boolean delete(UUID id) {
         assertDelete(id);
         unlinkTasks(get(id, RequestUtil.parametersSet("tasks")));
+        deleteExtensions(get(id, RequestUtil.parametersSet("extensions")));
         return deleteBaseEntity(timywimy.model.bo.events.Event.class, id);
     }
 
@@ -70,6 +81,7 @@ public class EventRepositoryImpl extends AbstractEventTaskEntityRepository<Event
         RequestUtil.validateEmptyField(RepositoryException.class, event, "event");
         assertDelete(event.getId());
         unlinkTasks(get(event.getId(), RequestUtil.parametersSet("tasks")));
+        deleteExtensions(get(event.getId(), RequestUtil.parametersSet("extensions")));
         return deleteBaseEntity(timywimy.model.bo.events.Event.class, event);
     }
 

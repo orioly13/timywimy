@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import timywimy.service.entities.UserService;
+import timywimy.util.TimeFormatUtil;
 import timywimy.web.dto.security.User;
 import timywimy.web.dto.common.Response;
 
@@ -78,8 +79,9 @@ public class UserControllerImpl extends AbstractEntityController<User, timywimy.
     public Response<Boolean> ban(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                  @PathVariable("id") UUID idToBan,
                                  @RequestHeader(name = "X-Auth-Session") UUID bannedBy,
-                                 @RequestParam(value = "banned_till", required = false) ZonedDateTime bannedTill) {
-        return new Response<>(requestId, ((UserService) service).ban(idToBan, bannedBy, bannedTill));
+                                 @RequestParam(value = "banned_till", required = false) String bannedTill) {
+        return new Response<>(requestId, ((UserService) service).ban(idToBan, bannedBy,
+                TimeFormatUtil.parseZonedDateTime(bannedTill)));
     }
 
     @Override

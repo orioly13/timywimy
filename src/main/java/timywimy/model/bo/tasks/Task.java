@@ -36,8 +36,8 @@ public class Task extends AbstractDefaultEntity implements DateTimeZoneEntity {
     @Column(name = "priority", columnDefinition = "numeric(1,0)")
     @Convert(converter = PriorityConverter.class)
     private Priority priority;
-    @Column(name = "completed", columnDefinition = "boolean", nullable = false)
-    private boolean completed;
+    @Column(name = "completed", columnDefinition = "boolean")
+    private Boolean completed;
 
     public Task getParent() {
         return parent;
@@ -64,12 +64,12 @@ public class Task extends AbstractDefaultEntity implements DateTimeZoneEntity {
     }
 
 
-    public boolean isCompleted() {
+    public Boolean isCompleted() {
         return completed;
     }
 
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 

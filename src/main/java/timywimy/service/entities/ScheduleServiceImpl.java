@@ -14,7 +14,9 @@ import timywimy.util.exception.ServiceException;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.Schedule;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, timywimy.model.bo.events.Schedule>
@@ -34,46 +36,54 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
         User userBySession = getUserBySession(userSession);
         RequestUtil.validateEmptyField(ServiceException.class, entityId, "entityId");
 
-
-        timywimy.model.bo.events.Schedule schedule = repository.get(entityId);
+        timywimy.model.bo.events.Schedule schedule = repository.get(entityId,
+                RequestUtil.parametersSet("owner", "instances"));
         if (schedule == null) {
             return null;
         }
         assertOwner(schedule, userBySession);
 
-        return Converter.scheduleEntityToScheduleDTO(schedule);
+        return Converter.scheduleEntityToScheduleDTO(schedule, true);
     }
 
     @Override
     public Schedule save(Schedule dto, UUID userSession) {
         User userBySession = getUserBySession(userSession);
-        RequestUtil.validateEmptyField(ServiceException.class, dto, "task");
-        //todo check if event has schedule (should be consistent with schedule cron)
-        timywimy.model.bo.events.Schedule schedule = repository.get(dto.getId());
-        if (schedule == null) {
+        RequestUtil.validateEmptyField(ServiceException.class, dto, "schedule");
+        //todo assert cron if provided ()
+        timywimy.model.bo.events.Schedule schedule = dto.getId() == null ? null :
+                repository.get(dto.getId(), RequestUtil.parametersSet("owner", "instances"));
+        if (dto.getId() != null && schedule == null) {
             throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "schedule not found");
         }
-        assertOwner(schedule, userBySession);
-
+        if (schedule != null) {
+            assertOwner(schedule, userBySession);
+        } else {
+            schedule = new timywimy.model.bo.events.Schedule();
+        }
+        schedule.setOwner(userBySession);
         schedule.setName(dto.getName());
         schedule.setDescription(dto.getDescription());
+        if (schedule.getId() != null &&
+                (!(dto.getCron() == null ? schedule.getCron() == null : dto.getCron().equals(schedule.getCron())) ||
+                        !(dto.getDuration() == null ? schedule.getDuration() == null : dto.getDuration().equals(schedule.getDuration())))) {
+            for (timywimy.model.bo.events.Event instance : schedule.getInstances()) {
+                eventRepository.delete(instance);
+            }
+            schedule.setInstances(new ArrayList<>());
+        }
         schedule.setDuration(dto.getDuration());
         schedule.setCron(dto.getCron());
 
 
-        return Converter.scheduleEntityToScheduleDTO(repository.save(schedule, userSession));
+        return Converter.scheduleEntityToScheduleDTO(repository.save(schedule, userBySession.getId()), true);
     }
 
     @Override
     public boolean delete(UUID entityId, UUID userSession) {
         User userBySession = getUserBySession(userSession);
-        RequestUtil.validateEmptyField(ServiceException.class, entityId, "entityId");
 
-        timywimy.model.bo.events.Schedule schedule = repository.get(entityId);
-        if (schedule == null) {
-            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "task not found");
-        }
-        assertOwner(schedule, userBySession);
+        timywimy.model.bo.events.Schedule schedule = assertOwner(entityId, userBySession);
 
         return repository.delete(schedule);
     }
@@ -87,7 +97,7 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
 
         List<Schedule> result = new ArrayList<>();
         for (timywimy.model.bo.events.Schedule ownedSchedule : allByOwner) {
-            result.add(Converter.scheduleEntityToScheduleDTO(ownedSchedule));
+            result.add(Converter.scheduleEntityToScheduleDTO(ownedSchedule, true));
         }
         return result;
     }
@@ -103,10 +113,12 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
                 throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "instance id exists");
             }
         }
-
+        //todo check cron of schedule
         List<timywimy.model.bo.events.Event> eventsToAdd = new ArrayList<>();
         for (Event instance : instances) {
-            eventsToAdd.add(Converter.eventDTOToEventEntity(instance));
+            timywimy.model.bo.events.Event event = Converter.eventDTOToEventEntity(instance);
+            event.setOwner(userBySession);
+            eventsToAdd.add(event);
         }
 
         List<timywimy.model.bo.events.Event> events = ((ScheduleRepository) repository).
@@ -114,7 +126,7 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
 
         List<Event> result = new ArrayList<>();
         for (timywimy.model.bo.events.Event ownedEvent : events) {
-            result.add(Converter.eventEntityToEventDTO(ownedEvent));
+            result.add(Converter.eventEntityToEventDTO(ownedEvent, true));
         }
 
         return result;
@@ -127,12 +139,10 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
         for (Event instance : instances) {
             RequestUtil.validateEmptyField(ServiceException.class, instance, "instance");
             RequestUtil.validateEmptyField(ServiceException.class, instance.getId(), "instance id");
-
         }
 
-        Set<String> parameters = new HashSet<>();
-        parameters.add("instances");
-        List<timywimy.model.bo.events.Event> loadedInstances = repository.get(schedule, parameters).getInstances();
+        List<timywimy.model.bo.events.Event> loadedInstances = repository.
+                get(schedule, RequestUtil.parametersSet("instances")).getInstances();
         List<timywimy.model.bo.events.Event> instancesToRemove = new ArrayList<>();
         for (Event instance : instances) {
             boolean foundToDelete = false;
@@ -154,7 +164,7 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
 
         List<Event> result = new ArrayList<>();
         for (timywimy.model.bo.events.Event resultInstance : resultInstances) {
-            result.add(Converter.eventEntityToEventDTO(resultInstance));
+            result.add(Converter.eventEntityToEventDTO(resultInstance, true));
         }
         return result;
     }

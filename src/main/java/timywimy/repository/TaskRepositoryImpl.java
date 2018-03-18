@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import timywimy.model.bo.tasks.Task;
 import timywimy.model.common.util.DateTimeZone;
+import timywimy.model.security.User;
 import timywimy.repository.common.AbstractEventTaskEntityRepository;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
@@ -74,7 +75,7 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
         CriteriaQuery<Task> criteria = builder.createQuery(Task.class);
         Root<Task> userRoot = criteria.from(Task.class);
         criteria.select(userRoot).
-                orderBy(builder.asc(userRoot.get("owner.id")),
+                orderBy(builder.asc(userRoot.get("owner")),
                         builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();
@@ -85,8 +86,10 @@ public class TaskRepositoryImpl extends AbstractEventTaskEntityRepository<Task> 
         RequestUtil.validateEmptyField(RepositoryException.class, owner, "user");
         CriteriaQuery<Task> criteria = builder.createQuery(Task.class);
         Root<Task> userRoot = criteria.from(Task.class);
+        User user = new User();
+        user.setId(owner);
         criteria.select(userRoot).
-                where(builder.equal(userRoot.get("owner.id"), owner)).
+                where(builder.equal(userRoot.get("owner"), user)).
                 orderBy(builder.asc(userRoot.get("dateTimeZone")));
 
         return entityManager.createQuery(criteria).getResultList();

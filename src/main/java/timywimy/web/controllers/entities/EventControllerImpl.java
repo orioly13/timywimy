@@ -7,6 +7,8 @@ import timywimy.service.entities.EventService;
 import timywimy.util.TimeFormatUtil;
 import timywimy.web.dto.common.Response;
 import timywimy.web.dto.events.Event;
+import timywimy.web.dto.events.extensions.EventExtension;
+import timywimy.web.dto.tasks.Task;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,8 +55,8 @@ public class EventControllerImpl extends AbstractEntityController<Event, timywim
     @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/delete")
     public Response<Boolean> delete(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
-                                    @PathVariable("id") UUID entityId,
-                                    @RequestHeader(name = "X-Auth-Session") UUID session) {
+                                    @RequestHeader(name = "X-Auth-Session") UUID session,
+                                    @PathVariable("id") UUID entityId) {
         return new Response<>(requestId, service.delete(entityId, session));
     }
 
@@ -74,5 +76,55 @@ public class EventControllerImpl extends AbstractEntityController<Event, timywim
 
         return new Response<>(requestId, ((EventService) service).getBetween(session,
                 TimeFormatUtil.parseZonedDateTime(start), TimeFormatUtil.parseZonedDateTime(finish)));
+    }
+
+    @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/link-tasks")
+    public Response<List<Task>> linkTasks(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                          @RequestHeader(name = "X-Auth-Session") UUID session,
+                                          @PathVariable("id") UUID event,
+                                          @RequestBody List<Task> tasks) {
+        return new Response<>(requestId, ((EventService) service).linkTasks(event, session, tasks));
+    }
+
+    @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/unlink-tasks")
+    public Response<List<Task>> unlinkTasks(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                            @RequestHeader(name = "X-Auth-Session") UUID session,
+                                            @PathVariable("id") UUID event,
+                                            @RequestBody List<Task> tasks) {
+        return new Response<>(requestId, ((EventService) service).unlinkTasks(event, session, tasks));
+    }
+
+    @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/add-extensions")
+    public Response<Event> addExtensions(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                         @RequestHeader(name = "X-Auth-Session") UUID session,
+                                         @PathVariable("id") UUID event,
+                                         @RequestBody List<EventExtension> extensions) {
+        return new Response<>(requestId, ((EventService) service).addExtensions(event, session, extensions));
+    }
+
+    @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/update-extensions")
+    public Response<Event> updateExtensions(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                            @RequestHeader(name = "X-Auth-Session") UUID session,
+                                            @PathVariable("id") UUID event,
+                                            @RequestBody List<EventExtension> extensions) {
+        return new Response<>(requestId, ((EventService) service).updateExtensions(event, session, extensions));
+    }
+
+    @Override
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/delete-extensions")
+    public Response<Event> deleteExtensions(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                            @RequestHeader(name = "X-Auth-Session") UUID session,
+                                            @PathVariable("id") UUID event,
+                                            @RequestBody List<EventExtension> extensions) {
+        return new Response<>(requestId, ((EventService) service).deleteExtensions(event, session, extensions));
     }
 }

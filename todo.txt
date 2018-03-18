@@ -1,18 +1,6 @@
 todo 1. Cypher passwords
-todo 2. Rest events/users/profile
-todo 3. Exceptions on different levels
 todo 4. Read about Spring, Hiber, Rest
 todo 5. session expiry
-
-TODO 6:  1. Repo works ONLY with entities
-         2. Controller works ONLY with DTOs
-         3. Service connects controller and repo (knows about both)
-
-
-1. web context (DONE via spring mvc usage)
-2. 2 rest
-3. 6 repo
-4. users,profile,events
-5. tests unit and performance
-6. 1,5,3
-7. all other stuff
+todo 6. 404 and 405
+todo 7. hib cache, service cache
+todo 8. fix calls (remove copy-selects)

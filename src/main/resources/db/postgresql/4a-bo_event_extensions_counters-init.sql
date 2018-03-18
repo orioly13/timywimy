@@ -15,7 +15,7 @@ CREATE TABLE bo_event_ext_counters (
   --ordered
   event_order INTEGER  CONSTRAINT bo_event_ext_counters_event_order_positive CHECK (event_order >= 0),
   --other
-  counter     INTEGER NOT NULL DEFAULT 0
+  counter     INTEGER DEFAULT 0
 );
 CREATE INDEX bo_event_ext_counters_idx_event_order
   ON bo_event_ext_counters (event_id, event_order);

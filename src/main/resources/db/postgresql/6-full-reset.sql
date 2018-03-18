@@ -107,7 +107,7 @@ CREATE TABLE bo_event_ext_counters (
   --ordered
   event_order INTEGER CONSTRAINT bo_event_ext_counters_event_order_positive CHECK (event_order >= 0),
   --other
-  counter     INTEGER NOT NULL DEFAULT 0
+  counter     INTEGER DEFAULT 0
 );
 CREATE INDEX bo_event_ext_counters_idx_event_order
   ON bo_event_ext_counters (event_id, event_order);
@@ -129,7 +129,7 @@ CREATE TABLE bo_event_ext_tickboxes (
   --ordered
   event_order INTEGER CONSTRAINT bo_event_ext_tickboxes_event_order_positive CHECK (event_order >= 0),
   --other
-  active      BOOLEAN NOT NULL DEFAULT FALSE
+  active      BOOLEAN DEFAULT FALSE
 );
 CREATE INDEX bo_event_ext_tickboxes_idx_event_order
   ON bo_event_ext_tickboxes (event_id, event_order);
@@ -182,7 +182,7 @@ CREATE TABLE bo_tasks (
   parent_id   UUID CONSTRAINT bo_tasks_fk_parent_id_bo_tasks_id REFERENCES bo_tasks (id),
   group_id    UUID CONSTRAINT bo_tasks_fk_group_id_bo_task_groups_id REFERENCES bo_task_groups (id),
   priority    NUMERIC(1, 0),
-  completed   BOOLEAN NOT NULL DEFAULT FALSE
+  completed   BOOLEAN DEFAULT FALSE
 );
 CREATE INDEX bo_tasks_idx_date_time_zone
   ON bo_tasks (owner_id, date, time, zone);

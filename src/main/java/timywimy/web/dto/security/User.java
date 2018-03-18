@@ -2,17 +2,19 @@ package timywimy.web.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import timywimy.model.bo.events.Event;
 import timywimy.model.bo.events.Schedule;
 import timywimy.model.security.converters.Role;
 import timywimy.web.dto.tasks.Task;
+import timywimy.web.util.converters.ZonedDateTimeSerializer;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @JsonPropertyOrder(value = {"id", "email", "name", "password", "old_password",
-        "token", "active", "banned", "banned_till","role","active","schedules","events","tasks"})
+        "token", "active", "banned", "banned_till", "role", "active", "schedules", "events", "tasks"})
 public class User {
     //todo expand with events and shit
     private UUID id;
@@ -25,6 +27,7 @@ public class User {
     private String token;
     private Boolean banned;
     @JsonProperty("banned_till")
+    @JsonSerialize(using = ZonedDateTimeSerializer.class)
     private ZonedDateTime bannedTill;
     private Role role;
     private Boolean active;

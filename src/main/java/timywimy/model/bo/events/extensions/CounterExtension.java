@@ -12,14 +12,14 @@ import javax.persistence.Table;
         @Index(name = "bo_event_ext_counters_idx_event_order", columnList = "event_id,event_order")})
 public class CounterExtension extends AbstractEventExtension {
 
-    @Column(name = "counter", columnDefinition = "integer", nullable = false)
-    private int counter;
+    @Column(name = "counter", columnDefinition = "integer")
+    private Integer counter;
 
-    public int getCounter() {
+    public Integer getCounter() {
         return counter;
     }
 
-    public void setCounter(int counter) {
+    public void setCounter(Integer counter) {
         this.counter = counter;
     }
 }

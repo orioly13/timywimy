@@ -2,9 +2,9 @@ package timywimy.web.dto.tasks;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import timywimy.model.bo.events.Event;
 import timywimy.model.bo.tasks.converters.Priority;
 import timywimy.web.dto.common.DateTimeZone;
+import timywimy.web.dto.events.Event;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +16,7 @@ public class Task {
     private String name;
     private String description;
 
-    @JsonProperty("deadline_ts")
+    @JsonProperty("deadline_dtz")
     private DateTimeZone deadline;
 
     private Task parent;

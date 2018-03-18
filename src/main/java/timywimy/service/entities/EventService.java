@@ -21,6 +21,6 @@ public interface EventService extends EntityService<Event, timywimy.model.bo.eve
 
     Event updateExtensions(UUID event, UUID session, List<EventExtension> extensions);
 
-    Event removeExtensions(UUID event, UUID session, List<EventExtension> extensions);
+    Event deleteExtensions(UUID event, UUID session, List<EventExtension> extensions);
 
 }
