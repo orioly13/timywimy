@@ -17,6 +17,8 @@ import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.RestException;
 import timywimy.web.dto.common.Response;
 
+import java.time.format.DateTimeParseException;
+
 @ControllerAdvice
 public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(RestRequestIdInterceptor.class);
@@ -32,6 +34,12 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseBody
     protected Response<Object> handleGeneral(Exception ex, WebRequest request) {
         return new Response<>(logWithId(ex, request), ErrorCode.INTERNAL_GENERAL);
+    }
+
+    @ExceptionHandler(value = {DateTimeParseException.class})
+    @ResponseBody
+    protected Response<Object> handleDateTimeParse(DateTimeParseException ex, WebRequest request) {
+        return new Response<>(logWithId(ex, request), ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS);
     }
 
     //handles all custom errors
