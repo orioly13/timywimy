@@ -62,7 +62,11 @@ INSERT INTO bo_tasks (id, owner_id, parent_id, name, description, priority)
 VALUES ('33aa4a30-075f-49ff-a7a2-3352cb68ed01',
         '19f725c6-1996-11e8-accf-0ed5f89f718b',
         'f2dc5bf7-ed4f-4b8f-a500-608267ff6d11', 'task_child', 'task_child_desc', 2);
-
+--admin task
+INSERT INTO bo_tasks (id, owner_id, name, description, date, time, zone)
+VALUES ('4273d51e-d53d-4a2a-b6ac-50f19966c82c',
+        '19f7231e-1996-11e8-accf-0ed5f89f718b',
+        'task_admin', 'task_admin_desc', '2018-03-25', '00:00', 'Europe/Samara');
 --EVENTS
 --task
 INSERT INTO bo_events (id, owner_id, name, description, date)

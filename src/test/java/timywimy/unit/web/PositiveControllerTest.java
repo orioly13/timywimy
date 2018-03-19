@@ -414,7 +414,6 @@ public class PositiveControllerTest {
             Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS, e.getErrorCode());
         }
         try {
-
             scheduleController.addInstances(requestId, session, PositiveTestData.SCHED_1, new ArrayList<>());
         } catch (ServiceException e) {
             Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS, e.getErrorCode());
@@ -438,8 +437,30 @@ public class PositiveControllerTest {
 
     @Test
     public void ScheduleControllerTestFailOther() {
-        //todo assert deleted instance (not found)
-        //assert invalid cron,cron == null
+        int requestId = RequestUtil.getRandomRequestId();
+        UUID session = restController.
+                openSession(requestId, PositiveTestData.USER_LOGIN_USER).
+                getResponse().getSession();
+        //add instance with ID
+        try {
+            List<Event> events = new ArrayList<>();
+            Event event = new Event();
+            event.setId(UUID.randomUUID());
+            events.add(event);
+            scheduleController.addInstances(requestId, session, PositiveTestData.SCHED_1, events);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, e.getErrorCode());
+        }
+        //delete intastance that does not exist
+        try {
+            List<Event> events = new ArrayList<>();
+            Event event = new Event();
+            event.setId(UUID.randomUUID());
+            events.add(event);
+            scheduleController.deleteInstances(requestId, session, PositiveTestData.SCHED_1, events);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
     }
 
     //EVENTS
@@ -679,10 +700,63 @@ public class PositiveControllerTest {
 
     @Test
     public void EventControllerTestFailOther() {
-        //todo assert updated,deleted extension (not found)
-        //todo assert link task not found,owned
-        //todo assert unlink task not found
-        //assert between fin before start
+        int requestId = RequestUtil.getRandomRequestId();
+        UUID session = restController.
+                openSession(requestId, PositiveTestData.USER_LOGIN_USER).
+                getResponse().getSession();
+        //create with id
+        List<EventExtension> exts = new ArrayList<>();
+        EventExtension ext = new CounterExtension();
+        ext.setId(UUID.randomUUID());
+        exts.add(ext);
+        try {
+            eventController.addExtensions(requestId, session, PositiveTestData.EVT_1, exts);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, e.getErrorCode());
+        }
+        //update not found
+        try {
+            eventController.updateExtensions(requestId, session, PositiveTestData.EVT_1, exts);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
+        //delete not found
+        try {
+            eventController.deleteExtensions(requestId, session, PositiveTestData.EVT_1, exts);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
+        //get between fin before start
+        try {
+            eventController.getBetween(requestId, session,
+                    "2018-03-19T01:20:21.903+04:00[Europe/Samara]", "2018-03-18T01:20:21.903+04:00[Europe/Samara]");
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, e.getErrorCode());
+        }
+
+        List<Task> tasks = new ArrayList<>();
+        Task task = new Task();
+        task.setId(UUID.randomUUID());
+        tasks.add(task);
+        //link not found
+        try {
+            eventController.linkTasks(requestId, session, PositiveTestData.EVT_1, tasks);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
+        //unlink not found
+        try {
+            eventController.unlinkTasks(requestId, session, PositiveTestData.EVT_1, tasks);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
+        //link found, not owned
+        task.setId(PositiveTestData.TSK_ADMIN);
+        try {
+            eventController.linkTasks(requestId, session, PositiveTestData.EVT_1, tasks);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS, e.getErrorCode());
+        }
     }
 
     //TASKS
@@ -857,8 +931,42 @@ public class PositiveControllerTest {
 
     @Test
     public void TaskControllerTestFailOther() {
-        //todo assert link task not found,owned
-        //todo assert unlink task not found
-        //assert between fin before start
+        int requestId = RequestUtil.getRandomRequestId();
+        UUID session = restController.
+                openSession(requestId, PositiveTestData.USER_LOGIN_USER).
+                getResponse().getSession();
+        //create with id
+
+        //get between fin before start
+        try {
+            taskController.getBetween(requestId, session,
+                    "2018-03-19T01:20:21.903+04:00[Europe/Samara]", "2018-03-18T01:20:21.903+04:00[Europe/Samara]");
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, e.getErrorCode());
+        }
+
+        List<Task> tasks = new ArrayList<>();
+        Task task = new Task();
+        task.setId(UUID.randomUUID());
+        tasks.add(task);
+        //link not found
+        try {
+            taskController.linkChildren(requestId, session, PositiveTestData.TSK_CHILD, tasks);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
+        //unlink not found
+        try {
+            taskController.unlinkChildren(requestId, session, PositiveTestData.TSK_CHILD, tasks);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.ENTITY_NOT_FOUND, e.getErrorCode());
+        }
+        //link found, not owned
+        task.setId(PositiveTestData.TSK_ADMIN);
+        try {
+            taskController.linkChildren(requestId, session, PositiveTestData.TSK_CHILD, tasks);
+        } catch (ServiceException e) {
+            Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS, e.getErrorCode());
+        }
     }
 }

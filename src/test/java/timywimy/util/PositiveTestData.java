@@ -21,6 +21,7 @@ public class PositiveTestData {
 
     public static final UUID TSK_PARENT = UUID.fromString("f2dc5bf7-ed4f-4b8f-a500-608267ff6d11");
     public static final UUID TSK_CHILD = UUID.fromString("33aa4a30-075f-49ff-a7a2-3352cb68ed01");
+    public static final UUID TSK_ADMIN = UUID.fromString("4273d51e-d53d-4a2a-b6ac-50f19966c82c");
 
     public static final UUID EVT_1 = UUID.fromString("3b714040-55fe-4c47-9d72-238cfa0b9aa3");
     public static final UUID EVT_1_TSK = UUID.fromString("c493db88-f824-45d6-86e5-1d23e4dd58c9");

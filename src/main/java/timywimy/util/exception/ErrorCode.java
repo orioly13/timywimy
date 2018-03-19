@@ -10,7 +10,7 @@ public enum ErrorCode {
 
     REQUEST_VALIDATION_EMPTY_FIELDS(2, "Not enough fields provided"),
     REQUEST_VALIDATION_INVALID_FIELDS(3, "Some fields are invalid"),
-    REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS(4, "Not enough right for operation"),
+    REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS(4, "Not enough rights for operation"),
     REQUEST_VALIDATION_SESSION_REQUIRED(5, "Session is closed or expired, please open a new one"),
     REQUEST_VALIDATION_OPERATION_RESTRICTED(6, "Operation is not allowed"),
 
