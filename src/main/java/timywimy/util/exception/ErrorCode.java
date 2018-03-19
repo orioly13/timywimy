@@ -19,13 +19,18 @@ public enum ErrorCode {
 
     SESSION_USER_NOT_FOUND(13, "User with provided credentials not found"),
     ENTITY_NOT_FOUND(14, "Entity with this id not found"),
-    ENTITY_DIFFERENT_OWNER(15,"Only owner of entity can do this"),
 
     INTERNAL_REPOSITORY(101, "Internal General Error (Repository level)"),
     //
     INTERNAL_SERVICE(201, "Internal General Error (Service level)"),
     //
-    INTERNAL_CONTROLLER(301, "Internal General Error (Controller level)");
+    INTERNAL_CONTROLLER(301, "Internal General Error (Controller level)"),
+
+
+    BAD_REQUEST(400, "Bad request"),
+    NOT_FOUND(404, "Not found"),
+    NOT_ALLOWED(405, "Method not allowed");
+
 
     private static final Map<Integer, ErrorCode> mapByCode;
 

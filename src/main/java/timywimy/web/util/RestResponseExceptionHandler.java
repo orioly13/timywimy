@@ -2,10 +2,16 @@ package timywimy.web.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.RestException;
@@ -35,5 +41,26 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         ErrorCode errorCode = ex.getErrorCode() == null ? ErrorCode.INTERNAL_GENERAL : ex.getErrorCode();
         String message = ex.getMessage() == null ? errorCode.getMessage() : ex.getMessage();
         return new Response<>(logWithId(ex, request), errorCode, message);
+    }
+
+    //400
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return new ResponseEntity<>(new Response<>(null, ErrorCode.BAD_REQUEST), headers, status);
+    }
+
+    //404
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex,
+                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return new ResponseEntity<>(new Response<>(null, ErrorCode.NOT_FOUND), headers, status);
+    }
+
+    //405
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+                                                                         HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return new ResponseEntity<>(new Response<>(null, ErrorCode.NOT_ALLOWED), headers, status);
     }
 }
