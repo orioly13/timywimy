@@ -30,22 +30,28 @@ public class RestServiceImpl implements RestService {
     private final Long expireMinutes;
     private final Pattern passwordPattern;
     private final Pattern emailPattern;
+    private final SHAPasswordWorker passwordWorker;
+
     private Map<UUID, UserSession> sessions;
     private timywimy.model.security.User apiUser;
 
     @Autowired
     public RestServiceImpl(UserRepository userRepository,
+                           SHAPasswordWorker passwordWorker,
                            @Value("${api.session.expiryMinutes}") Long expireMinutes,
                            @Value("${api.user.passwordPattern.regexp}") String passwordPattern,
                            @Value("${api.user.emailPattern.regexp}") String emailPattern) {
+
         Assert.notNull(expireMinutes, "ExpireMinutes should be provided");
         Assert.notNull(userRepository, "UserRepository should be provided");
         Assert.notNull(passwordPattern, "PasswordPattern should be provided");
         Assert.notNull(emailPattern, "EmailPattern should be provided");
+        Assert.notNull(passwordWorker, "Password worker");
         this.expireMinutes = expireMinutes;
         this.userRepository = userRepository;
         this.passwordPattern = Pattern.compile(passwordPattern);
         this.emailPattern = Pattern.compile(emailPattern);
+        this.passwordWorker = passwordWorker;
     }
 
     //PostConstruct annotation applies AFTER  Autowired
@@ -83,6 +89,9 @@ public class RestServiceImpl implements RestService {
             throw new ServiceException(ErrorCode.USER_ALREADY_REGISTERED, String.format("email:%s", user.getEmail()));
         }
         user.setRole(Role.USER);
+        user.setPassword(passwordWorker.generatePasswordHash(user.getPassword()));
+        //todo add validation
+        user.setActive(true);
         timywimy.model.security.User savedUser = userRepository.save(Converter.userDTOtoUserEntity(user), apiUser.getId());
         if (savedUser == null) {
             throw new ServiceException(ErrorCode.REGISTER_FAILED_TO_PERSIST);
@@ -105,8 +114,14 @@ public class RestServiceImpl implements RestService {
         validatePasswordPattern(user.getPassword());
 
         timywimy.model.security.User userByEmail = userRepository.getByEmail(lowerCaseEmail);
-        if (userByEmail == null || !userByEmail.getPassword().equals(user.getPassword())) {
-            throw new ServiceException(ErrorCode.SESSION_USER_NOT_FOUND, "Please check email and password");
+        if (userByEmail == null || !passwordWorker.validatePassword(user.getPassword(), userByEmail.getPassword())) {
+            throw new ServiceException(ErrorCode.USER_NOT_FOUND, "Please check email and password");
+        }
+        if (!userByEmail.isActive()) {
+            throw new ServiceException(ErrorCode.USER_NOT_ACTIVE, "Please check email and activate registration");
+        }
+        if (userByEmail.isBanned()) {
+            throw new ServiceException(ErrorCode.USER_IS_BANNED, "User with provided credentials is banned");
         }
 
         UUID session = UUID.randomUUID();
@@ -145,7 +160,7 @@ public class RestServiceImpl implements RestService {
         //password change check
         if (!StringUtil.isEmpty(user.getPassword())) {
             RequestUtil.validateEmptyField(ServiceException.class, user.getOldPassword(), "old password");
-            if (userBySession.getPassword().equals(user.getOldPassword())) {
+            if (!passwordWorker.validatePassword(user.getOldPassword(), userBySession.getPassword())) {
                 validatePasswordPattern(user.getPassword());
                 userBySession.setPassword(user.getPassword());
             } else {

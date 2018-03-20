@@ -17,7 +17,7 @@ public class User extends AbstractNamedEntity {
     //unique corresponds to constraint
     @Column(name = "email", columnDefinition = "varchar(50)", nullable = false, unique = true)
     private String email;
-    @Column(name = "password", columnDefinition = "varchar(50)", nullable = false)
+    @Column(name = "password", columnDefinition = "varchar(200)", nullable = false)
     private String password;
     @Column(name = "role", columnDefinition = "numeric(2,0)")
     @Convert(converter = RoleConverter.class)

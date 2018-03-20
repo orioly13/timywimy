@@ -17,8 +17,10 @@ public enum ErrorCode {
     REGISTER_FAILED_TO_PERSIST(10, "Failed to persist user"),
     USER_ALREADY_REGISTERED(11, "User with this email already registered"),
 
-    SESSION_USER_NOT_FOUND(13, "User with provided credentials not found"),
-    ENTITY_NOT_FOUND(14, "Entity with this id not found"),
+    USER_NOT_FOUND(13, "User with provided credentials not found"),
+    USER_NOT_ACTIVE(14, "User with provided credentials is not active, check your email to activate it"),
+    USER_IS_BANNED(15, "User with provided credentials is banned"),
+    ENTITY_NOT_FOUND(20, "Entity with this id not found"),
 
     INTERNAL_REPOSITORY(101, "Internal General Error (Repository level)"),
     //

@@ -24,7 +24,7 @@ CREATE TABLE sec_users (
   name        VARCHAR(50),
   --other
   email       VARCHAR(50) NOT NULL CONSTRAINT sec_users_uq_email UNIQUE,
-  password    VARCHAR(50) NOT NULL,
+  password    VARCHAR(200) NOT NULL,
   role        NUMERIC(2, 0),
   active      BOOLEAN     NOT NULL DEFAULT FALSE,
   banned      BOOLEAN     NOT NULL DEFAULT FALSE,
