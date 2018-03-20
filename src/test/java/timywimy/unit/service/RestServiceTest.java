@@ -1,8 +1,6 @@
 package timywimy.unit.service;
 
-import org.junit.AfterClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
@@ -98,5 +96,17 @@ public class RestServiceTest {
     public void validGetUserBySession() {
         Session session = service.openSession(UserTestData.getExistingUserDTO());
         service.getUserBySession(session.getSession());
+    }
+
+    @Test
+    @Ignore //invoce only if testing by hand
+    public void validEvictUsers() throws InterruptedException {
+        Session session = service.openSession(UserTestData.getExistingUserDTO());
+        timywimy.model.security.User userBySession = service.getUserBySession(session.getSession());
+        Assert.assertNotEquals(null, userBySession);
+        Thread.sleep(125000);
+        userBySession = service.getUserBySession(session.getSession());
+        Assert.assertEquals(null, userBySession);
+
     }
 }

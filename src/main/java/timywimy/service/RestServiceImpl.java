@@ -18,9 +18,13 @@ import timywimy.web.dto.security.User;
 
 import javax.annotation.PostConstruct;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 @Service
@@ -32,17 +36,19 @@ public class RestServiceImpl implements RestService {
     private final Pattern emailPattern;
     private final SHAPasswordWorker passwordWorker;
 
-    private Map<UUID, UserSession> sessions;
+    private final Map<UUID, UserSession> sessions;
     private timywimy.model.security.User apiUser;
 
     @Autowired
     public RestServiceImpl(UserRepository userRepository,
                            SHAPasswordWorker passwordWorker,
+                           @Value("${api.session.expiryCheckRate.seconds}") Long expiryCheckRate,
                            @Value("${api.session.expiryMinutes}") Long expireMinutes,
                            @Value("${api.user.passwordPattern.regexp}") String passwordPattern,
                            @Value("${api.user.emailPattern.regexp}") String emailPattern) {
 
         Assert.notNull(expireMinutes, "ExpireMinutes should be provided");
+        Assert.notNull(expiryCheckRate, "expiryCheckRate should be provided");
         Assert.notNull(userRepository, "UserRepository should be provided");
         Assert.notNull(passwordPattern, "PasswordPattern should be provided");
         Assert.notNull(emailPattern, "EmailPattern should be provided");
@@ -52,12 +58,24 @@ public class RestServiceImpl implements RestService {
         this.passwordPattern = Pattern.compile(passwordPattern);
         this.emailPattern = Pattern.compile(emailPattern);
         this.passwordWorker = passwordWorker;
+        //setup session map and scheduler
+        this.sessions = Collections.synchronizedMap(new HashMap<>());
+        ScheduledExecutorService evictSessionsScheduler = Executors.newScheduledThreadPool(1);
+        evictSessionsScheduler.scheduleAtFixedRate(createEvictTask(), expiryCheckRate, expiryCheckRate, TimeUnit.SECONDS);
+    }
+
+    private Runnable createEvictTask() {
+        return () -> {
+            synchronized (sessions) {
+                sessions.entrySet().removeIf(entry ->
+                        entry.getValue().getExpiryDate().isBefore(ZonedDateTime.now()));
+            }
+        };
     }
 
     //PostConstruct annotation applies AFTER  Autowired
     @PostConstruct
     private void init() {
-        this.sessions = new HashMap<>();
         this.apiUser = userRepository.get(UUID.fromString("3088b1fc-43c2-4951-8b78-1f56261c16ca"));
     }
 

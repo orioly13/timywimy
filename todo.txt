@@ -1,6 +1,5 @@
-todo 1. Cypher passwords
 todo 4. Read about Spring, Hiber, Rest
-todo 5. session expiry
-todo 6. 404 and 405
+todo 6. schedule cron
+todo 9. add activation check
 todo 7. hib cache, service cache
 todo 8. fix calls (remove copy-selects)
