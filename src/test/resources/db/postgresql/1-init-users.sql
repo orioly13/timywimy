@@ -1,25 +1,25 @@
 --root (and API)
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('3088b1fc-43c2-4951-8b78-1f56261c16ca', now(), 'root', 'lol@kek.cheburek',
-        '1000:35767285604180af14f3f691200f1cf6:40fcc9380313ae64c16175fa0aed66162fb3d04fcb1fdfa5663b3ce15e509a7a50f19a9622f56cec9f89dc3da8d96a5f2aab3c4a07a3128910ea69a28cb3b6e9',
+        '1000:1666aaece4953f9d2b4897f191107b14:00582c3030525f2cbec0e3b0d426f93a60a181c864b6e2c7fde5eb470a0736f419ec280591e64b1c8e882a52ed72bbe86baa7508d3c1df99206249d8b285f65c',
         1, TRUE);
 --admin
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('19f7231e-1996-11e8-accf-0ed5f89f718b', now(), 'admin', 'admin@user.test.com',
-        '1000:40d2a6110dccf0e055d5089ec4eb3ae3:38eafb98e06187ac0c4e37ff1a7a2e7b3d6077ae0d824f9f36d9bc1111cb34b37a5bee6bfbc685ba647d9bb52372a1e7e4271c5a76f6ce0a5c3a9212f0b535ca',
+        '1000:0c4d266d00fd05c456aa86bb3938bd38:eab716eb74f5e20fa039be7812aa3f59d002bb3789d089d788bb15b541d29b12dc52f778bfe24a7a2c06f86f77edebc46d6885caf63a82a4f376dcf0fe7d4599',
         1, TRUE);
 --user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('19f725c6-1996-11e8-accf-0ed5f89f718b', now(), 'user', 'user@user.com',
-        '1000:487377b012a1e5da6263cb9288b5c318:e5df5312c58ce01e3027702140d1376ceb5fae42f391a95b71e0fe674ecdbbf6227d457a9427f6c2c7035036d84d281ac204ff10c8543cd67433775095807dd7',
+        '1000:8109f5df0be9f257d78dfa25eda0b4f2:8d48d965aa6128666e224002928e0f8851420977613e4883b5d804d0061753a255dc51570aa6f9b3e878be77975d51faec969480a94d24814a71d2928f5d8bb1',
         0, TRUE);
 --inactive user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('19f7294a-1996-11e8-accf-0ed5f89f718b', now(), 'inactive_user', 'inactive_user@user.com',
-        '1000:487377b012a1e5da6263cb9288b5c318:e5df5312c58ce01e3027702140d1376ceb5fae42f391a95b71e0fe674ecdbbf6227d457a9427f6c2c7035036d84d281ac204ff10c8543cd67433775095807dd7',
+        '1000:8109f5df0be9f257d78dfa25eda0b4f2:8d48d965aa6128666e224002928e0f8851420977613e4883b5d804d0061753a255dc51570aa6f9b3e878be77975d51faec969480a94d24814a71d2928f5d8bb1',
         0, FALSE);
 --invalid role user
 INSERT INTO sec_users (id, created_ts, name, email, password, role, active)
 VALUES ('ea7d161f-743a-4863-9277-770a95591d3e', now(), 'invalid_role_user', 'invalid_role_user@user.test.com',
-        '1000:487377b012a1e5da6263cb9288b5c318:e5df5312c58ce01e3027702140d1376ceb5fae42f391a95b71e0fe674ecdbbf6227d457a9427f6c2c7035036d84d281ac204ff10c8543cd67433775095807dd7',
+        '1000:8109f5df0be9f257d78dfa25eda0b4f2:8d48d965aa6128666e224002928e0f8851420977613e4883b5d804d0061753a255dc51570aa6f9b3e878be77975d51faec969480a94d24814a71d2928f5d8bb1',
         14, TRUE);

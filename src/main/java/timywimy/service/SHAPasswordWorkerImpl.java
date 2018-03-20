@@ -14,7 +14,8 @@ import java.security.spec.InvalidKeySpecException;
 
 @Component
 public class SHAPasswordWorkerImpl implements SHAPasswordWorker {
-
+    //https://howtodoinjava.com/security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+    //https://stackoverflow.com/questions/19348501/pbkdf2withhmacsha512-vs-pbkdf2withhmacsha1
     private final int iterations;
     private final int hashLength;
     private final byte[] pepper;
@@ -31,7 +32,7 @@ public class SHAPasswordWorkerImpl implements SHAPasswordWorker {
         this.iterations = iterations;
         this.pepper = pepper;
         try {
-            this.skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            this.skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
             this.sr = SecureRandom.getInstance("SHA1PRNG");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException();
