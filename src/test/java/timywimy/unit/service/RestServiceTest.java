@@ -99,7 +99,7 @@ public class RestServiceTest {
     }
 
     @Test
-    @Ignore //invoce only if testing by hand
+    @Ignore //invoke only if testing by hand
     public void validEvictUsers() throws InterruptedException {
         Session session = service.openSession(UserTestData.getExistingUserDTO());
         timywimy.model.security.User userBySession = service.getUserBySession(session.getSession());

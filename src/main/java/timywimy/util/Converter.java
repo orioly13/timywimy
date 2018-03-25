@@ -1,4 +1,4 @@
-package timywimy.service.converters;
+package timywimy.util;
 
 import org.hibernate.Hibernate;
 import timywimy.model.bo.events.extensions.common.AbstractEventExtension;

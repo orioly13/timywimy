@@ -3,9 +3,11 @@ package timywimy.model.bo.events;
 import timywimy.model.common.AbstractDefaultEntity;
 import timywimy.model.common.DurableEntity;
 import timywimy.model.common.converters.DurationConverter;
+import timywimy.model.common.converters.ZoneIdConverter;
 
 import javax.persistence.*;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.util.List;
 
 @Entity
@@ -16,6 +18,9 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
 
     @Column(name = "cron", columnDefinition = "varchar(20)")
     private String cron;
+    @Column(name = "zone", columnDefinition = "varchar(20)")
+    @Convert(converter = ZoneIdConverter.class)
+    private ZoneId zone;
     @Column(name = "duration", columnDefinition = "varchar(12)")
     @Convert(converter = DurationConverter.class)
     private Duration duration;
@@ -49,5 +54,13 @@ public class Schedule extends AbstractDefaultEntity implements DurableEntity {
     @Override
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public ZoneId getZone() {
+        return zone;
+    }
+
+    public void setZone(ZoneId zone) {
+        this.zone = zone;
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import timywimy.model.security.converters.Role;
 import timywimy.repository.UserRepository;
-import timywimy.service.converters.Converter;
+import timywimy.util.Converter;
 import timywimy.service.dto.UserSession;
 import timywimy.util.PairFieldName;
 import timywimy.util.RequestUtil;

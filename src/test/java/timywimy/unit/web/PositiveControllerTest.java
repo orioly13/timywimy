@@ -28,6 +28,7 @@ import timywimy.web.controllers.entities.EventController;
 import timywimy.web.controllers.entities.ScheduleController;
 import timywimy.web.controllers.entities.TaskController;
 import timywimy.web.controllers.entities.UserController;
+import timywimy.web.dto.common.DateTimeZone;
 import timywimy.web.dto.common.Response;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.Schedule;
@@ -37,6 +38,8 @@ import timywimy.web.dto.events.extensions.TickBoxExtension;
 import timywimy.web.dto.security.User;
 import timywimy.web.dto.tasks.Task;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -265,9 +268,11 @@ public class PositiveControllerTest {
         List<Event> events = new ArrayList<>();
         Event event1 = new Event();
         event1.setName("NAME_1");
+        event1.setDateTimeZone(new DateTimeZone(LocalDate.now(), LocalTime.MIDNIGHT,null));
         events.add(event1);
         Event event2 = new Event();
         event2.setName("NAME_2");
+        event2.setDateTimeZone(new DateTimeZone(LocalDate.now(), LocalTime.MIDNIGHT,null));
         events.add(event2);
         Response<List<Event>> listResponse = scheduleController.addInstances(requestId, session, PositiveTestData.SCHED_1, events);
         Assert.assertEquals(2, listResponse.getResponse().size());
@@ -292,6 +297,7 @@ public class PositiveControllerTest {
         //create
         Schedule schedule1 = new Schedule();
         schedule1.setName("LOL");
+        schedule1.setCron("* * * * *");
         Response<Schedule> scheduleResponse = scheduleController.create(requestId, session, schedule1);
         Assert.assertEquals("LOL", scheduleResponse.getResponse().getName());
         Assert.assertNotNull(scheduleResponse.getResponse().getId());
@@ -306,11 +312,12 @@ public class PositiveControllerTest {
         //update empty
         Schedule schedule1 = new Schedule();
         schedule1.setName("LOL");
+        schedule1.setCron("* * * * *");
         Response<Schedule> update = scheduleController.update(requestId, session, PositiveTestData.SCHED_1, schedule1);
         Assert.assertEquals("LOL", update.getResponse().getName());
         //update with instances
         Schedule schedule2 = new Schedule();
-        schedule2.setCron("* * * *");
+        schedule2.setCron("* * * * *");
         schedule2.setName("LOL");
         Response<Schedule> update2 = scheduleController.update(requestId, session, PositiveTestData.SCHED_2, schedule2);
         Assert.assertEquals("LOL", update2.getResponse().getName());
@@ -429,7 +436,9 @@ public class PositiveControllerTest {
             Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS, e.getErrorCode());
         }
         try {
-            scheduleController.update(requestId, session, PositiveTestData.SCHED_1, new Schedule());
+            Schedule schedule = new Schedule();
+            schedule.setCron("* * * * *");
+            scheduleController.update(requestId, session, PositiveTestData.SCHED_1, schedule);
         } catch (ServiceException e) {
             Assert.assertEquals(ErrorCode.REQUEST_VALIDATION_NOT_ENOUGH_RIGHTS, e.getErrorCode());
         }

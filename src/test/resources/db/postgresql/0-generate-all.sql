@@ -29,11 +29,11 @@ VALUES ('19f725c6-1996-11e8-accf-0ed5f89f718b', now(), 'user', 'user@user.com',
 --no instances
 INSERT INTO bo_schedules (id, owner_id, name, description, cron)
 VALUES ('eb729e1b-f23a-4665-a4b3-eab17d517748',
-        '19f725c6-1996-11e8-accf-0ed5f89f718b', 'sched_1', 'sched_desc_1', '0 0 12 * * ? *');
+        '19f725c6-1996-11e8-accf-0ed5f89f718b', 'sched_1', 'sched_desc_1', '* * * * *');
 --three instances (one empty,one with task,one with extension)
 INSERT INTO bo_schedules (id, owner_id, name, description, cron, duration)
 VALUES ('e3c86daa-e368-491f-9e94-e11c55ea6d4e',
-        '19f725c6-1996-11e8-accf-0ed5f89f718b', 'sched_2', 'sched_desc_2', '0 0 12 * * ? *', '0d1h0m0s');
+        '19f725c6-1996-11e8-accf-0ed5f89f718b', 'sched_2', 'sched_desc_2', '* * * * *', '0d1h0m0s');
 --empty
 INSERT INTO bo_events (id, owner_id, schedule_id, name, description, date, time, zone, duration)
 VALUES ('73432aa7-0db7-4244-b5a4-c33f8dad30c4',

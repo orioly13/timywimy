@@ -51,7 +51,8 @@ CREATE TABLE bo_schedules (
   --durable
   duration    VARCHAR(12),
   --other fields
-  cron        VARCHAR(20)
+  cron        VARCHAR(50),
+  zone        VARCHAR(20)
 );
 CREATE INDEX bo_schedules_idx_owner_id
   ON bo_schedules (owner_id);

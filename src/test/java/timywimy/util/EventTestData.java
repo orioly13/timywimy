@@ -1,7 +1,6 @@
 package timywimy.util;
 
 import timywimy.model.bo.events.Event;
-import timywimy.service.converters.Converter;
 
 import java.util.UUID;
 

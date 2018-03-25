@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import timywimy.model.security.User;
 import timywimy.repository.TaskRepository;
 import timywimy.service.RestService;
-import timywimy.service.converters.Converter;
+import timywimy.util.Converter;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;

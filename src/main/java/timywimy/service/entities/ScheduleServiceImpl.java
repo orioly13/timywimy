@@ -7,13 +7,15 @@ import timywimy.model.security.User;
 import timywimy.repository.EventRepository;
 import timywimy.repository.ScheduleRepository;
 import timywimy.service.RestService;
-import timywimy.service.converters.Converter;
+import timywimy.util.Converter;
+import timywimy.util.CronEntity;
 import timywimy.util.RequestUtil;
 import timywimy.util.exception.ErrorCode;
 import timywimy.util.exception.ServiceException;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.Schedule;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -50,7 +52,7 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
     public Schedule save(Schedule dto, UUID userSession) {
         User userBySession = getUserBySession(userSession);
         RequestUtil.validateEmptyField(ServiceException.class, dto, "schedule");
-        //todo assert cron if provided ()
+        RequestUtil.validateEmptyField(ServiceException.class, dto.getCron(), "schedule cron");
         timywimy.model.bo.events.Schedule schedule = dto.getId() == null ? null :
                 repository.get(dto.getId(), RequestUtil.parametersSet("owner", "instances"));
         if (dto.getId() != null && schedule == null) {
@@ -61,11 +63,16 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
         } else {
             schedule = new timywimy.model.bo.events.Schedule();
         }
+        if (!dto.getCron().equals(schedule.getCron())) {
+            if (!CronEntity.assertCron(dto.getCron())) {
+                throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                        "cron is invalid format (minutes,hours,days of month,months of year,days of week * * * * *)");
+            }
+        }
         schedule.setOwner(userBySession);
         schedule.setName(dto.getName());
         schedule.setDescription(dto.getDescription());
-        if (schedule.getId() != null &&
-                (!(dto.getCron() == null ? schedule.getCron() == null : dto.getCron().equals(schedule.getCron())) ||
+        if (schedule.getId() != null && (!dto.getCron().equals(schedule.getCron()) ||
                         !(dto.getDuration() == null ? schedule.getDuration() == null : dto.getDuration().equals(schedule.getDuration())))) {
             for (timywimy.model.bo.events.Event instance : schedule.getInstances()) {
                 eventRepository.delete(instance);
@@ -112,11 +119,31 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
             if (instance.getId() != null) {
                 throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "instance id exists");
             }
+            RequestUtil.validateEmptyField(ServiceException.class, instance.getDateTimeZone(), "instance dateTimeZone");
         }
-        //todo check cron of schedule
+        //load schedule
+        timywimy.model.bo.events.Schedule schedLoaded = repository.get(schedule);
+        if (schedLoaded == null) {
+            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "schedule not found");
+        }
+        CronEntity cronEntity = new CronEntity(schedLoaded.getCron());
+
         List<timywimy.model.bo.events.Event> eventsToAdd = new ArrayList<>();
         for (Event instance : instances) {
             timywimy.model.bo.events.Event event = Converter.eventDTOToEventEntity(instance);
+            //check instance on schedule
+            ZonedDateTime zonedDateTime = event.getDateTimeZone().getZonedDateTime();
+            if (schedLoaded.getZone() != null && event.getDateTimeZone().getZone() == null ||
+                    schedLoaded.getZone() == null && event.getDateTimeZone().getZone() != null) {
+                throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS,
+                        "instance should have zone if schedule does (and vice versa)");
+            }
+            if (schedLoaded.getZone() != null) {
+                zonedDateTime = zonedDateTime.withZoneSameInstant(schedLoaded.getZone());
+            }
+            if (!cronEntity.validateLocalDateTime(zonedDateTime.toLocalDateTime())) {
+                throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "event instance differs from cron");
+            }
             event.setOwner(userBySession);
             eventsToAdd.add(event);
         }
