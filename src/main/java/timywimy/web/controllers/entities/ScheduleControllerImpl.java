@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import timywimy.service.entities.ScheduleService;
+import timywimy.util.TimeFormatUtil;
 import timywimy.web.dto.common.Response;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.Schedule;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,5 +86,17 @@ public class ScheduleControllerImpl extends AbstractEntityController<Schedule, t
                                                  @PathVariable("id") UUID schedule,
                                                  @RequestBody List<Event> instances) {
         return new Response<>(requestId, ((ScheduleService) service).deleteInstances(schedule, session, instances));
+    }
+
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/next-occurrences")
+    public Response<List<ZonedDateTime>> getNextOccurancies(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+                                                            @RequestHeader(name = "X-Auth-Session") UUID session,
+                                                            @PathVariable("id") UUID schedule,
+                                                            @RequestParam("start") String start,
+                                                            @RequestParam("days") Integer days,
+                                                            @RequestParam("max") Integer max) {
+        return new Response<>(requestId, ((ScheduleService) service).getNextOccurrences(
+                schedule, session, TimeFormatUtil.parseZonedDateTime(start), days, max));
     }
 }

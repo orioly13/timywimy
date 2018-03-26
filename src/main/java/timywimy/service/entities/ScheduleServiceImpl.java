@@ -15,6 +15,7 @@ import timywimy.util.exception.ServiceException;
 import timywimy.web.dto.events.Event;
 import timywimy.web.dto.events.Schedule;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
         schedule.setName(dto.getName());
         schedule.setDescription(dto.getDescription());
         if (schedule.getId() != null && (!dto.getCron().equals(schedule.getCron()) ||
-                        !(dto.getDuration() == null ? schedule.getDuration() == null : dto.getDuration().equals(schedule.getDuration())))) {
+                !(dto.getDuration() == null ? schedule.getDuration() == null : dto.getDuration().equals(schedule.getDuration())))) {
             for (timywimy.model.bo.events.Event instance : schedule.getInstances()) {
                 eventRepository.delete(instance);
             }
@@ -126,6 +127,7 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
         if (schedLoaded == null) {
             throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "schedule not found");
         }
+        assertOwner(schedLoaded, userBySession);
         CronEntity cronEntity = new CronEntity(schedLoaded.getCron());
 
         List<timywimy.model.bo.events.Event> eventsToAdd = new ArrayList<>();
@@ -168,8 +170,13 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
             RequestUtil.validateEmptyField(ServiceException.class, instance.getId(), "instance id");
         }
 
-        List<timywimy.model.bo.events.Event> loadedInstances = repository.
-                get(schedule, RequestUtil.parametersSet("instances")).getInstances();
+        timywimy.model.bo.events.Schedule schedLoaded = repository.get(schedule, RequestUtil.parametersSet("instances"));
+        if (schedLoaded == null) {
+            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "schedule not found");
+        }
+        assertOwner(schedLoaded, userBySession);
+
+        List<timywimy.model.bo.events.Event> loadedInstances = schedLoaded.getInstances();
         List<timywimy.model.bo.events.Event> instancesToRemove = new ArrayList<>();
         for (Event instance : instances) {
             boolean foundToDelete = false;
@@ -194,5 +201,35 @@ public class ScheduleServiceImpl extends AbstractOwnedEntityService<Schedule, ti
             result.add(Converter.eventEntityToEventDTO(resultInstance, true));
         }
         return result;
+    }
+
+    @Override
+    public List<ZonedDateTime> getNextOccurrences(UUID schedule, UUID session, ZonedDateTime start,
+                                                  Integer days, Integer maxAmount) {
+        User userBySession = getUserBySession(session);
+        RequestUtil.validateEmptyField(ServiceException.class, schedule, "schedule");
+        RequestUtil.validateEmptyField(ServiceException.class, start, "start datetime");
+        if (days != null && days > CronEntity.MAX_DAYS_COUNT) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "max days is " + CronEntity.MAX_DAYS_COUNT);
+        }
+        if (maxAmount != null && maxAmount > CronEntity.MAX_INSTANCES_COUNT) {
+            throw new ServiceException(ErrorCode.REQUEST_VALIDATION_INVALID_FIELDS, "max occurrences is " + CronEntity.MAX_INSTANCES_COUNT);
+        }
+        timywimy.model.bo.events.Schedule schedLoaded = repository.get(schedule);
+        if (schedLoaded == null) {
+            throw new ServiceException(ErrorCode.ENTITY_NOT_FOUND, "schedule not found");
+        }
+        assertOwner(schedLoaded, userBySession);
+        CronEntity entity = new CronEntity(schedLoaded.getCron());
+        ZonedDateTime startAdjusted = schedLoaded.getZone() == null ? start :
+                start.withZoneSameInstant(schedLoaded.getZone());
+        List<LocalDateTime> localDateTimes = entity.nextLocalDateTimeList(startAdjusted.toLocalDateTime(), days, maxAmount);
+
+        List<ZonedDateTime> res = new ArrayList<>();
+        for (LocalDateTime localDateTime : localDateTimes) {
+            res.add(ZonedDateTime.of(localDateTime,
+                    schedLoaded.getZone() == null ? start.getZone() : schedLoaded.getZone()));
+        }
+        return res;
     }
 }
