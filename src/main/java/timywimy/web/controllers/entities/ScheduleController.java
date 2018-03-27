@@ -16,5 +16,5 @@ public interface ScheduleController extends EntityController<Schedule> {
 
     Response<List<Event>> deleteInstances(Integer requestId, UUID session, UUID schedule, List<Event> instances);
 
-    Response<List<ZonedDateTime>> getNextOccurancies(Integer requestId, UUID session, UUID schedule, String start, Integer days, Integer max);
+    Response<List<ZonedDateTime>> getNextOccurrences(Integer requestId, UUID session, UUID schedule, String start, Integer days, Integer max);
 }

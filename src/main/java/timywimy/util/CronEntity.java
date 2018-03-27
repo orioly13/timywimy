@@ -140,7 +140,7 @@ public class CronEntity {
         }
         List<LocalDateTime> possibleDateTimes = new ArrayList<>();
         //add all days that pass date pass
-        for (int i = 0; i <= days; i++) {
+        for (int i = 0; i < days; i++) {
             LocalDateTime next = localDateTime.plusDays(i);
             if (validateLocalDate(next.toLocalDate())) {
                 possibleDateTimes.add(next);

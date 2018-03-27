@@ -90,12 +90,12 @@ public class ScheduleControllerImpl extends AbstractEntityController<Schedule, t
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/next-occurrences")
-    public Response<List<ZonedDateTime>> getNextOccurancies(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
+    public Response<List<ZonedDateTime>> getNextOccurrences(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                                             @RequestHeader(name = "X-Auth-Session") UUID session,
                                                             @PathVariable("id") UUID schedule,
                                                             @RequestParam("start") String start,
-                                                            @RequestParam("days") Integer days,
-                                                            @RequestParam("max") Integer max) {
+                                                            @RequestParam(value = "days", required = false) Integer days,
+                                                            @RequestParam(value = "max", required = false) Integer max) {
         return new Response<>(requestId, ((ScheduleService) service).getNextOccurrences(
                 schedule, session, TimeFormatUtil.parseZonedDateTime(start), days, max));
     }
