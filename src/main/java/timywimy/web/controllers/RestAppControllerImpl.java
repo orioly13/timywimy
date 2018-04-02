@@ -38,7 +38,7 @@ public class RestAppControllerImpl implements RestAppController {
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/register")
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "profile/register")
     public Response<Session> register(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                       @RequestBody User user) {
         Session session = restService.register(user);
@@ -47,7 +47,7 @@ public class RestAppControllerImpl implements RestAppController {
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/open-session")
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "profile/open-session")
     public Response<Session> openSession(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                          @RequestBody User user) {
         Session session = restService.openSession(user);
@@ -56,7 +56,7 @@ public class RestAppControllerImpl implements RestAppController {
     }
 
     @Override
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/api/close-session")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "profile/close-session")
     public Response<Boolean> closeSession(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                           @RequestHeader(name = "X-Auth-Session") UUID session) {
         boolean res = restService.closeSession(session);
@@ -65,7 +65,7 @@ public class RestAppControllerImpl implements RestAppController {
 
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE, value = "/update-profile")
+            produces = MediaType.APPLICATION_JSON_VALUE, value = "profile/update-profile")
     public Response<User> updateProfile(@RequestAttribute(value = "timywimy.request.id") Integer requestId,
                                         @RequestHeader(name = "X-Auth-Session") UUID session,
                                         @RequestBody User user) {
